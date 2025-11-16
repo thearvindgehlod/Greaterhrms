@@ -504,7 +504,7 @@ class _AllAssignedLeave extends State<AllAssignedLeave> {
                               style: ButtonStyle(
                                 backgroundColor:
                                     MaterialStateProperty.all<Color>(
-                                        Colors.red),
+                                        const Color(0xFF6B57F0)),
                                 shape: MaterialStateProperty.all<
                                     RoundedRectangleBorder>(
                                   RoundedRectangleBorder(

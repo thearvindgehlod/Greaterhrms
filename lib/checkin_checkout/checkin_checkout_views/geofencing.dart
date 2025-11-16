@@ -644,7 +644,8 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
                             }
                           },
                           style: ElevatedButton.styleFrom(
-                              backgroundColor: Colors.red),
+                            backgroundColor: const Color(0xFF6B57F0),
+                          ),
                           child: const Text('Delete'),
                         ),
                       ElevatedButton(
