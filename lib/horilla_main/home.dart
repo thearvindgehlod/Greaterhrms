@@ -12,6 +12,8 @@ import 'package:shimmer/shimmer.dart';
 import 'package:timeago/timeago.dart' as timeago;
 import '../../checkin_checkout/checkin_checkout_views/geofencing.dart';
 
+const Color _baseColor = Color(0xFF6B57F0);
+
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
 
@@ -216,6 +218,34 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
         !_scrollController.position.outOfRange) {
       currentPage++;
       fetchNotifications();
+    }
+  }
+
+  Future<void> _refreshHome() async {
+    if (!mounted) return;
+    setState(() {
+      isLoading = true;
+    });
+
+    await Future.wait([
+      permissionGeoFencingMapView(),
+      loadGeoFencingPreference(),
+      permissionLeaveOverviewChecks(),
+      permissionLeaveTypeChecks(),
+      permissionLeaveRequestChecks(),
+      permissionLeaveAssignChecks(),
+      permissionWardChecks(),
+      prefetchData(),
+      fetchData(),
+      fetchNotifications(),
+      unreadNotificationsCount(),
+    ]);
+
+    if (mounted) {
+      setState(() {
+        isLoading = false;
+        _isPermissionLoading = false;
+      });
     }
   }
 
@@ -767,13 +797,13 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                               _showUnreadNotifications(context);
                             },
                             icon: Icon(Icons.done_all,
-                                color: const Color(0xFF6B57F0),
+                                color: _baseColor,
                                 size:
                                     MediaQuery.of(context).size.width * 0.0357),
                             label: Text(
                               'Mark as Read',
                               style: TextStyle(
-                                  color: const Color(0xFF6B57F0),
+                                  color: _baseColor,
                                   fontWeight: FontWeight.bold,
                                   fontSize: MediaQuery.of(context).size.width *
                                       0.0368),
@@ -786,13 +816,13 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                               _showUnreadNotifications(context);
                             },
                             icon: Icon(Icons.clear,
-                                color: const Color(0xFF6B57F0),
+                                color: _baseColor,
                                 size:
                                     MediaQuery.of(context).size.width * 0.0357),
                             label: Text(
                               'Clear all',
                               style: TextStyle(
-                                  color: const Color(0xFF6B57F0),
+                                  color: _baseColor,
                                   fontWeight: FontWeight.bold,
                                   fontSize: MediaQuery.of(context).size.width *
                                       0.0368),
@@ -908,7 +938,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                                   MediaQuery.of(context).size.width * 0.0134,
                               vertical:
                                   MediaQuery.of(context).size.width * 0.0134),
-                          backgroundColor: const Color(0xFF6B57F0),
+                          backgroundColor: _baseColor,
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(8.0),
                           ),
@@ -1035,11 +1065,30 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
       appBar: AppBar(
         forceMaterialTransparency: true,
         backgroundColor: Colors.white,
-        title: const Text(
-          'Modules',
-          style: TextStyle(
-            fontWeight: FontWeight.bold,
-          ),
+        title: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Container(
+              padding: const EdgeInsets.all(8),
+              decoration: BoxDecoration(
+                color: _baseColor.withOpacity(0.1),
+                shape: BoxShape.circle,
+              ),
+              child: Image.asset(
+                'Assets/horilla-logo.png',
+                width: 20,
+                height: 20,
+              ),
+            ),
+            const SizedBox(width: 12),
+            Text(
+              'Greaterchange',
+              style: const TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 18,
+              ),
+            ),
+          ],
         ),
         automaticallyImplyLeading: false,
         actions: [
@@ -1063,9 +1112,9 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
             Visibility(
               visible: permissionGeoFencingMapViewCheck,
               child: IconButton(
-                icon: const Icon(
+                icon: Icon(
                   Icons.settings,
-                  color: Colors.black,
+                  color: _baseColor,
                 ),
                 onPressed: () async {
                   var faceDetection = await getFaceDetection();
@@ -1177,9 +1226,9 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
             Visibility(
               visible: permissionGeoFencingMapViewCheck && geoFencingEnabled,
               child: IconButton(
-                icon: const Icon(
+                icon: Icon(
                   Icons.location_on,
-                  color: Colors.black,
+                  color: _baseColor,
                 ),
                 onPressed: () async {
                   Navigator.push(
@@ -1196,9 +1245,9 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
               alignment: Alignment.center,
               children: [
                 IconButton(
-                  icon: const Icon(
+                  icon: Icon(
                     Icons.notifications,
-                    color: Colors.black,
+                    color: _baseColor,
                   ),
                   onPressed: () {
                     markAllReadNotification();
@@ -1219,7 +1268,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                         vertical: MediaQuery.of(context).size.width * 0.004,
                       ),
                       decoration: const BoxDecoration(
-                        color: const Color(0xFF6B57F0),
+                        color: _baseColor,
                         shape: BoxShape.circle,
                       ),
                       constraints: BoxConstraints(
@@ -1242,9 +1291,9 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
               ],
             ),
             IconButton(
-              icon: const Icon(
+              icon: Icon(
                 Icons.logout,
-                color: Colors.black,
+                color: _baseColor,
               ),
               onPressed: () async {
                 await clearToken(context);
@@ -1253,165 +1302,24 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
           ],
         ],
       ),
-      body: _isPermissionLoading
-          ? Shimmer.fromColors(
-              baseColor: Colors.grey[300]!,
-              highlightColor: Colors.grey[100]!,
-              child: Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: ListView(
-                  children: [
-                    const SizedBox(height: 50.0),
-                    const SizedBox(height: 50.0),
-                    Card(
-                      child: ListTile(
-                        leading: Container(
-                          width: 40,
-                          height: 40,
-                          color: Colors.white,
-                        ),
-                        title: Container(
-                          width: double.infinity,
-                          height: 20,
-                          color: Colors.white,
-                        ),
-                        subtitle: Container(
-                          width: double.infinity,
-                          height: 16,
-                          color: Colors.white,
-                        ),
-                        trailing: Container(
-                          width: 24,
-                          height: 24,
-                          color: Colors.white,
-                        ),
-                      ),
-                    ),
-                    Card(
-                      child: ListTile(
-                        leading: Container(
-                          width: 40,
-                          height: 40,
-                          color: Colors.white,
-                        ),
-                        title: Container(
-                          width: double.infinity,
-                          height: 20,
-                          color: Colors.white,
-                        ),
-                        subtitle: Container(
-                          width: double.infinity,
-                          height: 16,
-                          color: Colors.white,
-                        ),
-                        trailing: Container(
-                          width: 24,
-                          height: 24,
-                          color: Colors.white,
-                        ),
-                      ),
-                    ),
-                    Card(
-                      child: ListTile(
-                        leading: Container(
-                          width: 40,
-                          height: 40,
-                          color: Colors.white,
-                        ),
-                        title: Container(
-                          width: double.infinity,
-                          height: 20,
-                          color: Colors.white,
-                        ),
-                        subtitle: Container(
-                          width: double.infinity,
-                          height: 16,
-                          color: Colors.white,
-                        ),
-                        trailing: Container(
-                          width: 24,
-                          height: 24,
-                          color: Colors.white,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            )
-          : Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: ListView(
-                children: [
-                  const SizedBox(height: 50.0),
-                  const SizedBox(height: 50.0),
-                  Card(
-                    child: ListTile(
-                      leading: const Icon(Icons.people),
-                      title: const Text('Employees'),
-                      subtitle: Text(
-                        'View and manage all your employees.',
-                        style: TextStyle(color: Colors.grey.shade700),
-                      ),
-                      trailing: const Icon(Icons.keyboard_arrow_right),
-                      onTap: () {
-                        Navigator.pushNamed(context, '/employees_list',
-                            arguments: permissionCheck);
-                      },
-                    ),
-                  ),
-                  Card(
-                    child: ListTile(
-                      leading: const Icon(Icons.checklist_rtl),
-                      title: const Text('Attendances'),
-                      subtitle: Text(
-                        'Record and view employee information.',
-                        style: TextStyle(color: Colors.grey.shade700),
-                      ),
-                      trailing: const Icon(Icons.keyboard_arrow_right),
-                      onTap: () {
-                        if (permissionCheck) {
-                          Navigator.pushNamed(context, '/attendance_overview',
-                              arguments: permissionCheck);
-                        } else {
-                          Navigator.pushNamed(context, '/employee_hour_account',
-                              arguments: permissionCheck);
-                        }
-                      },
-                    ),
-                  ),
-                  Card(
-                    child: GestureDetector(
-                      onTap: () {
-                        setState(() {
-                          if (permissionLeaveOverviewCheck) {
-                            Navigator.pushNamed(context, '/leave_overview');
-                          } else {
-                            Navigator.pushNamed(context, '/my_leave_request');
-                          }
-                        });
-                      },
-                      child: ListTile(
-                        leading: const Icon(Icons.calendar_month_outlined),
-                        title: const Text('Leaves'),
-                        subtitle: Text(
-                          'Record and view Leave information',
-                          style: TextStyle(color: Colors.grey.shade700),
-                        ),
-                        trailing: const Icon(Icons.keyboard_arrow_right),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
+      body: RefreshIndicator(
+        onRefresh: _refreshHome,
+        color: _baseColor,
+        edgeOffset: 16,
+        child: AnimatedSwitcher(
+          duration: const Duration(milliseconds: 300),
+          child: (_isPermissionLoading || isLoading)
+              ? _buildLoadingState(context)
+              : _buildHomeContent(context),
+        ),
+      ),
       extendBody: true,
       bottomNavigationBar: (bottomBarPages.length <= maxCount)
           ? AnimatedNotchBottomBar(
               notchBottomBarController: _controller,
-              color: const Color(0xFF6B57F0),
+              color: _baseColor,
               showLabel: true,
-              notchColor: const Color(0xFF6B57F0),
+              notchColor: _baseColor,
               kBottomRadius: 28.0,
               kIconSize: 24.0,
               removeMargins: false,
@@ -1475,14 +1383,417 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
     );
   }
 
+  Widget _buildLoadingState(BuildContext context) {
+    return ListView.builder(
+      key: const ValueKey('loading_state'),
+      physics: const AlwaysScrollableScrollPhysics(),
+      padding: const EdgeInsets.fromLTRB(16, 24, 16, 32),
+      itemCount: 4,
+      itemBuilder: (_, __) {
+        return Shimmer.fromColors(
+          baseColor: Colors.grey[300]!,
+          highlightColor: Colors.grey[100]!,
+          child: Container(
+            margin: const EdgeInsets.only(bottom: 20),
+            height: 110,
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(24),
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _buildHomeContent(BuildContext context) {
+    final modules = _moduleTiles(context);
+    final quickActions = _quickActions(context);
+
+    final bottomInset = MediaQuery.of(context).padding.bottom + 80;
+
+    return ListView(
+      key: const ValueKey('home_content'),
+      physics: const AlwaysScrollableScrollPhysics(),
+      padding: EdgeInsets.fromLTRB(16, 20, 16, bottomInset),
+      children: [
+        _buildHeroHeader(context),
+        if (quickActions.isNotEmpty) ...[
+          const SizedBox(height: 24),
+          _buildSectionHeader(
+            title: 'Quick actions',
+            subtitle: 'Do more with fewer taps',
+            icon: Icons.flash_on,
+          ),
+          const SizedBox(height: 10),
+          _buildQuickActionChips(quickActions),
+        ],
+        if (modules.isNotEmpty) ...[
+          const SizedBox(height: 24),
+          _buildSectionHeader(
+            title: 'Modules',
+            subtitle: 'Your day-to-day toolkit',
+            icon: Icons.auto_awesome,
+          ),
+          const SizedBox(height: 10),
+          _buildModuleGrid(modules),
+        ],
+      ],
+    );
+  }
+
+  Widget _buildHeroHeader(BuildContext context) {
+    final String employeeName =
+        (arguments['employee_name'] as String?)?.trim().isNotEmpty == true
+            ? arguments['employee_name']
+            : 'there';
+    final theme = Theme.of(context);
+
+    return Container(
+      padding: const EdgeInsets.all(24),
+      decoration: BoxDecoration(
+        gradient: const LinearGradient(
+          colors: [_baseColor, Color(0xFF8F75FF)],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        ),
+        borderRadius: BorderRadius.circular(28),
+        boxShadow: [
+          BoxShadow(
+            color: _baseColor.withOpacity(0.35),
+            blurRadius: 30,
+            offset: const Offset(0, 18),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            'Welcome back,',
+            style: theme.textTheme.titleSmall?.copyWith(
+              color: Colors.white.withOpacity(0.9),
+            ),
+          ),
+          const SizedBox(height: 6),
+          Text(
+            employeeName,
+            style: theme.textTheme.headlineSmall?.copyWith(
+              color: Colors.white,
+              fontWeight: FontWeight.w700,
+            ),
+          ),
+          const SizedBox(height: 24),
+          Row(
+            children: [
+              _buildHeroMetric(
+                label: 'Pending Alerts',
+                value: notificationsCount.toString(),
+              ),
+              const SizedBox(width: 16),
+              _buildHeroMetric(
+                label: 'Geo Fencing',
+                value: geoFencingEnabled ? 'On' : 'Off',
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildHeroMetric({required String label, required String value}) {
+    return Expanded(
+      child: Container(
+        padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 12),
+        decoration: BoxDecoration(
+          color: Colors.white.withOpacity(0.2),
+          borderRadius: BorderRadius.circular(20),
+          border: Border.all(color: Colors.white.withOpacity(0.3)),
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              label,
+              style: const TextStyle(color: Colors.white70),
+            ),
+            const SizedBox(height: 4),
+            Text(
+              value,
+              style: const TextStyle(
+                color: Colors.white,
+                fontWeight: FontWeight.w700,
+                fontSize: 20,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildSectionHeader({
+    required String title,
+    required String subtitle,
+    IconData? icon,
+  }) {
+    return Row(
+      children: [
+        if (icon != null) ...[
+          Container(
+            padding: const EdgeInsets.all(8),
+            decoration: BoxDecoration(
+              color: _baseColor.withOpacity(0.08),
+              shape: BoxShape.circle,
+            ),
+            child: Icon(
+              icon,
+              color: _baseColor,
+              size: 18,
+            ),
+          ),
+          const SizedBox(width: 12),
+        ],
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                title,
+                style: const TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.w700,
+                ),
+              ),
+              const SizedBox(height: 2),
+              Text(
+                subtitle,
+                style: TextStyle(
+                  color: Colors.grey[600],
+                ),
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildQuickActionChips(List<_QuickAction> actions) {
+    return Wrap(
+      spacing: 12,
+      runSpacing: 12,
+      children: actions
+          .map(
+            (action) => ActionChip(
+              label: Text(action.label),
+              avatar: Icon(
+                action.icon,
+                size: 18,
+                color: _baseColor,
+              ),
+              backgroundColor: _baseColor.withOpacity(0.08),
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+              labelStyle: const TextStyle(
+                fontWeight: FontWeight.w600,
+                color: Color(0xFF2A2A2A),
+              ),
+              onPressed: action.onTap,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(20),
+                side: BorderSide(
+                  color: _baseColor.withOpacity(0.2),
+                ),
+              ),
+            ),
+          )
+          .toList(),
+    );
+  }
+
+  Widget _buildModuleGrid(List<_ModuleTile> modules) {
+    return GridView.builder(
+      itemCount: modules.length,
+      shrinkWrap: true,
+      physics: const NeverScrollableScrollPhysics(),
+      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: 2,
+        crossAxisSpacing: 16,
+        mainAxisSpacing: 16,
+        childAspectRatio: 0.95,
+      ),
+      itemBuilder: (context, index) => _ModuleCard(
+        tile: modules[index],
+      ),
+    );
+  }
+
+  Widget _buildNotificationsPreview(BuildContext context) {
+    if (notifications.isEmpty) {
+      return Container(
+        padding: const EdgeInsets.all(20),
+        decoration: BoxDecoration(
+          color: Colors.grey[100],
+          borderRadius: BorderRadius.circular(20),
+        ),
+        child: Row(
+          children: const [
+            Icon(Icons.inbox_outlined, color: Colors.grey),
+            SizedBox(width: 12),
+            Expanded(
+              child: Text(
+                'You are all caught up. Enjoy your day!',
+                style: TextStyle(color: Colors.grey),
+              ),
+            ),
+          ],
+        ),
+      );
+    }
+
+    final latestNotifications = notifications.take(3).toList();
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(24),
+        border: Border.all(color: Colors.grey.withOpacity(0.1)),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.05),
+            blurRadius: 18,
+            offset: const Offset(0, 10),
+          ),
+        ],
+      ),
+      child: Column(
+        children: [
+          for (var notification in latestNotifications) ...[
+            ListTile(
+              onTap: () {
+                Navigator.pushNamed(context, '/notifications_list');
+              },
+              leading: CircleAvatar(
+                backgroundColor: _baseColor.withOpacity(0.15),
+                child: Icon(
+                  Icons.notifications_active,
+                  color: _baseColor,
+                ),
+              ),
+              title: Text(
+                notification['verb'] ?? 'Notification',
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+              ),
+              subtitle: Text(
+                timeago.format(DateTime.parse(notification['timestamp'])),
+              ),
+            ),
+            if (notification != latestNotifications.last)
+              const Divider(height: 0),
+          ],
+          TextButton(
+            onPressed: () {
+              Navigator.pushNamed(context, '/notifications_list');
+            },
+            child: const Text('View all notifications'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  List<_ModuleTile> _moduleTiles(BuildContext context) {
+    return [
+      _ModuleTile(
+        title: 'Employees',
+        subtitle: 'Manage workforce records',
+        icon: Icons.people,
+        accentColor: _baseColor,
+        onTap: () {
+          Navigator.pushNamed(
+            context,
+            '/employees_list',
+            arguments: permissionCheck,
+          );
+        },
+      ),
+      _ModuleTile(
+        title: 'Attendance',
+        subtitle: 'Oversee daily presence',
+        icon: Icons.fingerprint,
+        accentColor: _baseColor,
+        onTap: () {
+          if (permissionCheck) {
+            Navigator.pushNamed(
+              context,
+              '/attendance_overview',
+              arguments: permissionCheck,
+            );
+          } else {
+            Navigator.pushNamed(
+              context,
+              '/employee_hour_account',
+              arguments: permissionCheck,
+            );
+          }
+        },
+      ),
+      _ModuleTile(
+        title: 'Leaves',
+        subtitle: 'Approve or request time off',
+        icon: Icons.calendar_month_outlined,
+        accentColor: _baseColor,
+        onTap: () {
+          if (permissionLeaveOverviewCheck) {
+            Navigator.pushNamed(context, '/leave_overview');
+          } else {
+            Navigator.pushNamed(context, '/my_leave_request');
+          }
+        },
+      ),
+    ];
+  }
+
+  List<_QuickAction> _quickActions(BuildContext context) {
+    return [
+      _QuickAction(
+        label: permissionCheck ? 'Attendance overview' : 'Hour account',
+        icon: Icons.schedule,
+        onTap: () {
+          if (permissionCheck) {
+            Navigator.pushNamed(
+              context,
+              '/attendance_overview',
+              arguments: permissionCheck,
+            );
+          } else {
+            Navigator.pushNamed(
+              context,
+              '/employee_hour_account',
+              arguments: permissionCheck,
+            );
+          }
+        },
+      ),
+      _QuickAction(
+        label: 'Leave request',
+        icon: Icons.airplane_ticket,
+        onTap: () {
+          Navigator.pushNamed(context, '/my_leave_request');
+        },
+      ),
+    ];
+  }
+
   void showSnackBar() {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        backgroundColor: const Color(0xFF6B57F0),
+        backgroundColor: _baseColor,
         content: const Text('Please check your internet connectivity',
             style: TextStyle(color: Colors.white)),
         action: SnackBarAction(
-          backgroundColor: const Color(0xFF6B57F0),
+          backgroundColor: _baseColor,
           label: 'close',
           textColor: Colors.white,
           onPressed: () async {
@@ -1495,6 +1806,97 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
           },
         ),
         duration: const Duration(hours: 1),
+      ),
+    );
+  }
+}
+
+class _ModuleTile {
+  final String title;
+  final String subtitle;
+  final IconData icon;
+  final VoidCallback onTap;
+  final bool isVisible;
+  final Color accentColor;
+
+  _ModuleTile({
+    required this.title,
+    required this.subtitle,
+    required this.icon,
+    required this.onTap,
+    this.isVisible = true,
+    this.accentColor = _baseColor,
+  });
+}
+
+class _QuickAction {
+  final String label;
+  final IconData icon;
+  final VoidCallback onTap;
+
+  _QuickAction({
+    required this.label,
+    required this.icon,
+    required this.onTap,
+  });
+}
+
+class _ModuleCard extends StatelessWidget {
+  final _ModuleTile tile;
+
+  const _ModuleCard({Key? key, required this.tile}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return InkWell(
+      borderRadius: BorderRadius.circular(20),
+      onTap: tile.onTap,
+      child: Ink(
+        decoration: BoxDecoration(
+          color: tile.accentColor.withOpacity(0.08),
+          borderRadius: BorderRadius.circular(20),
+          border: Border.all(color: tile.accentColor.withOpacity(0.12)),
+          boxShadow: [
+            BoxShadow(
+              color: tile.accentColor.withOpacity(0.08),
+              blurRadius: 16,
+              offset: const Offset(0, 8),
+            ),
+          ],
+        ),
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Container(
+                padding: const EdgeInsets.all(10),
+                decoration: BoxDecoration(
+                  color: tile.accentColor.withOpacity(0.2),
+                  borderRadius: BorderRadius.circular(16),
+                ),
+                child: Icon(
+                  tile.icon,
+                  color: tile.accentColor,
+                ),
+              ),
+              const Spacer(),
+              Text(
+                tile.title,
+                style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                      fontWeight: FontWeight.w700,
+                    ),
+              ),
+              const SizedBox(height: 4),
+              Text(
+                tile.subtitle,
+                style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                      color: Colors.grey[700],
+                    ),
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }
