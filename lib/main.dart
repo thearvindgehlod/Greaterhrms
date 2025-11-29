@@ -29,10 +29,9 @@ import 'horilla_main/notifications_list.dart';
 import 'package:http/http.dart' as http;
 
 final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
-FlutterLocalNotificationsPlugin();
+    FlutterLocalNotificationsPlugin();
 
 final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
-// var faceSdk = FaceSDK.instance;
 int currentPage = 1;
 bool isFirstFetch = true;
 Set<int> seenNotificationIds = {};
@@ -46,7 +45,8 @@ Map<String, dynamic> newNotificationList = {};
 bool isAuthenticated = false;
 
 @pragma('vm:entry-point')
-Future<void> notificationTapBackground(NotificationResponse notificationResponse) async {
+Future<void> notificationTapBackground(
+    NotificationResponse notificationResponse) async {
   if (!isAuthenticated) return;
 
   print('notification(${notificationResponse.id}) action tapped: '
@@ -57,7 +57,8 @@ Future<void> notificationTapBackground(NotificationResponse notificationResponse
     if (context != null) {
       _onSelectNotification(context);
     }
-    print('notification action tapped with input: ${notificationResponse.input}');
+    print(
+        'notification action tapped with input: ${notificationResponse.input}');
   }
 }
 
@@ -74,15 +75,28 @@ void _startNotificationTimer() {
   });
 }
 
+////////////////////////////////////////////////////////////////
+//   🔥 ADDED: ANDROID NOTIFICATION PERMISSION REQUEST
+////////////////////////////////////////////////////////////////
+Future<void> requestAndroidNotificationPermission() async {
+  final androidImplementation =
+      flutterLocalNotificationsPlugin.resolvePlatformSpecificImplementation<
+          AndroidFlutterLocalNotificationsPlugin>();
+
+  if (androidImplementation != null) {
+    await androidImplementation.requestNotificationsPermission();
+  }
+}
+////////////////////////////////////////////////////////////////
+
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  // await faceSdk.initialize();
 
   const AndroidInitializationSettings initializationSettingsAndroid =
-  AndroidInitializationSettings('@mipmap/horilla_logo');
+      AndroidInitializationSettings('@mipmap/horilla_logo');
 
   final DarwinInitializationSettings initializationSettingsIOS =
-  DarwinInitializationSettings(
+      DarwinInitializationSettings(
     requestAlertPermission: true,
     requestBadgePermission: true,
     requestSoundPermission: true,
@@ -103,6 +117,14 @@ Future<void> main() async {
     },
     onDidReceiveBackgroundNotificationResponse: notificationTapBackground,
   );
+
+  ////////////////////////////////////////////////////////////////
+  // 🔥 ADDED: CALL PERMISSION ON ANDROID (Only addition here)
+  ////////////////////////////////////////////////////////////////
+  if (Platform.isAndroid) {
+    await requestAndroidNotificationPermission();
+  }
+  ////////////////////////////////////////////////////////////////
 
   final prefs = await SharedPreferences.getInstance();
   isAuthenticated = prefs.getString('token') != null;
@@ -132,18 +154,18 @@ void _showNotification() async {
   if (!isAuthenticated) return;
   FlutterRingtonePlayer().playNotification();
   const AndroidNotificationDetails androidPlatformChannelSpecifics =
-  AndroidNotificationDetails(
-      'your_channel_id',
-      'your_channel_name',
-      channelDescription: 'your_channel_description',
-      importance: Importance.max,
-      priority: Priority.high,
-      playSound: false,
-      silent: true
+      AndroidNotificationDetails(
+    'your_channel_id',
+    'your_channel_name',
+    channelDescription: 'your_channel_description',
+    importance: Importance.max,
+    priority: Priority.high,
+    playSound: false,
+    silent: true,
   );
 
   const NotificationDetails platformChannelSpecifics =
-  NotificationDetails(android: androidPlatformChannelSpecifics);
+      NotificationDetails(android: androidPlatformChannelSpecifics);
   final timestamp = DateTime.parse(newNotificationList['timestamp']);
   final timeAgo = timeago.format(timestamp);
   final user = arguments['employee_name'];
@@ -213,7 +235,8 @@ Future<void> markAllReadNotification() async {
 
   if (token == null || typed_serverUrl == null) return;
 
-  var uri = Uri.parse('$typed_serverUrl/api/notifications/notifications/bulk-read/');
+  var uri =
+      Uri.parse('$typed_serverUrl/api/notifications/notifications/bulk-read/');
   var response = await http.post(uri, headers: {
     "Content-Type": "application/json",
     "Authorization": "Bearer $token",
@@ -241,7 +264,6 @@ Future<void> fetchNotifications() async {
     return;
   }
 
-
   try {
     print('Fetching notifications...');
     var uri = Uri.parse(
@@ -254,7 +276,7 @@ Future<void> fetchNotifications() async {
 
     if (response.statusCode == 200) {
       List<Map<String, dynamic>> fetchedNotifications =
-      List<Map<String, dynamic>>.from(
+          List<Map<String, dynamic>>.from(
         jsonDecode(response.body)['results']
             .where((notification) => notification['deleted'] == false)
             .toList(),
@@ -266,7 +288,8 @@ Future<void> fetchNotifications() async {
             .map((notification) => notification['id'] as int)
             .toList();
 
-        bool hasNewNotifications = newNotificationIds.any((id) => !seenNotificationIds.contains(id));
+        bool hasNewNotifications =
+            newNotificationIds.any((id) => !seenNotificationIds.contains(id));
 
         if (!isFirstFetch && hasNewNotifications) {
           _playNotificationSound();
@@ -276,10 +299,12 @@ Future<void> fetchNotifications() async {
         notifications = fetchedNotifications;
         notificationsCount = jsonDecode(response.body)['count'];
         isFirstFetch = false;
+
         final timestamp = DateTime.parse(newNotificationList['timestamp']);
         final timeAgo = timeago.format(timestamp);
         final user = arguments['employee_name'];
         print('$timeAgo by User $user');
+
         isLoading = false;
       } else {
         print("No notifications available.");
@@ -305,7 +330,8 @@ Future<void> unreadNotificationsCount() async {
 
   if (token == null || typed_serverUrl == null) return;
 
-  var uri = Uri.parse('$typed_serverUrl/api/notifications/notifications/list/unread');
+  var uri =
+      Uri.parse('$typed_serverUrl/api/notifications/notifications/list/unread');
   var response = await http.get(uri, headers: {
     "Content-Type": "application/json",
     "Authorization": "Bearer $token",
