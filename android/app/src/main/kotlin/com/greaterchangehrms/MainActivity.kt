@@ -1,4 +1,4 @@
-package com.greaterchange
+package com.greaterchangehrms
 
 import io.flutter.embedding.android.FlutterActivity
 
