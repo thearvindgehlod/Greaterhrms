@@ -1315,19 +1315,38 @@ class _LeaveRequest extends State<LeaveRequest>
     request.headers['Authorization'] = 'Bearer $token';
     var response = await request.send();
     if (response.statusCode == 201) {
-      isSaveClick = false;
-      _errorMessage = null;
-      currentPage = 0;
-      requestedRecords.clear();
-      approvedRecords.clear();
-      cancelledRecords.clear();
-      rejectedRecords.clear();
-      getAllLeaveRequest();
-      getRequestedCount();
-      getApprovedCount();
-      getCancelledCount();
-      getRejectedCount();
-      setState(() {});
+      // Reset all state properly
+      setState(() {
+        isSaveClick = true;
+        _errorMessage = null;
+        currentPage = 1;
+        myAllRequests.clear();
+        requestedRecords.clear();
+        approvedRecords.clear();
+        cancelledRecords.clear();
+        rejectedRecords.clear();
+        hasMoreAll = true;
+        hasMoreRequested = true;
+        hasMoreApproved = true;
+        hasMoreCancelled = true;
+        hasMoreRejected = true;
+        isLoading = true;
+        _isShimmerVisible = true;
+      });
+
+      // Reload all data
+      await Future.wait([
+        getAllLeaveRequest(reset: true),
+        getRequestedCount(reset: true),
+        getApprovedCount(reset: true),
+        getCancelledCount(reset: true),
+        getRejectedCount(reset: true),
+      ]);
+
+      setState(() {
+        isLoading = false;
+        _isShimmerVisible = false;
+      });
     } else {
       isSaveClick = true;
       var responseBody = await response.stream.bytesToString();
