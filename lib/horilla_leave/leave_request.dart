@@ -173,14 +173,23 @@ class _LeaveRequest extends State<LeaveRequest>
 
   Future<void> _loadInitialData() async {
     try {
-      await prefetchData();
-      await getBaseUrl();
-      await getEmployees();
-      await getListEmployees();
-      await getAllEmployeesName();
-      await checkPermissions();
-
+      // Load local data first (fast, can be parallel)
       await Future.wait([
+        prefetchData(),
+        getBaseUrl(),
+        fetchToken(),
+      ]);
+      
+      // Load employee data in parallel
+      await Future.wait([
+        getEmployees(),
+        getListEmployees(),
+        getAllEmployeesName(),
+      ]);
+      
+      // Load permissions and leave data in parallel
+      await Future.wait([
+        checkPermissions(),
         getAllLeaveRequest(reset: true),
         getRequestedCount(reset: true),
         getApprovedCount(reset: true),
@@ -188,17 +197,21 @@ class _LeaveRequest extends State<LeaveRequest>
         getRejectedCount(reset: true),
       ]);
 
-      setState(() {
-        _isShimmerVisible = false;
-        isLoading = false;
-        _isShimmer = false;
-      });
+      if (mounted) {
+        setState(() {
+          _isShimmerVisible = false;
+          isLoading = false;
+          _isShimmer = false;
+        });
+      }
     } catch (e) {
-      setState(() {
-        _isShimmerVisible = false;
-        isLoading = false;
-        _isShimmer = false;
-      });
+      if (mounted) {
+        setState(() {
+          _isShimmerVisible = false;
+          isLoading = false;
+          _isShimmer = false;
+        });
+      }
     }
   }
 
@@ -678,6 +691,12 @@ class _LeaveRequest extends State<LeaveRequest>
   void showCreateLeaveDialog(BuildContext context) async {
     final prefs = await SharedPreferences.getInstance();
     var employeeID = prefs.getInt("employee_id");
+    
+    // Reset button state when dialog opens
+    setState(() {
+      isSaveClick = true;
+      _errorMessage = null;
+    });
 
     showDialog(
       context: context,
@@ -1317,7 +1336,7 @@ class _LeaveRequest extends State<LeaveRequest>
     if (response.statusCode == 201) {
       // Reset all state properly
       setState(() {
-        isSaveClick = true;
+        isSaveClick = false;
         _errorMessage = null;
         currentPage = 1;
         myAllRequests.clear();
