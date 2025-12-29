@@ -65,24 +65,51 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
   }
 
   Future _initializePermissionsAndData() async {
-    await checkAllPermissions();
-    await Future.wait([
+    // Load local preferences first (fast, non-blocking)
+    loadGeoFencingPreference();
+    
+    // Show UI immediately - don't wait for all data
+    if (mounted) {
+      setState(() {
+        isLoading = false;
+        _isPermissionLoading = false; // Show UI immediately, permissions load in background
+      });
+    }
+    
+    // Load critical permissions in parallel (non-blocking)
+    Future.wait([
+      checkAllPermissions(),
       permissionGeoFencingMapView(),
-      loadGeoFencingPreference(),
       permissionLeaveOverviewChecks(),
       permissionLeaveTypeChecks(),
       permissionLeaveRequestChecks(),
       permissionLeaveAssignChecks(),
       permissionWardChecks(),
-      fetchNotifications(),
-      unreadNotificationsCount(),
       prefetchData(),
-      fetchData(),
-    ]);
-    setState(() {
-      _isPermissionLoading = false;
-      isLoading = false;
+    ]).then((_) {
+      // Permissions loaded - UI will update automatically via setState in each function
+      if (mounted) {
+        setState(() {
+          // UI already shown, just ensure state is updated
+        });
+      }
+    }).catchError((e) {
+      // Handle errors gracefully - UI already shown
     });
+    
+    // Load notifications in background (non-critical, can load after UI shows)
+    _loadNotificationsInBackground();
+  }
+  
+  Future<void> _loadNotificationsInBackground() async {
+    try {
+      await Future.wait([
+        fetchNotifications(),
+        unreadNotificationsCount(),
+      ]);
+    } catch (e) {
+      // Handle errors silently - notifications are not critical for initial load
+    }
   }
 
   Future<void> loadGeoFencingPreference() async {
@@ -227,19 +254,22 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
       isLoading = true;
     });
 
+    // Load local preferences first (fast)
+    loadGeoFencingPreference();
+
+    // Load critical data in parallel
     await Future.wait([
       permissionGeoFencingMapView(),
-      loadGeoFencingPreference(),
       permissionLeaveOverviewChecks(),
       permissionLeaveTypeChecks(),
       permissionLeaveRequestChecks(),
       permissionLeaveAssignChecks(),
       permissionWardChecks(),
       prefetchData(),
-      fetchData(),
-      fetchNotifications(),
-      unreadNotificationsCount(),
     ]);
+
+    // Load notifications in background
+    _loadNotificationsInBackground();
 
     if (mounted) {
       setState(() {
@@ -249,10 +279,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
     }
   }
 
-  Future<void> fetchData() async {
-    await permissionWardChecks();
-    setState(() {});
-  }
+  // Removed redundant fetchData - permissionWardChecks is already called in initialization
 
   void permissionChecks() async {
     final prefs = await SharedPreferences.getInstance();
@@ -329,6 +356,8 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
   }
 
   Future<void> fetchNotifications() async {
+    if (!mounted) return;
+    
     final prefs = await SharedPreferences.getInstance();
     var token = prefs.getString("token");
     var typedServerUrl = prefs.getString("typed_url");
@@ -336,38 +365,43 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
     List<Map<String, dynamic>> allNotifications = [];
     int page = 1;
     bool hasMore = true;
+    int maxPages = 5; // Limit to first 5 pages for faster initial load
 
-    while (hasMore) {
+    while (hasMore && page <= maxPages) {
       var uri = Uri.parse(
           '$typedServerUrl/api/notifications/notifications/list/unread?page=$page');
 
-      var response = await http.get(uri, headers: {
-        "Content-Type": "application/json",
-        "Authorization": "Bearer $token",
-      });
+      try {
+        var response = await http.get(uri, headers: {
+          "Content-Type": "application/json",
+          "Authorization": "Bearer $token",
+        }).timeout(const Duration(seconds: 5));
 
-      if (response.statusCode == 200) {
-        var responseData = jsonDecode(response.body);
-        var results = responseData['results'] as List;
+        if (response.statusCode == 200) {
+          var responseData = jsonDecode(response.body);
+          var results = responseData['results'] as List;
 
-        if (results.isEmpty) break;
+          if (results.isEmpty) break;
 
-        // Filter out deleted notifications
-        List<Map<String, dynamic>> fetched = results
-            .where((n) => n['deleted'] == false)
-            .cast<Map<String, dynamic>>()
-            .toList();
+          // Filter out deleted notifications
+          List<Map<String, dynamic>> fetched = results
+              .where((n) => n['deleted'] == false)
+              .cast<Map<String, dynamic>>()
+              .toList();
 
-        allNotifications.addAll(fetched);
+          allNotifications.addAll(fetched);
 
-        // Check if there's a next page
-        if (responseData['next'] == null) {
-          hasMore = false;
+          // Check if there's a next page
+          if (responseData['next'] == null) {
+            hasMore = false;
+          } else {
+            page++;
+          }
         } else {
-          page++;
+          hasMore = false;
         }
-      } else {
-        print('Failed to fetch notifications: ${response.statusCode}');
+      } catch (e) {
+        // Handle timeout or network errors gracefully
         hasMore = false;
       }
     }
@@ -377,32 +411,39 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
         .map((notification) => jsonEncode(notification))
         .toSet();
 
-    setState(() {
-      notifications = uniqueMapStrings
-          .map((jsonString) => jsonDecode(jsonString))
-          .cast<Map<String, dynamic>>()
-          .toList();
-      notificationsCount = notifications.length;
-      isLoading = false;
-    });
+    if (mounted) {
+      setState(() {
+        notifications = uniqueMapStrings
+            .map((jsonString) => jsonDecode(jsonString))
+            .cast<Map<String, dynamic>>()
+            .toList();
+        notificationsCount = notifications.length;
+      });
+    }
   }
 
   Future<void> unreadNotificationsCount() async {
+    if (!mounted) return;
+    
     final prefs = await SharedPreferences.getInstance();
     var token = prefs.getString("token");
     var typedServerUrl = prefs.getString("typed_url");
     var uri = Uri.parse(
         '$typedServerUrl/api/notifications/notifications/list/unread');
-    var response = await http.get(uri, headers: {
-      "Content-Type": "application/json",
-      "Authorization": "Bearer $token",
-    });
+    
+    try {
+      var response = await http.get(uri, headers: {
+        "Content-Type": "application/json",
+        "Authorization": "Bearer $token",
+      }).timeout(const Duration(seconds: 5));
 
-    if (response.statusCode == 200) {
-      setState(() {
-        notificationsCount = jsonDecode(response.body)['count'];
-        isLoading = false;
-      });
+      if (response.statusCode == 200 && mounted) {
+        setState(() {
+          notificationsCount = jsonDecode(response.body)['count'];
+        });
+      }
+    } catch (e) {
+      // Handle errors silently - notifications count is not critical
     }
   }
 
@@ -1315,16 +1356,23 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
       ),
       extendBody: true,
       bottomNavigationBar: (bottomBarPages.length <= maxCount)
-          ? AnimatedNotchBottomBar(
-              notchBottomBarController: _controller,
-              color: _baseColor,
-              showLabel: true,
-              notchColor: _baseColor,
-              kBottomRadius: 28.0,
-              kIconSize: 24.0,
-              removeMargins: false,
-              bottomBarWidth: MediaQuery.of(context).size.width * 1,
-              durationInMilliSeconds: 500,
+          ? SafeArea(
+              child: Padding(
+                padding: EdgeInsets.only(
+                  bottom: MediaQuery.of(context).padding.bottom > 0 
+                      ? MediaQuery.of(context).padding.bottom - 8 
+                      : 8,
+                ),
+                child: AnimatedNotchBottomBar(
+                  notchBottomBarController: _controller,
+                  color: _baseColor,
+                  showLabel: true,
+                  notchColor: _baseColor,
+                  kBottomRadius: 28.0,
+                  kIconSize: 24.0,
+                  removeMargins: false,
+                  bottomBarWidth: MediaQuery.of(context).size.width * 1,
+                  durationInMilliSeconds: 500,
               bottomBarItems: const [
                 BottomBarItem(
                   inActiveItem: Icon(
@@ -1357,27 +1405,29 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                   ),
                 ),
               ],
-              onTap: (index) async {
-                switch (index) {
-                  case 0:
-                    Future.delayed(const Duration(milliseconds: 1000), () {
-                      Navigator.pushNamed(context, '/home');
-                    });
-                    break;
-                  case 1:
-                    Future.delayed(const Duration(milliseconds: 1000), () {
-                      Navigator.pushNamed(
-                          context, '/employee_checkin_checkout');
-                    });
-                    break;
-                  case 2:
-                    Future.delayed(const Duration(milliseconds: 1000), () {
-                      Navigator.pushNamed(context, '/employees_form',
-                          arguments: arguments);
-                    });
-                    break;
-                }
-              },
+                  onTap: (index) async {
+                    switch (index) {
+                      case 0:
+                        Future.delayed(const Duration(milliseconds: 1000), () {
+                          Navigator.pushNamed(context, '/home');
+                        });
+                        break;
+                      case 1:
+                        Future.delayed(const Duration(milliseconds: 1000), () {
+                          Navigator.pushNamed(
+                              context, '/employee_checkin_checkout');
+                        });
+                        break;
+                      case 2:
+                        Future.delayed(const Duration(milliseconds: 1000), () {
+                          Navigator.pushNamed(context, '/employees_form',
+                              arguments: arguments);
+                        });
+                        break;
+                    }
+                  },
+                ),
+              ),
             )
           : null,
     );
