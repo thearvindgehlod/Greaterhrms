@@ -52,6 +52,9 @@ class _LeaveOverview extends State<LeaveOverview>
     getBaseUrl();
     fetchToken();
     prefetchData();
+    
+    // Start loading permissions immediately (non-blocking)
+    checkPermissions();
   }
 
   Future<void> fetchToken() async {
@@ -63,10 +66,18 @@ class _LeaveOverview extends State<LeaveOverview>
   }
 
   Future<void> checkPermissions() async {
-    await permissionLeaveOverviewChecks();
-    await permissionLeaveTypeChecks();
-    await permissionLeaveRequestChecks();
-    await permissionLeaveAssignChecks();
+    // Load all permissions in parallel for faster loading
+    await Future.wait([
+      permissionLeaveOverviewChecks(),
+      permissionLeaveTypeChecks(),
+      permissionLeaveRequestChecks(),
+      permissionLeaveAssignChecks(),
+    ]);
+    
+    // Update UI when permissions are loaded
+    if (mounted) {
+      setState(() {});
+    }
   }
 
   Future<void> permissionLeaveOverviewChecks() async {
@@ -539,123 +550,97 @@ class _LeaveOverview extends State<LeaveOverview>
               ),
       ),
       drawer: Drawer(
-        child: FutureBuilder<void>(
-          future: checkPermissions(),
-          builder: (context, snapshot) {
-            if (snapshot.connectionState == ConnectionState.waiting) {
-              return ListView(
-                padding: const EdgeInsets.all(0),
-                children: [
-                  DrawerHeader(
-                    decoration: const BoxDecoration(),
-                    child: FittedBox(
-                      fit: BoxFit.contain,
-                      child: SizedBox(
-                        width: 80,
-                        height: 80,
-                        child: Image.asset(
-                          'Assets/horilla-logo.png',
-                        ),
-                      ),
-                    ),
+        // Show sidebar immediately - permissions load in background
+        child: ListView(
+          padding: const EdgeInsets.all(0),
+          children: [
+            DrawerHeader(
+              decoration: const BoxDecoration(),
+              child: FittedBox(
+                fit: BoxFit.contain,
+                child: SizedBox(
+                  width: 80,
+                  height: 80,
+                  child: Image.asset(
+                    'Assets/horilla-logo.png',
                   ),
-                  shimmerListTile(),
-                  shimmerListTile(),
-                  shimmerListTile(),
-                  shimmerListTile(),
-                  shimmerListTile(),
-                  shimmerListTile(),
-                ],
-              );
-            } else if (snapshot.hasError) {
-              return const Center(child: Text('Error loading permissions.'));
-            } else {
-              return ListView(
-                padding: const EdgeInsets.all(0),
-                children: [
-                  DrawerHeader(
-                    decoration: const BoxDecoration(),
-                    child: FittedBox(
-                      fit: BoxFit.contain,
-                      child: SizedBox(
-                        width: 80,
-                        height: 80,
-                        child: Image.asset(
-                          'Assets/horilla-logo.png',
-                        ),
-                      ),
-                    ),
-                  ),
-                  permissionLeaveOverviewCheck
-                      ? ListTile(
-                          title: const Text('Overview'),
-                          onTap: () {
-                            Navigator.pushNamed(context, '/leave_overview');
-                          },
-                        )
-                      : const SizedBox.shrink(),
-                  permissionMyLeaveRequestCheck
-                      ? ListTile(
-                          title: const Text('My Leave Request'),
-                          onTap: () {
-                            Navigator.pushNamed(context, '/my_leave_request');
-                          },
-                        )
-                      : const SizedBox.shrink(),
-                  permissionLeaveRequestCheck
-                      ? ListTile(
-                          title: const Text('Leave Request'),
-                          onTap: () {
-                            Navigator.pushNamed(context, '/leave_request');
-                          },
-                        )
-                      : const SizedBox.shrink(),
-                  permissionLeaveTypeCheck
-                      ? ListTile(
-                          title: const Text('Leave Type'),
-                          onTap: () {
-                            Navigator.pushNamed(context, '/leave_types');
-                          },
-                        )
-                      : const SizedBox.shrink(),
-                  permissionLeaveAllocationCheck
-                      ? ListTile(
-                          title: const Text('Leave Allocation Request'),
-                          onTap: () {
-                            Navigator.pushNamed(
-                                context, '/leave_allocation_request');
-                          },
-                        )
-                      : const SizedBox.shrink(),
-                  permissionLeaveAssignCheck
-                      ? ListTile(
-                          title: const Text('All Assigned Leave'),
-                          onTap: () {
-                            Navigator.pushNamed(context, '/all_assigned_leave');
-                          },
-                        )
-                      : const SizedBox.shrink(),
-                ],
-              );
-            }
-          },
+                ),
+              ),
+            ),
+            permissionLeaveOverviewCheck
+                ? ListTile(
+                    title: const Text('Overview'),
+                    onTap: () {
+                      Navigator.pushNamed(context, '/leave_overview');
+                    },
+                  )
+                : const SizedBox.shrink(),
+            permissionMyLeaveRequestCheck
+                ? ListTile(
+                    title: const Text('My Leave Request'),
+                    onTap: () {
+                      Navigator.pushNamed(context, '/my_leave_request');
+                    },
+                  )
+                : const SizedBox.shrink(),
+            permissionLeaveRequestCheck
+                ? ListTile(
+                    title: const Text('Leave Request'),
+                    onTap: () {
+                      Navigator.pushNamed(context, '/leave_request');
+                    },
+                  )
+                : const SizedBox.shrink(),
+            permissionLeaveTypeCheck
+                ? ListTile(
+                    title: const Text('Leave Type'),
+                    onTap: () {
+                      Navigator.pushNamed(context, '/leave_types');
+                    },
+                  )
+                : const SizedBox.shrink(),
+            permissionLeaveAllocationCheck
+                ? ListTile(
+                    title: const Text('Leave Allocation Request'),
+                    onTap: () {
+                      Navigator.pushNamed(
+                          context, '/leave_allocation_request');
+                    },
+                  )
+                : const SizedBox.shrink(),
+            permissionLeaveAssignCheck
+                ? ListTile(
+                    title: const Text('All Assigned Leave'),
+                    onTap: () {
+                      Navigator.pushNamed(context, '/all_assigned_leave');
+                    },
+                  )
+                : const SizedBox.shrink(),
+          ],
         ),
       ),
       extendBody: true,
       bottomNavigationBar: (bottomBarPages.length <= maxCount)
-          ? AnimatedNotchBottomBar(
-              /// Provide NotchBottomBarController
-              notchBottomBarController: _controller,
-              color: const Color(0xFF6B57F0),
-              showLabel: true,
-              notchColor: const Color(0xFF6B57F0),
-              kBottomRadius: 28.0,
-              kIconSize: 24.0,
+          ? SafeArea(
+              child: Padding(
+                padding: EdgeInsets.only(
+                  bottom: MediaQuery.of(context).padding.bottom > 0 
+                      ? MediaQuery.of(context).padding.bottom - 8 
+                      : 8,
+                ),
+                child: AnimatedNotchBottomBar(
+                  /// Provide NotchBottomBarController
+                  notchBottomBarController: _controller,
+                  color: const Color(0xFF6B57F0),
+                  showLabel: true,
+                  notchColor: const Color(0xFF6B57F0),
+                  kBottomRadius: 28.0,
+                  kIconSize: 24.0,
 
-              /// restart app if you change removeMargins
-              removeMargins: false,
-              bottomBarWidth: MediaQuery.of(context).size.width * 1,
-              durationInMilliSeconds: 300,
+                  /// restart app if you change removeMargins
+                  removeMargins: false,
+                  bottomBarWidth: MediaQuery.of(context).size.width * 1,
+                  durationInMilliSeconds: 300,
               bottomBarItems: const [
                 BottomBarItem(
                   inActiveItem: Icon(
@@ -689,20 +674,22 @@ class _LeaveOverview extends State<LeaveOverview>
                 ),
               ],
 
-              onTap: (index) async {
-                switch (index) {
-                  case 0:
-                    Navigator.pushNamed(context, '/home');
-                    break;
-                  case 1:
-                    Navigator.pushNamed(context, '/employee_checkin_checkout');
-                    break;
-                  case 2:
-                    Navigator.pushNamed(context, '/employees_form',
-                        arguments: arguments);
-                    break;
-                }
-              },
+                  onTap: (index) async {
+                    switch (index) {
+                      case 0:
+                        Navigator.pushNamed(context, '/home');
+                        break;
+                      case 1:
+                        Navigator.pushNamed(context, '/employee_checkin_checkout');
+                        break;
+                      case 2:
+                        Navigator.pushNamed(context, '/employees_form',
+                            arguments: arguments);
+                        break;
+                    }
+                  },
+                ),
+              ),
             )
           : null,
     );

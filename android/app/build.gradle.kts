@@ -15,7 +15,7 @@ if (keystorePropertiesFile.exists()) {
 }
 
 android {
-    namespace = "com.greaterchange"
+    namespace = "com.greaterchangehrms"
     compileSdk = 36
     ndkVersion = "27.0.12077973"
 
@@ -30,11 +30,11 @@ android {
     }
 
     defaultConfig {
-        applicationId = "com.greaterchange"
+        applicationId = "com.greaterchangehrms"
         minSdk = flutter.minSdkVersion
         targetSdk = 35
-        versionCode = 9
-        versionName = "1.0.3"
+        versionCode = 3
+        versionName = "1.0.0"
     }
 
     signingConfigs {

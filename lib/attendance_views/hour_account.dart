@@ -2096,16 +2096,23 @@ class _HourAccountFormPageState extends State<HourAccountFormPage> {
               ),
             ),
       bottomNavigationBar: (bottomBarPages.length <= maxCount)
-          ? AnimatedNotchBottomBar(
-              notchBottomBarController: _controller,
-              color: const Color(0xFF6B57F0),
-              showLabel: true,
-              notchColor: const Color(0xFF6B57F0),
-              kBottomRadius: 28.0,
-              kIconSize: 24.0,
-              removeMargins: false,
-              bottomBarWidth: MediaQuery.of(context).size.width * 1,
-              durationInMilliSeconds: 300,
+          ? SafeArea(
+              child: Padding(
+                padding: EdgeInsets.only(
+                  bottom: MediaQuery.of(context).padding.bottom > 0 
+                      ? MediaQuery.of(context).padding.bottom - 8 
+                      : 8,
+                ),
+                child: AnimatedNotchBottomBar(
+                  notchBottomBarController: _controller,
+                  color: const Color(0xFF6B57F0),
+                  showLabel: true,
+                  notchColor: const Color(0xFF6B57F0),
+                  kBottomRadius: 28.0,
+                  kIconSize: 24.0,
+                  removeMargins: false,
+                  bottomBarWidth: MediaQuery.of(context).size.width * 1,
+                  durationInMilliSeconds: 300,
               bottomBarItems: const [
                 BottomBarItem(
                   inActiveItem: Icon(
@@ -2137,21 +2144,23 @@ class _HourAccountFormPageState extends State<HourAccountFormPage> {
                     color: Colors.white,
                   ),
                 ),
-              ],
-              onTap: (index) async {
-                switch (index) {
-                  case 0:
-                    Navigator.pushNamed(context, '/home');
-                    break;
-                  case 1:
-                    Navigator.pushNamed(context, '/employee_checkin_checkout');
-                    break;
-                  case 2:
-                    Navigator.pushNamed(context, '/employees_form',
-                        arguments: arguments);
-                    break;
-                }
-              },
+                ],
+                  onTap: (index) async {
+                    switch (index) {
+                      case 0:
+                        Navigator.pushNamed(context, '/home');
+                        break;
+                      case 1:
+                        Navigator.pushNamed(context, '/employee_checkin_checkout');
+                        break;
+                      case 2:
+                        Navigator.pushNamed(context, '/employees_form',
+                            arguments: arguments);
+                        break;
+                    }
+                  },
+                ),
+              ),
             )
           : null,
     );

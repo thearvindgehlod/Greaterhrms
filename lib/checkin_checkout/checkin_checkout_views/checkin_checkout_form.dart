@@ -64,8 +64,17 @@ class _CheckInCheckOutFormPageState extends State<CheckInCheckOutFormPage>
   void initState() {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
-    fetchToken();
     swipeDirection = 'Swipe to Check-In';
+    
+    // Show UI immediately - don't wait for data
+    setState(() {
+      isLoading = false;
+    });
+    
+    // Restore timer from local storage immediately (fast)
+    _restoreTimerFromLocal();
+    
+    // Load data in background
     _initializeData();
   }
 
@@ -75,11 +84,14 @@ class _CheckInCheckOutFormPageState extends State<CheckInCheckOutFormPage>
     super.dispose();
   }
 
-  // Handle app lifecycle — restore timer on resume
+  // Handle app lifecycle — sync with server on resume
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) async {
     if (state == AppLifecycleState.resumed) {
+      // First restore from local (fast)
       await _restoreTimerFromLocal();
+      // Then sync with server (server is source of truth)
+      await getCheckIn();
     }
   }
 
@@ -138,43 +150,55 @@ class _CheckInCheckOutFormPageState extends State<CheckInCheckOutFormPage>
   }
 
   // Restore timer consistently on app start/resume
+  // Note: This is called immediately, but server sync happens in background
   Future<void> _restoreTimerFromLocal() async {
     final isIn = await _getIsCheckedIn();
+    final display = await _getCheckinDisplay();
+    
     if (isIn) {
       final saved = await _getSavedCheckInTime();
-      final display = await _getCheckinDisplay();
       if (saved != null) {
+        // Calculate elapsed from saved timestamp
         final elapsed = _calculateElapsedTime(saved);
         stopwatchManager.startStopwatch(initialTime: elapsed);
-        setState(() {
-          clockCheckedIn = true;
-          clockCheckBool = true;
-          workingTime = formatDuration(elapsed);
-          elapsedTimeString = formatDuration(elapsed);
-          checkInFormattedTime = display ?? checkInFormattedTime ?? '00:00';
-        });
+        if (mounted) {
+          setState(() {
+            clockCheckedIn = true;
+            clockCheckBool = true;
+            workingTime = formatDuration(elapsed);
+            elapsedTimeString = formatDuration(elapsed);
+            checkInFormattedTime = display ?? checkInFormattedTime ?? '00:00';
+          });
+        }
       } else {
-        // Safety: start from zero if somehow flag true but no timestamp
-        final now = DateTime.now();
-        await _saveCheckInTime(now);
-        stopwatchManager.startStopwatch(initialTime: Duration.zero);
-        setState(() {
-          clockCheckedIn = true;
-          clockCheckBool = true;
-          workingTime = '00:00:00';
-          elapsedTimeString = '00:00:00';
-          checkInFormattedTime = display ?? DateFormat('h:mm a').format(now);
-        });
+        // No saved timestamp - reset to not checked in
+        await _setIsCheckedIn(false);
+        stopwatchManager.stopStopwatch();
+        stopwatchManager.resetStopwatch();
+        if (mounted) {
+          setState(() {
+            clockCheckedIn = false;
+            clockCheckBool = false;
+            workingTime = '00:00:00';
+            elapsedTimeString = '00:00:00';
+            checkInFormattedTime = '00:00';
+          });
+        }
       }
     } else {
-      // Not checked in => show last elapsed if any
-      final last = await _getLastElapsed();
-      setState(() {
-        clockCheckedIn = false;
-        clockCheckBool = false;
-        elapsedTimeString = formatDuration(last ?? Duration.zero);
-      });
+      // Not checked in => reset everything
       stopwatchManager.stopStopwatch();
+      stopwatchManager.resetStopwatch();
+      if (mounted) {
+        setState(() {
+          clockCheckedIn = false;
+          clockCheckBool = false;
+          elapsedTimeString = '00:00:00';
+          workingTime = '00:00:00';
+          checkInFormattedTime = '00:00';
+          checkOutFormattedTime = '00:00';
+        });
+      }
     }
   }
 
@@ -189,30 +213,31 @@ class _CheckInCheckOutFormPageState extends State<CheckInCheckOutFormPage>
 
   Future<void> _initializeData() async {
     try {
-      final faceDetectionEnabled = await getFaceDetection();
+      // Load local preferences first (fast)
       final prefs = await SharedPreferences.getInstance();
+      final faceDetectionEnabled = await getFaceDetection();
       await prefs.setBool("face_detection", faceDetectionEnabled);
+      
+      // Load token immediately
+      fetchToken();
 
-      await _initializeLocation();
+      // Initialize location in background (non-blocking)
+      _initializeLocation();
+
+      // Load all API data in parallel
       await Future.wait<void>([
         prefetchData(),
-        _loadClockStateUIOnly(),
         getBaseUrl(),
         getLoginEmployeeRecord(),
-        getCheckIn(), // sync with server
       ]);
 
-      // Always restore from local so timer persists even if API is slow/offline
-      await _restoreTimerFromLocal();
-
-      setState(() {
-        isLoading = false;
-      });
+      // Sync check-in status from server (server is source of truth)
+      // This will update all state including check-in time, timer, etc.
+      await getCheckIn();
     } catch (e) {
+      // Handle errors gracefully - UI already shown
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Failed to initialize data: $e')),
-        );
+        // Optionally show a non-blocking error message
       }
     }
   }
@@ -293,12 +318,28 @@ class _CheckInCheckOutFormPageState extends State<CheckInCheckOutFormPage>
 
   // ---------- API ----------
   String _extractCheckInDisplay(Map<String, dynamic> jsonBody) {
-    // Try multiple field names that backend might return
+    // Try multiple field names that backend might return (server is source of truth)
     final c1 = jsonBody['clock_in_time'];
     final c2 = jsonBody['clock_in'];
-    if (c1 is String && c1.trim().isNotEmpty) return c1;
+    final c3 = jsonBody['check_in_time'];
+    
+    // Try formatted time first
+    if (c1 is String && c1.trim().isNotEmpty) {
+      // If already formatted (h:mm a), return as is
+      if (c1.contains('AM') || c1.contains('PM') || c1.contains('am') || c1.contains('pm')) {
+        return c1;
+      }
+      // Otherwise try to parse and format
+      try {
+        final dt = DateTime.parse(c1).toLocal();
+        return DateFormat('h:mm a').format(dt);
+      } catch (_) {
+        return c1;
+      }
+    }
+    
+    // Try clock_in field
     if (c2 is String && c2.trim().isNotEmpty) {
-      // If server returns ISO, format to h:mm a
       try {
         final dt = DateTime.parse(c2).toLocal();
         return DateFormat('h:mm a').format(dt);
@@ -306,7 +347,18 @@ class _CheckInCheckOutFormPageState extends State<CheckInCheckOutFormPage>
         return c2;
       }
     }
-    // Fallback: now
+    
+    // Try check_in_time field
+    if (c3 is String && c3.trim().isNotEmpty) {
+      try {
+        final dt = DateTime.parse(c3).toLocal();
+        return DateFormat('h:mm a').format(dt);
+      } catch (_) {
+        return c3;
+      }
+    }
+    
+    // Fallback: current time (shouldn't happen if server provides data)
     return DateFormat('h:mm a').format(DateTime.now());
   }
 
@@ -316,43 +368,80 @@ class _CheckInCheckOutFormPageState extends State<CheckInCheckOutFormPage>
     var typedServerUrl = prefs.getString("typed_url");
     if (typedServerUrl == null || token == null) return;
 
-    final uri = Uri.parse('$typedServerUrl/api/attendance/checking-in');
-    final response = await http.get(uri, headers: {
-      "Content-Type": "application/json",
-      "Authorization": "Bearer $token",
-    });
+    try {
+      final uri = Uri.parse('$typedServerUrl/api/attendance/checking-in');
+      final response = await http.get(uri, headers: {
+        "Content-Type": "application/json",
+        "Authorization": "Bearer $token",
+      }).timeout(const Duration(seconds: 10));
 
-    if (response.statusCode == 200) {
-      final data = jsonDecode(response.body);
-      if (data['status'] == true) {
-        // Server says currently checked-in
-        final display = _extractCheckInDisplay(data);
-        await _setIsCheckedIn(true);
-        // If the server also sends a timestamp parsable, seed local timestamp if missing
-        if (await _getSavedCheckInTime() == null) {
-          DateTime seed;
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+        
+        // Server is the source of truth - sync everything from server
+        if (data['status'] == true) {
+          // Server says currently checked-in - get all info from server
+          final display = _extractCheckInDisplay(data);
+          
+          // Extract check-in timestamp from server (source of truth)
+          DateTime serverCheckInTime;
           try {
-            seed = DateTime.parse((data['clock_in'] ?? '')).toLocal();
+            final clockInStr = data['clock_in'] ?? data['clock_in_time'] ?? '';
+            if (clockInStr.toString().isNotEmpty) {
+              serverCheckInTime = DateTime.parse(clockInStr.toString()).toLocal();
+            } else {
+              // Fallback to current time if server doesn't provide timestamp
+              serverCheckInTime = DateTime.now();
+            }
           } catch (_) {
-            seed = DateTime.now();
+            serverCheckInTime = DateTime.now();
           }
-          await _saveCheckInTime(seed);
+          
+          // Calculate elapsed time from server check-in time
+          final elapsed = DateTime.now().difference(serverCheckInTime);
+          
+          // Sync local state with server (server is source of truth)
+          await _setIsCheckedIn(true);
+          await _saveCheckInTime(serverCheckInTime);
+          await _saveCheckinDisplay(display);
+          
+          // Start/restart timer with server's elapsed time
+          stopwatchManager.startStopwatch(initialTime: elapsed);
+          
+          if (mounted) {
+            setState(() {
+              duration = data['duration'] ?? formatDuration(elapsed);
+              checkInFormattedTime = display;
+              clockCheckedIn = true;
+              clockCheckBool = true;
+              workingTime = formatDuration(elapsed);
+              elapsedTimeString = formatDuration(elapsed);
+            });
+          }
+        } else {
+          // Server says not checked-in - reset everything
+          await _setIsCheckedIn(false);
+          await _clearCheckInTime();
+          await _saveLastElapsed(Duration.zero);
+          stopwatchManager.stopStopwatch();
+          stopwatchManager.resetStopwatch();
+          
+          if (mounted) {
+            setState(() {
+              clockCheckedIn = false;
+              clockCheckBool = false;
+              duration = data['duration'] ?? '00:00:00';
+              checkInFormattedTime = '00:00';
+              checkOutFormattedTime = '00:00';
+              workingTime = '00:00:00';
+              elapsedTimeString = '00:00:00';
+            });
+          }
         }
-        await _saveCheckinDisplay(display);
-        setState(() {
-          duration = data['duration'];
-          checkInFormattedTime = display;
-          clockCheckedIn = true;
-          clockCheckBool = true;
-        });
-      } else {
-        await _setIsCheckedIn(false);
-        setState(() {
-          clockCheckedIn = false;
-          clockCheckBool = false;
-          duration = data['duration'];
-        });
       }
+    } catch (e) {
+      // Handle errors gracefully - don't break the app
+      print('Error fetching check-in status: $e');
     }
   }
 
@@ -444,16 +533,23 @@ class _CheckInCheckOutFormPageState extends State<CheckInCheckOutFormPage>
       body: isLoading
           ? _buildLoadingWidget()
           : _buildCheckInCheckoutWidget(getToken),
-      bottomNavigationBar: AnimatedNotchBottomBar(
-        notchBottomBarController: _controller,
-        color: const Color(0xFF6B57F0),
-        showLabel: true,
-        notchColor: const Color(0xFF6B57F0),
-        kBottomRadius: 28.0,
-        kIconSize: 24.0,
-        removeMargins: false,
-        bottomBarWidth: MediaQuery.of(context).size.width,
-        durationInMilliSeconds: 500,
+      bottomNavigationBar: SafeArea(
+        child: Padding(
+          padding: EdgeInsets.only(
+            bottom: MediaQuery.of(context).padding.bottom > 0 
+                ? MediaQuery.of(context).padding.bottom - 8 
+                : 8,
+          ),
+          child: AnimatedNotchBottomBar(
+            notchBottomBarController: _controller,
+            color: const Color(0xFF6B57F0),
+            showLabel: true,
+            notchColor: const Color(0xFF6B57F0),
+            kBottomRadius: 28.0,
+            kIconSize: 24.0,
+            removeMargins: false,
+            bottomBarWidth: MediaQuery.of(context).size.width,
+            durationInMilliSeconds: 500,
         bottomBarItems: const [
           BottomBarItem(
             inActiveItem: Icon(Icons.home_filled, color: Colors.white),
@@ -468,26 +564,28 @@ class _CheckInCheckOutFormPageState extends State<CheckInCheckOutFormPage>
             activeItem: Icon(Icons.person, color: Colors.white),
           ),
         ],
-        onTap: (index) async {
-          switch (index) {
-            case 0:
-              Future.delayed(const Duration(milliseconds: 1000), () {
-                Navigator.pushNamed(context, '/home');
-              });
-              break;
-            case 1:
-              Future.delayed(const Duration(milliseconds: 1000), () {
-                Navigator.pushNamed(context, '/employee_checkin_checkout');
-              });
-              break;
-            case 2:
-              Future.delayed(const Duration(milliseconds: 1000), () {
-                Navigator.pushNamed(context, '/employees_form',
-                    arguments: arguments);
-              });
-              break;
-          }
-        },
+            onTap: (index) async {
+              switch (index) {
+                case 0:
+                  Future.delayed(const Duration(milliseconds: 1000), () {
+                    Navigator.pushNamed(context, '/home');
+                  });
+                  break;
+                case 1:
+                  Future.delayed(const Duration(milliseconds: 1000), () {
+                    Navigator.pushNamed(context, '/employee_checkin_checkout');
+                  });
+                  break;
+                case 2:
+                  Future.delayed(const Duration(milliseconds: 1000), () {
+                    Navigator.pushNamed(context, '/employees_form',
+                        arguments: arguments);
+                  });
+                  break;
+              }
+            },
+          ),
+        ),
       ),
     );
   }
@@ -905,8 +1003,6 @@ class _CheckInCheckOutFormPageState extends State<CheckInCheckOutFormPage>
       {required bool faceDetection, required bool geoFencing}) async {
     Map<String, dynamic>? apiJson;
 
-    print("Check-In API Response: $apiJson");
-
     // Remote check-in
     if (faceDetection) {
       final result = await Navigator.push(
@@ -920,9 +1016,7 @@ class _CheckInCheckOutFormPageState extends State<CheckInCheckOutFormPage>
         ),
       );
       if (!(result != null && result['checkedIn'] == true)) return;
-      if (result['clock_in_time'] is String) {
-        apiJson = {'clock_in_time': result['clock_in_time']};
-      }
+      apiJson = result; // Use full result from face detection
     } else if (geoFencing) {
       apiJson = await _postCheckinGeoOrSimple(geoFencing: true);
       if (apiJson == null) return;
@@ -931,28 +1025,59 @@ class _CheckInCheckOutFormPageState extends State<CheckInCheckOutFormPage>
       if (apiJson == null) return;
     }
 
-    // Determine display time from API (prevent "null")
-    final display = apiJson != null
-        ? _extractCheckInDisplay(apiJson)
-        : DateFormat('h:mm a').format(DateTime.now());
+    // Ensure apiJson is not null
+    if (apiJson == null) return;
+    
+    // Store in non-nullable variable for safe access
+    final responseData = apiJson;
+    
+    // Extract check-in time from API response (server is source of truth)
+    final display = _extractCheckInDisplay(responseData);
+    
+    // Extract server timestamp
+    DateTime serverCheckInTime;
+    try {
+      final clockInStr = responseData['clock_in'] ?? responseData['clock_in_time'] ?? '';
+      if (clockInStr.toString().isNotEmpty) {
+        serverCheckInTime = DateTime.parse(clockInStr.toString()).toLocal();
+      } else {
+        // Fallback to current time if server doesn't provide timestamp
+        serverCheckInTime = DateTime.now();
+      }
+    } catch (_) {
+      serverCheckInTime = DateTime.now();
+    }
 
-    // Local state: start fresh from 0 and persist
+    // Sync local state with server (server is source of truth)
     await _saveCheckinDisplay(display);
     await _setIsCheckedIn(true);
-    await _saveCheckInTime(DateTime.now());
+    await _saveCheckInTime(serverCheckInTime);
     await _saveLastElapsed(Duration.zero);
+    
+    // Reset and start timer from zero
     stopwatchManager.resetStopwatch();
     stopwatchManager.startStopwatch(initialTime: Duration.zero);
 
-    setState(() {
-      isCheckIn = true;
-      clockCheckedIn = true;
-      clockCheckBool = true;
-      checkInFormattedTime = display;
-    });
+    // Extract duration before setState
+    final durationValue = responseData['duration'] ?? '00:00:00';
 
-    stopwatchManager.startStopwatch(initialTime: Duration.zero);
+    if (mounted) {
+      setState(() {
+        isCheckIn = true;
+        clockCheckedIn = true;
+        clockCheckBool = true;
+        checkInFormattedTime = display;
+        checkOutFormattedTime = '00:00';
+        workingTime = '00:00:00';
+        elapsedTimeString = '00:00:00';
+        duration = durationValue;
+      });
+    }
+
     await _saveClockStateUIOnly(clockCheckedIn, 1, display);
+    
+    // Refresh check-in status from server to ensure sync
+    await getCheckIn();
   }
 
   Future<void> _handleCheckout(
@@ -980,29 +1105,36 @@ class _CheckInCheckOutFormPageState extends State<CheckInCheckOutFormPage>
       if (apiJson == null) return;
     }
 
-    // Extract proper checkout time
+    // Extract checkout time from server (server is source of truth)
     final serverClockOut = apiJson?['clock_out_time'] ??
         apiJson?['clock_out'] ??
         DateFormat('h:mm a').format(DateTime.now());
 
-    // Stop timer
-    final elapsed = stopwatchManager.elapsed;
+    // Reset everything - server confirmed checkout
     await _setIsCheckedIn(false);
     await _clearCheckInTime();
-    await _saveLastElapsed(elapsed);
+    await _saveLastElapsed(Duration.zero); // Reset elapsed time to zero
     stopwatchManager.stopStopwatch();
+    stopwatchManager.resetStopwatch(); // Reset timer completely
 
-    setState(() {
-      isCheckIn = false;
-      clockCheckedIn = false;
-      clockCheckBool = false;
-      workingTime = formatDuration(elapsed);
-      elapsedTimeString = formatDuration(elapsed);
-      checkOutFormattedTime = serverClockOut;
-    });
+    if (mounted) {
+      setState(() {
+        isCheckIn = false;
+        clockCheckedIn = false;
+        clockCheckBool = false;
+        workingTime = '00:00:00'; // Reset to zero
+        elapsedTimeString = '00:00:00'; // Reset to zero
+        checkOutFormattedTime = serverClockOut;
+        checkInFormattedTime = '00:00'; // Reset check-in time
+        duration = apiJson?['duration'] ?? '00:00:00';
+      });
+    }
 
     // Save UI state
     await _saveClockStateUIOnly(false, 2, serverClockOut);
+    
+    // Refresh check-in status from server to ensure sync
+    await getCheckIn();
   }
 
   // ---------- Utils ----------

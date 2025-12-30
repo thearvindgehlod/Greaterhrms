@@ -3569,19 +3569,26 @@ class _EmployeeFormPageState extends State<EmployeeFormPage>
         ],
       ),
       bottomNavigationBar: (bottomBarPages.length <= maxCount)
-          ? AnimatedNotchBottomBar(
-              /// Provide NotchBottomBarController
-              notchBottomBarController: _controller,
-              color: const Color(0xFF6B57F0),
-              showLabel: true,
-              notchColor: const Color(0xFF6B57F0),
-              kBottomRadius: 28.0,
-              kIconSize: 24.0,
+          ? SafeArea(
+              child: Padding(
+                padding: EdgeInsets.only(
+                  bottom: MediaQuery.of(context).padding.bottom > 0 
+                      ? MediaQuery.of(context).padding.bottom - 8 
+                      : 8,
+                ),
+                child: AnimatedNotchBottomBar(
+                  /// Provide NotchBottomBarController
+                  notchBottomBarController: _controller,
+                  color: const Color(0xFF6B57F0),
+                  showLabel: true,
+                  notchColor: const Color(0xFF6B57F0),
+                  kBottomRadius: 28.0,
+                  kIconSize: 24.0,
 
-              /// restart app if you change removeMargins
-              removeMargins: false,
-              bottomBarWidth: MediaQuery.of(context).size.width * 1,
-              durationInMilliSeconds: 500,
+                  /// restart app if you change removeMargins
+                  removeMargins: false,
+                  bottomBarWidth: MediaQuery.of(context).size.width * 1,
+                  durationInMilliSeconds: 500,
               bottomBarItems: const [
                 BottomBarItem(
                   inActiveItem: Icon(
@@ -3635,7 +3642,9 @@ class _EmployeeFormPageState extends State<EmployeeFormPage>
                     });
                     break;
                 }
-              },
+                  },
+                ),
+              ),
             )
           : null,
     );

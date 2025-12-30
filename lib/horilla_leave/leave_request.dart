@@ -173,14 +173,23 @@ class _LeaveRequest extends State<LeaveRequest>
 
   Future<void> _loadInitialData() async {
     try {
-      await prefetchData();
-      await getBaseUrl();
-      await getEmployees();
-      await getListEmployees();
-      await getAllEmployeesName();
-      await checkPermissions();
-
+      // Load local data first (fast, can be parallel)
       await Future.wait([
+        prefetchData(),
+        getBaseUrl(),
+        fetchToken(),
+      ]);
+      
+      // Load employee data in parallel
+      await Future.wait([
+        getEmployees(),
+        getListEmployees(),
+        getAllEmployeesName(),
+      ]);
+      
+      // Load permissions and leave data in parallel
+      await Future.wait([
+        checkPermissions(),
         getAllLeaveRequest(reset: true),
         getRequestedCount(reset: true),
         getApprovedCount(reset: true),
@@ -188,17 +197,21 @@ class _LeaveRequest extends State<LeaveRequest>
         getRejectedCount(reset: true),
       ]);
 
-      setState(() {
-        _isShimmerVisible = false;
-        isLoading = false;
-        _isShimmer = false;
-      });
+      if (mounted) {
+        setState(() {
+          _isShimmerVisible = false;
+          isLoading = false;
+          _isShimmer = false;
+        });
+      }
     } catch (e) {
-      setState(() {
-        _isShimmerVisible = false;
-        isLoading = false;
-        _isShimmer = false;
-      });
+      if (mounted) {
+        setState(() {
+          _isShimmerVisible = false;
+          isLoading = false;
+          _isShimmer = false;
+        });
+      }
     }
   }
 
@@ -678,6 +691,12 @@ class _LeaveRequest extends State<LeaveRequest>
   void showCreateLeaveDialog(BuildContext context) async {
     final prefs = await SharedPreferences.getInstance();
     var employeeID = prefs.getInt("employee_id");
+    
+    // Reset button state when dialog opens
+    setState(() {
+      isSaveClick = true;
+      _errorMessage = null;
+    });
 
     showDialog(
       context: context,
@@ -1315,19 +1334,38 @@ class _LeaveRequest extends State<LeaveRequest>
     request.headers['Authorization'] = 'Bearer $token';
     var response = await request.send();
     if (response.statusCode == 201) {
-      isSaveClick = false;
-      _errorMessage = null;
-      currentPage = 0;
-      requestedRecords.clear();
-      approvedRecords.clear();
-      cancelledRecords.clear();
-      rejectedRecords.clear();
-      getAllLeaveRequest();
-      getRequestedCount();
-      getApprovedCount();
-      getCancelledCount();
-      getRejectedCount();
-      setState(() {});
+      // Reset all state properly
+      setState(() {
+        isSaveClick = false;
+        _errorMessage = null;
+        currentPage = 1;
+        myAllRequests.clear();
+        requestedRecords.clear();
+        approvedRecords.clear();
+        cancelledRecords.clear();
+        rejectedRecords.clear();
+        hasMoreAll = true;
+        hasMoreRequested = true;
+        hasMoreApproved = true;
+        hasMoreCancelled = true;
+        hasMoreRejected = true;
+        isLoading = true;
+        _isShimmerVisible = true;
+      });
+
+      // Reload all data
+      await Future.wait([
+        getAllLeaveRequest(reset: true),
+        getRequestedCount(reset: true),
+        getApprovedCount(reset: true),
+        getCancelledCount(reset: true),
+        getRejectedCount(reset: true),
+      ]);
+
+      setState(() {
+        isLoading = false;
+        _isShimmerVisible = false;
+      });
     } else {
       isSaveClick = true;
       var responseBody = await response.stream.bytesToString();
@@ -2664,19 +2702,26 @@ class _LeaveRequest extends State<LeaveRequest>
           ),
         ),
         bottomNavigationBar: (bottomBarPages.length <= maxCount)
-            ? AnimatedNotchBottomBar(
-                /// Provide NotchBottomBarController
-                notchBottomBarController: _controller,
-                color: const Color(0xFF6B57F0),
-                showLabel: true,
-                notchColor: const Color(0xFF6B57F0),
-                kBottomRadius: 28.0,
-                kIconSize: 24.0,
+            ? SafeArea(
+                child: Padding(
+                  padding: EdgeInsets.only(
+                    bottom: MediaQuery.of(context).padding.bottom > 0 
+                        ? MediaQuery.of(context).padding.bottom - 8 
+                        : 8,
+                  ),
+                  child: AnimatedNotchBottomBar(
+                    /// Provide NotchBottomBarController
+                    notchBottomBarController: _controller,
+                    color: const Color(0xFF6B57F0),
+                    showLabel: true,
+                    notchColor: const Color(0xFF6B57F0),
+                    kBottomRadius: 28.0,
+                    kIconSize: 24.0,
 
-                /// restart app if you change removeMargins
-                removeMargins: false,
-                bottomBarWidth: MediaQuery.of(context).size.width * 1,
-                durationInMilliSeconds: 300,
+                    /// restart app if you change removeMargins
+                    removeMargins: false,
+                    bottomBarWidth: MediaQuery.of(context).size.width * 1,
+                    durationInMilliSeconds: 300,
                 bottomBarItems: const [
                   BottomBarItem(
                     inActiveItem: Icon(
@@ -2712,21 +2757,23 @@ class _LeaveRequest extends State<LeaveRequest>
                   ),
                 ],
 
-                onTap: (index) async {
-                  switch (index) {
-                    case 0:
-                      Navigator.pushNamed(context, '/home');
-                      break;
-                    case 1:
-                      Navigator.pushNamed(
-                          context, '/employee_checkin_checkout');
-                      break;
-                    case 2:
-                      Navigator.pushNamed(context, '/employees_form',
-                          arguments: arguments);
-                      break;
-                  }
-                },
+                    onTap: (index) async {
+                      switch (index) {
+                        case 0:
+                          Navigator.pushNamed(context, '/home');
+                          break;
+                        case 1:
+                          Navigator.pushNamed(
+                              context, '/employee_checkin_checkout');
+                          break;
+                        case 2:
+                          Navigator.pushNamed(context, '/employees_form',
+                              arguments: arguments);
+                          break;
+                      }
+                    },
+                  ),
+                ),
               )
             : null,
       ),
