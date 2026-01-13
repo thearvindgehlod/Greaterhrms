@@ -432,7 +432,7 @@ class _FutureBuilderPageState extends State<FutureBuilderPage> {
 
         if (snapshot.connectionState == ConnectionState.done) {
           if (snapshot.hasData && snapshot.data == true) {
-            return const HomePage();
+            return const CheckInCheckOutFormPage();
           } else {
             return LoginPage();
           }

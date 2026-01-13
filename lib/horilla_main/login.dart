@@ -83,7 +83,7 @@ class _LoginPageState extends State<LoginPage> {
         _startNotificationTimer();
         prefetchData();
 
-        Navigator.pushReplacementNamed(context, '/home');
+        Navigator.pushReplacementNamed(context, '/employee_checkin_checkout');
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(

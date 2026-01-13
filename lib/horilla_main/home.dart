@@ -61,41 +61,65 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
     super.initState();
     _mapController = AnimatedMapController(vsync: this);
     _scrollController.addListener(_scrollListener);
-    _initializePermissionsAndData();
+    
+    // Show UI immediately - don't wait for data
+    setState(() {
+      isLoading = false;
+      _isPermissionLoading = false;
+    });
+    
+    // Load data in background (non-blocking)
+    _initializePermissionsAndData().catchError((e) {
+      print('Error in _initializePermissionsAndData: $e');
+      // Ensure UI is shown even if initialization fails
+      if (mounted) {
+        setState(() {
+          isLoading = false;
+          _isPermissionLoading = false;
+        });
+      }
+    });
   }
 
   Future _initializePermissionsAndData() async {
-    // Load local preferences first (fast, non-blocking)
-    loadGeoFencingPreference();
-    
-    // Show UI immediately - don't wait for all data
-    if (mounted) {
-      setState(() {
-        isLoading = false;
-        _isPermissionLoading = false; // Show UI immediately, permissions load in background
-      });
-    }
-    
-    // Load critical permissions in parallel (non-blocking)
-    Future.wait([
-      checkAllPermissions(),
-      permissionGeoFencingMapView(),
-      permissionLeaveOverviewChecks(),
-      permissionLeaveTypeChecks(),
-      permissionLeaveRequestChecks(),
-      permissionLeaveAssignChecks(),
-      permissionWardChecks(),
-      prefetchData(),
-    ]).then((_) {
-      // Permissions loaded - UI will update automatically via setState in each function
-      if (mounted) {
-        setState(() {
-          // UI already shown, just ensure state is updated
-        });
+    try {
+      // Load local preferences first (fast, non-blocking)
+      loadGeoFencingPreference();
+      
+      // Load critical permissions in parallel with timeout protection
+      try {
+        await Future.wait([
+          checkAllPermissions().catchError((e) {
+            print('Error in checkAllPermissions: $e');
+          }),
+          permissionGeoFencingMapView().catchError((e) {
+            print('Error in permissionGeoFencingMapView: $e');
+          }),
+          permissionLeaveOverviewChecks().catchError((e) {
+            print('Error in permissionLeaveOverviewChecks: $e');
+          }),
+          permissionLeaveTypeChecks().catchError((e) {
+            print('Error in permissionLeaveTypeChecks: $e');
+          }),
+          permissionLeaveRequestChecks().catchError((e) {
+            print('Error in permissionLeaveRequestChecks: $e');
+          }),
+          permissionLeaveAssignChecks().catchError((e) {
+            print('Error in permissionLeaveAssignChecks: $e');
+          }),
+          permissionWardChecks().catchError((e) {
+            print('Error in permissionWardChecks: $e');
+          }),
+          prefetchData().catchError((e) {
+            print('Error in prefetchData: $e');
+          }),
+        ]).timeout(const Duration(seconds: 5));
+      } on TimeoutException {
+        print('Permission checks timed out after 5 seconds, continuing anyway');
       }
-    }).catchError((e) {
-      // Handle errors gracefully - UI already shown
-    });
+    } catch (e) {
+      print('Error in _initializePermissionsAndData: $e');
+    }
     
     // Load notifications in background (non-critical, can load after UI shows)
     _loadNotificationsInBackground();
@@ -121,101 +145,136 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
   }
 
   Future<void> permissionLeaveOverviewChecks() async {
-    final prefs = await SharedPreferences.getInstance();
-    var token = prefs.getString("token");
-    var typedServerUrl = prefs.getString("typed_url");
-    var uri = Uri.parse('$typedServerUrl/api/leave/check-perm/');
-    var response = await http.get(uri, headers: {
-      "Content-Type": "application/json",
-      "Authorization": "Bearer $token",
-    });
-    setState(() {
-      if (response.statusCode == 200) {
-        permissionLeaveOverviewCheck = true;
-        permissionMyLeaveRequestCheck = true;
-        permissionLeaveAllocationCheck = true;
-      } else {
-        permissionMyLeaveRequestCheck = true;
-        permissionLeaveAllocationCheck = true;
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      var token = prefs.getString("token");
+      var typedServerUrl = prefs.getString("typed_url");
+      var uri = Uri.parse('$typedServerUrl/api/leave/check-perm/');
+      var response = await http.get(uri, headers: {
+        "Content-Type": "application/json",
+        "Authorization": "Bearer $token",
+      }).timeout(const Duration(seconds: 3));
+      if (mounted) {
+        setState(() {
+          if (response.statusCode == 200) {
+            permissionLeaveOverviewCheck = true;
+            permissionMyLeaveRequestCheck = true;
+            permissionLeaveAllocationCheck = true;
+          } else {
+            permissionMyLeaveRequestCheck = true;
+            permissionLeaveAllocationCheck = true;
+          }
+        });
       }
-    });
+    } catch (e) {
+      // Handle timeout/errors gracefully - don't block UI
+      print('Error in permissionLeaveOverviewChecks: $e');
+    }
   }
 
   Future<void> permissionLeaveTypeChecks() async {
-    final prefs = await SharedPreferences.getInstance();
-    var token = prefs.getString("token");
-    var typedServerUrl = prefs.getString("typed_url");
-    var uri = Uri.parse('$typedServerUrl/api/leave/check-type/');
-    var response = await http.get(uri, headers: {
-      "Content-Type": "application/json",
-      "Authorization": "Bearer $token",
-    });
-    setState(() {
-      if (response.statusCode == 200) {
-        permissionLeaveTypeCheck = true;
-        permissionMyLeaveRequestCheck = true;
-        permissionLeaveAllocationCheck = true;
-      } else {
-        permissionMyLeaveRequestCheck = true;
-        permissionLeaveAllocationCheck = true;
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      var token = prefs.getString("token");
+      var typedServerUrl = prefs.getString("typed_url");
+      var uri = Uri.parse('$typedServerUrl/api/leave/check-type/');
+      var response = await http.get(uri, headers: {
+        "Content-Type": "application/json",
+        "Authorization": "Bearer $token",
+      }).timeout(const Duration(seconds: 3));
+      if (mounted) {
+        setState(() {
+          if (response.statusCode == 200) {
+            permissionLeaveTypeCheck = true;
+            permissionMyLeaveRequestCheck = true;
+            permissionLeaveAllocationCheck = true;
+          } else {
+            permissionMyLeaveRequestCheck = true;
+            permissionLeaveAllocationCheck = true;
+          }
+        });
       }
-    });
+    } catch (e) {
+      // Handle timeout/errors gracefully - don't block UI
+      print('Error in permissionLeaveTypeChecks: $e');
+    }
   }
 
   Future<void> permissionGeoFencingMapView() async {
-    final prefs = await SharedPreferences.getInstance();
-    var token = prefs.getString("token");
-    var typedServerUrl = prefs.getString("typed_url");
-    var uri = Uri.parse('$typedServerUrl/api/geofencing/setup-check/');
-    var response = await http.get(uri, headers: {
-      "Content-Type": "application/json",
-      "Authorization": "Bearer $token",
-    });
-    setState(() {
-      permissionGeoFencingMapViewCheck = response.statusCode == 200;
-    });
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      var token = prefs.getString("token");
+      var typedServerUrl = prefs.getString("typed_url");
+      var uri = Uri.parse('$typedServerUrl/api/geofencing/setup-check/');
+      var response = await http.get(uri, headers: {
+        "Content-Type": "application/json",
+        "Authorization": "Bearer $token",
+      }).timeout(const Duration(seconds: 3));
+      if (mounted) {
+        setState(() {
+          permissionGeoFencingMapViewCheck = response.statusCode == 200;
+        });
+      }
+    } catch (e) {
+      // Handle timeout/errors gracefully - don't block UI
+      print('Error in permissionGeoFencingMapView: $e');
+    }
   }
 
   Future<void> permissionLeaveRequestChecks() async {
-    final prefs = await SharedPreferences.getInstance();
-    var token = prefs.getString("token");
-    var typedServerUrl = prefs.getString("typed_url");
-    var uri = Uri.parse('$typedServerUrl/api/leave/check-request/');
-    var response = await http.get(uri, headers: {
-      "Content-Type": "application/json",
-      "Authorization": "Bearer $token",
-    });
-    setState(() {
-      if (response.statusCode == 200) {
-        permissionLeaveRequestCheck = true;
-        permissionMyLeaveRequestCheck = true;
-        permissionLeaveAllocationCheck = true;
-      } else {
-        permissionMyLeaveRequestCheck = true;
-        permissionLeaveAllocationCheck = true;
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      var token = prefs.getString("token");
+      var typedServerUrl = prefs.getString("typed_url");
+      var uri = Uri.parse('$typedServerUrl/api/leave/check-request/');
+      var response = await http.get(uri, headers: {
+        "Content-Type": "application/json",
+        "Authorization": "Bearer $token",
+      }).timeout(const Duration(seconds: 3));
+      if (mounted) {
+        setState(() {
+          if (response.statusCode == 200) {
+            permissionLeaveRequestCheck = true;
+            permissionMyLeaveRequestCheck = true;
+            permissionLeaveAllocationCheck = true;
+          } else {
+            permissionMyLeaveRequestCheck = true;
+            permissionLeaveAllocationCheck = true;
+          }
+        });
       }
-    });
+    } catch (e) {
+      // Handle timeout/errors gracefully - don't block UI
+      print('Error in permissionLeaveRequestChecks: $e');
+    }
   }
 
   Future<void> permissionLeaveAssignChecks() async {
-    final prefs = await SharedPreferences.getInstance();
-    var token = prefs.getString("token");
-    var typedServerUrl = prefs.getString("typed_url");
-    var uri = Uri.parse('$typedServerUrl/api/leave/check-assign/');
-    var response = await http.get(uri, headers: {
-      "Content-Type": "application/json",
-      "Authorization": "Bearer $token",
-    });
-    setState(() {
-      if (response.statusCode == 200) {
-        permissionLeaveAssignCheck = true;
-        permissionMyLeaveRequestCheck = true;
-        permissionLeaveAllocationCheck = true;
-      } else {
-        permissionMyLeaveRequestCheck = true;
-        permissionLeaveAllocationCheck = true;
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      var token = prefs.getString("token");
+      var typedServerUrl = prefs.getString("typed_url");
+      var uri = Uri.parse('$typedServerUrl/api/leave/check-assign/');
+      var response = await http.get(uri, headers: {
+        "Content-Type": "application/json",
+        "Authorization": "Bearer $token",
+      }).timeout(const Duration(seconds: 3));
+      if (mounted) {
+        setState(() {
+          if (response.statusCode == 200) {
+            permissionLeaveAssignCheck = true;
+            permissionMyLeaveRequestCheck = true;
+            permissionLeaveAllocationCheck = true;
+          } else {
+            permissionMyLeaveRequestCheck = true;
+            permissionLeaveAllocationCheck = true;
+          }
+        });
       }
-    });
+    } catch (e) {
+      // Handle timeout/errors gracefully - don't block UI
+      print('Error in permissionLeaveAssignChecks: $e');
+    }
   }
 
   void getConnectivity() {
@@ -282,46 +341,60 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
   // Removed redundant fetchData - permissionWardChecks is already called in initialization
 
   void permissionChecks() async {
-    final prefs = await SharedPreferences.getInstance();
-    var token = prefs.getString("token");
-    var typedServerUrl = prefs.getString("typed_url");
-    var uri =
-        Uri.parse('$typedServerUrl/api/attendance/permission-check/attendance');
-    var response = await http.get(uri, headers: {
-      "Content-Type": "application/json",
-      "Authorization": "Bearer $token",
-    });
-    setState(() {
-      permissionCheck = response.statusCode == 200;
-    });
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      var token = prefs.getString("token");
+      var typedServerUrl = prefs.getString("typed_url");
+      var uri =
+          Uri.parse('$typedServerUrl/api/attendance/permission-check/attendance');
+      var response = await http.get(uri, headers: {
+        "Content-Type": "application/json",
+        "Authorization": "Bearer $token",
+      });
+      if (mounted) {
+        setState(() {
+          permissionCheck = response.statusCode == 200;
+        });
+      }
+    } catch (e) {
+      // Handle timeout/errors gracefully - don't block UI
+    }
   }
 
   Future<void> permissionWardChecks() async {
-    final prefs = await SharedPreferences.getInstance();
-    var token = prefs.getString("token");
-    var typedServerUrl = prefs.getString("typed_url");
-    var uri = Uri.parse('$typedServerUrl/api/ward/check-ward/');
-    var response = await http.get(uri, headers: {
-      "Content-Type": "application/json",
-      "Authorization": "Bearer $token",
-    });
-    setState(() {
-      permissionWardCheck = response.statusCode == 200;
-    });
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      var token = prefs.getString("token");
+      var typedServerUrl = prefs.getString("typed_url");
+      var uri = Uri.parse('$typedServerUrl/api/ward/check-ward/');
+      var response = await http.get(uri, headers: {
+        "Content-Type": "application/json",
+        "Authorization": "Bearer $token",
+      }).timeout(const Duration(seconds: 3));
+      if (mounted) {
+        setState(() {
+          permissionWardCheck = response.statusCode == 200;
+        });
+      }
+    } catch (e) {
+      // Handle timeout/errors gracefully - don't block UI
+      print('Error in permissionWardChecks: $e');
+    }
   }
 
   Future<void> prefetchData() async {
-    final prefs = await SharedPreferences.getInstance();
-    var token = prefs.getString("token");
-    var typedServerUrl = prefs.getString("typed_url");
-    var employeeId = prefs.getInt("employee_id");
-    var uri = Uri.parse('$typedServerUrl/api/employee/employees/$employeeId');
-    var response = await http.get(uri, headers: {
-      "Content-Type": "application/json",
-      "Authorization": "Bearer $token",
-    });
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      var token = prefs.getString("token");
+      var typedServerUrl = prefs.getString("typed_url");
+      var employeeId = prefs.getInt("employee_id");
+      var uri = Uri.parse('$typedServerUrl/api/employee/employees/$employeeId');
+      var response = await http.get(uri, headers: {
+        "Content-Type": "application/json",
+        "Authorization": "Bearer $token",
+      }).timeout(const Duration(seconds: 3));
 
-    if (response.statusCode == 200) {
+      if (response.statusCode == 200 && mounted) {
       final responseData = jsonDecode(response.body);
       setState(() {
         arguments = {
@@ -352,6 +425,9 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
           'job_position_name': responseData['job_position_name'] ?? ''
         };
       });
+      }
+    } catch (e) {
+      // Handle timeout/errors gracefully - don't block UI
     }
   }
 
@@ -365,7 +441,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
     List<Map<String, dynamic>> allNotifications = [];
     int page = 1;
     bool hasMore = true;
-    int maxPages = 5; // Limit to first 5 pages for faster initial load
+    int maxPages = 2; // Reduced to 2 pages for faster initial load (can load more on scroll)
 
     while (hasMore && page <= maxPages) {
       var uri = Uri.parse(
@@ -375,7 +451,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
         var response = await http.get(uri, headers: {
           "Content-Type": "application/json",
           "Authorization": "Bearer $token",
-        }).timeout(const Duration(seconds: 5));
+        });
 
         if (response.statusCode == 200) {
           var responseData = jsonDecode(response.body);
@@ -435,7 +511,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
       var response = await http.get(uri, headers: {
         "Content-Type": "application/json",
         "Authorization": "Bearer $token",
-      }).timeout(const Duration(seconds: 5));
+        });
 
       if (response.statusCode == 200 && mounted) {
         setState(() {
@@ -496,10 +572,11 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
         var res = await http.get(uri, headers: {
           "Content-Type": "application/json",
           "Authorization": "Bearer $token",
-        });
+        }).timeout(const Duration(seconds: 3));
         return res.statusCode == 200;
       } catch (e) {
-        print("Permission check failed for $endpoint: $e");
+        // Handle timeout/errors gracefully - return false (permission not granted)
+        print('Error in _getPerm: $e');
         return false;
       }
     }
@@ -786,14 +863,6 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
         );
       },
     );
-    Future.delayed(const Duration(seconds: 3), () async {
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) => HomePage(),
-        ),
-      );
-    });
   }
 
   void _showUnreadNotifications(BuildContext context) {
@@ -883,27 +952,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                               horizontal:
                                   MediaQuery.of(context).size.width * 0.0357),
                           child: Center(
-                            child: isLoading
-                                ? Shimmer.fromColors(
-                                    baseColor: Colors.grey[300]!,
-                                    highlightColor: Colors.grey[100]!,
-                                    child: ListView.builder(
-                                      itemCount: 3,
-                                      itemBuilder: (context, index) => Padding(
-                                        padding: const EdgeInsets.symmetric(
-                                            vertical: 8.0),
-                                        child: Container(
-                                          width: double.infinity,
-                                          height: MediaQuery.of(context)
-                                                  .size
-                                                  .height *
-                                              0.0616,
-                                          color: Colors.white,
-                                        ),
-                                      ),
-                                    ),
-                                  )
-                                : notifications.isEmpty
+                            child: notifications.isEmpty
                                     ? Center(
                                         child: Column(
                                           mainAxisAlignment:
@@ -1347,12 +1396,9 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
         onRefresh: _refreshHome,
         color: _baseColor,
         edgeOffset: 16,
-        child: AnimatedSwitcher(
-          duration: const Duration(milliseconds: 300),
-          child: (_isPermissionLoading || isLoading)
-              ? _buildLoadingState(context)
-              : _buildHomeContent(context),
-        ),
+        child: isLoading
+            ? _buildLoadingState(context)
+            : _buildHomeContent(context),
       ),
       extendBody: true,
       bottomNavigationBar: (bottomBarPages.length <= maxCount)
@@ -1408,21 +1454,15 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                   onTap: (index) async {
                     switch (index) {
                       case 0:
-                        Future.delayed(const Duration(milliseconds: 1000), () {
-                          Navigator.pushNamed(context, '/home');
-                        });
+                        Navigator.pushNamed(context, '/home');
                         break;
                       case 1:
-                        Future.delayed(const Duration(milliseconds: 1000), () {
-                          Navigator.pushNamed(
-                              context, '/employee_checkin_checkout');
-                        });
+                        Navigator.pushNamed(
+                            context, '/employee_checkin_checkout');
                         break;
                       case 2:
-                        Future.delayed(const Duration(milliseconds: 1000), () {
-                          Navigator.pushNamed(context, '/employees_form',
-                              arguments: arguments);
-                        });
+                        Navigator.pushNamed(context, '/employees_form',
+                            arguments: arguments);
                         break;
                     }
                   },

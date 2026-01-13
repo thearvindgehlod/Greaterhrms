@@ -53,6 +53,7 @@ class _CheckInCheckOutFormPageState extends State<CheckInCheckOutFormPage>
   Position? userLocation;
   bool _locationSnackBarShown = false;
   late String getToken = '';
+  Timer? _syncTimer; // Timer for syncing with web every 2 seconds
 
   // Local persistence keys
   static const _kIsCheckedIn = 'is_checked_in';
@@ -76,11 +77,43 @@ class _CheckInCheckOutFormPageState extends State<CheckInCheckOutFormPage>
     
     // Load data in background
     _initializeData();
+    
+    // Start periodic sync with web every 2 seconds
+    _startPeriodicSync();
+  }
+  
+  void _startPeriodicSync() {
+    // Cancel any existing timer
+    _syncTimer?.cancel();
+    
+    // Start new timer that polls every 2 seconds
+    _syncTimer = Timer.periodic(const Duration(seconds: 2), (timer) {
+      // Sync with server to check if clock-out happened on web
+      getCheckIn().catchError((e) {
+        print('Error in periodic sync: $e');
+      });
+      
+      // Also refresh employee data periodically (every 30 seconds) to ensure data is up to date
+      // Check if data is still empty and retry loading
+      if ((requestsEmpMyFirstName.isEmpty || requestsEmpMyDepartment.isEmpty) && 
+          timer.tick % 15 == 0) { // Every 30 seconds (15 * 2 seconds)
+        print('Employee data is empty, retrying to load...');
+        getLoginEmployeeRecord().catchError((e) {
+          print('Error retrying employee data: $e');
+        });
+      }
+    });
+  }
+  
+  void _stopPeriodicSync() {
+    _syncTimer?.cancel();
+    _syncTimer = null;
   }
 
   @override
   void dispose() {
     WidgetsBinding.instance.removeObserver(this);
+    _stopPeriodicSync(); // Stop the sync timer
     super.dispose();
   }
 
@@ -88,10 +121,17 @@ class _CheckInCheckOutFormPageState extends State<CheckInCheckOutFormPage>
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) async {
     if (state == AppLifecycleState.resumed) {
+      // Resume periodic sync
+      _startPeriodicSync();
       // First restore from local (fast)
       await _restoreTimerFromLocal();
       // Then sync with server (server is source of truth)
       await getCheckIn();
+    } else if (state == AppLifecycleState.paused || 
+               state == AppLifecycleState.inactive ||
+               state == AppLifecycleState.detached) {
+      // Pause periodic sync when app is in background
+      _stopPeriodicSync();
     }
   }
 
@@ -215,29 +255,83 @@ class _CheckInCheckOutFormPageState extends State<CheckInCheckOutFormPage>
     try {
       // Load local preferences first (fast)
       final prefs = await SharedPreferences.getInstance();
-      final faceDetectionEnabled = await getFaceDetection();
-      await prefs.setBool("face_detection", faceDetectionEnabled);
       
-      // Load token immediately
+      // Load token immediately (non-blocking)
       fetchToken();
 
-      // Initialize location in background (non-blocking)
-      _initializeLocation();
+      // Initialize location in background (non-blocking, don't wait)
+      _initializeLocation().catchError((e) {
+        print('Error initializing location: $e');
+      });
 
-      // Load all API data in parallel
-      await Future.wait<void>([
-        prefetchData(),
-        getBaseUrl(),
-        getLoginEmployeeRecord(),
-      ]);
+      // Load face detection in background (non-blocking, don't wait if slow)
+      getFaceDetection().then((enabled) async {
+        await prefs.setBool("face_detection", enabled);
+      }).catchError((e) {
+        print('Error getting face detection: $e');
+        prefs.setBool("face_detection", false);
+      });
+
+      // Load all API data in parallel with timeout protection
+      // Retry once if fails
+      bool dataLoaded = false;
+      try {
+        await Future.wait<void>([
+          prefetchData().catchError((e) {
+            print('Error in prefetchData: $e');
+            // Retry once
+            return prefetchData();
+          }).catchError((e) {
+            print('Retry prefetchData also failed: $e');
+          }),
+          getBaseUrl().catchError((e) {
+            print('Error in getBaseUrl: $e');
+          }),
+          getLoginEmployeeRecord().catchError((e) {
+            print('Error in getLoginEmployeeRecord: $e');
+            // Retry once
+            return getLoginEmployeeRecord();
+          }).catchError((e) {
+            print('Retry getLoginEmployeeRecord also failed: $e');
+          }),
+        ]).timeout(const Duration(seconds: 5));
+        dataLoaded = true;
+      } on TimeoutException {
+        print('API calls timed out after 5 seconds, retrying once...');
+        // Retry failed calls once more
+        try {
+          await Future.wait<void>([
+            prefetchData().catchError((e) => print('Retry prefetchData failed: $e')),
+            getLoginEmployeeRecord().catchError((e) => print('Retry getLoginEmployeeRecord failed: $e')),
+          ]).timeout(const Duration(seconds: 3));
+          dataLoaded = true;
+        } catch (e) {
+          print('Retry also failed: $e');
+        }
+      }
+
+      // Ensure UI is updated even if data loading failed
+      if (mounted && !dataLoaded) {
+        setState(() {
+          // UI will show empty values but at least it won't be stuck
+        });
+      }
 
       // Sync check-in status from server (server is source of truth)
       // This will update all state including check-in time, timer, etc.
-      await getCheckIn();
+      await getCheckIn().catchError((e) {
+        print('Error in getCheckIn: $e');
+        // Retry getCheckIn once
+        return getCheckIn();
+      }).catchError((e) {
+        print('Retry getCheckIn also failed: $e');
+      });
     } catch (e) {
       // Handle errors gracefully - UI already shown
+      print('Error in _initializeData: $e');
+      // Ensure UI updates even on error
       if (mounted) {
-        // Optionally show a non-blocking error message
+        setState(() {});
       }
     }
   }
@@ -1170,46 +1264,69 @@ class _CheckInCheckOutFormPageState extends State<CheckInCheckOutFormPage>
   }
 
   Future<void> prefetchData() async {
-    final prefs = await SharedPreferences.getInstance();
-    var geo_fencing = prefs.getBool("geo_fencing");
-    if (geo_fencing == true) {
-      userLocation = await fetchCurrentLocation();
-    }
-    var token = prefs.getString("token");
-    var typedServerUrl = prefs.getString("typed_url");
-    var employeeId = prefs.getInt("employee_id");
-    if (typedServerUrl == null || token == null || employeeId == null) return;
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      var geo_fencing = prefs.getBool("geo_fencing");
+      if (geo_fencing == true) {
+        userLocation = await fetchCurrentLocation();
+      }
+      var token = prefs.getString("token");
+      var typedServerUrl = prefs.getString("typed_url");
+      var employeeId = prefs.getInt("employee_id");
+      if (typedServerUrl == null || token == null || employeeId == null) {
+        print('prefetchData: Missing required data');
+        return;
+      }
 
-    final uri = Uri.parse('$typedServerUrl/api/employee/employees/$employeeId');
-    final response = await http.get(uri, headers: {
-      "Content-Type": "application/json",
-      "Authorization": "Bearer $token",
-    });
-    if (response.statusCode == 200) {
-      final responseData = jsonDecode(response.body);
-      arguments = {
-        'employee_id': responseData['id'],
-        'employee_name':
-            '${responseData['employee_first_name']} ${responseData['employee_last_name']}',
-        'badge_id': responseData['badge_id'],
-        'email': responseData['email'],
-        'phone': responseData['phone'],
-        'date_of_birth': responseData['dob'],
-        'gender': responseData['gender'],
-        'address': responseData['address'],
-        'country': responseData['country'],
-        'state': responseData['state'],
-        'city': responseData['city'],
-        'qualification': responseData['qualification'],
-        'experience': responseData['experience'],
-        'marital_status': responseData['marital_status'],
-        'children': responseData['children'],
-        'emergency_contact': responseData['emergency_contact'],
-        'emergency_contact_name': responseData['emergency_contact_name'],
-        'employee_work_info_id': responseData['employee_work_info_id'],
-        'employee_bank_details_id': responseData['employee_bank_details_id'],
-        'employee_profile': responseData['employee_profile']
-      };
+      final uri = Uri.parse('$typedServerUrl/api/employee/employees/$employeeId');
+      final response = await http.get(uri, headers: {
+        "Content-Type": "application/json",
+        "Authorization": "Bearer $token",
+      }).timeout(const Duration(seconds: 3));
+      
+      if (response.statusCode == 200) {
+        final responseData = jsonDecode(response.body);
+        if (mounted) {
+          setState(() {
+            arguments = {
+              'employee_id': responseData['id'],
+              'employee_name':
+                  '${responseData['employee_first_name'] ?? ''} ${responseData['employee_last_name'] ?? ''}',
+              'badge_id': responseData['badge_id'] ?? '',
+              'email': responseData['email'] ?? '',
+              'phone': responseData['phone'] ?? '',
+              'date_of_birth': responseData['dob'],
+              'gender': responseData['gender'],
+              'address': responseData['address'],
+              'country': responseData['country'],
+              'state': responseData['state'],
+              'city': responseData['city'],
+              'qualification': responseData['qualification'],
+              'experience': responseData['experience'],
+              'marital_status': responseData['marital_status'],
+              'children': responseData['children'],
+              'emergency_contact': responseData['emergency_contact'],
+              'emergency_contact_name': responseData['emergency_contact_name'],
+              'employee_work_info_id': responseData['employee_work_info_id'],
+              'employee_bank_details_id': responseData['employee_bank_details_id'],
+              'employee_profile': responseData['employee_profile'] ?? ''
+            };
+          });
+        }
+      } else {
+        print('prefetchData: Failed with status ${response.statusCode}');
+        // Still update UI to trigger rebuild
+        if (mounted) {
+          setState(() {});
+        }
+      }
+    } catch (e) {
+      print('Error in prefetchData: $e');
+      // Still update UI to trigger rebuild even on error
+      if (mounted) {
+        setState(() {});
+      }
+      rethrow;
     }
   }
 
@@ -1242,51 +1359,86 @@ class _CheckInCheckOutFormPageState extends State<CheckInCheckOutFormPage>
   }
 
   Future<void> getLoginEmployeeRecord() async {
-    final prefs = await SharedPreferences.getInstance();
-    var token = prefs.getString("token");
-    var typedServerUrl = prefs.getString("typed_url");
-    var employeeId = prefs.getInt("employee_id");
-    if (typedServerUrl == null || token == null || employeeId == null) return;
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      var token = prefs.getString("token");
+      var typedServerUrl = prefs.getString("typed_url");
+      var employeeId = prefs.getInt("employee_id");
+      if (typedServerUrl == null || token == null || employeeId == null) {
+        print('Missing required data: token=$token, url=$typedServerUrl, employeeId=$employeeId');
+        return;
+      }
 
-    final uri = Uri.parse('$typedServerUrl/api/employee/employees/$employeeId');
-    final response = await http.get(uri, headers: {
-      "Content-Type": "application/json",
-      "Authorization": "Bearer $token",
-    });
-    if (response.statusCode == 200) {
-      final body = jsonDecode(response.body);
-      setState(() {
-        requestsEmpMyFirstName = body['employee_first_name'] ?? '';
-        requestsEmpMyLastName = body['employee_last_name'] ?? '';
-        requestsEmpMyBadgeId = body['badge_id'] ?? '';
-        requestsEmpMyDepartment = body['department_name'] ?? '';
-        requestsEmpProfile = body['employee_profile'] ?? '';
-        requestsEmpMyWorkInfoId = body['employee_work_info_id'] ?? '';
-      });
-      await getLoginEmployeeWorkInfoRecord(requestsEmpMyWorkInfoId);
+      final uri = Uri.parse('$typedServerUrl/api/employee/employees/$employeeId');
+      final response = await http.get(uri, headers: {
+        "Content-Type": "application/json",
+        "Authorization": "Bearer $token",
+      }).timeout(const Duration(seconds: 3));
+      
+      if (response.statusCode == 200) {
+        final body = jsonDecode(response.body);
+        if (mounted) {
+          setState(() {
+            requestsEmpMyFirstName = body['employee_first_name']?.toString() ?? '';
+            requestsEmpMyLastName = body['employee_last_name']?.toString() ?? '';
+            requestsEmpMyBadgeId = body['badge_id']?.toString() ?? '';
+            requestsEmpMyDepartment = body['department_name']?.toString() ?? '';
+            requestsEmpProfile = body['employee_profile']?.toString() ?? '';
+            requestsEmpMyWorkInfoId = body['employee_work_info_id']?.toString() ?? '';
+          });
+          print('Employee data loaded: ${requestsEmpMyFirstName} ${requestsEmpMyLastName}');
+        }
+        
+        // Load work info only if we have work info ID
+        if (requestsEmpMyWorkInfoId.isNotEmpty) {
+          await getLoginEmployeeWorkInfoRecord(requestsEmpMyWorkInfoId).catchError((e) {
+            print('Error in getLoginEmployeeWorkInfoRecord: $e');
+          });
+        }
+      } else {
+        print('Failed to load employee data: status ${response.statusCode}');
+        // Still update UI to trigger rebuild even if failed
+        if (mounted) {
+          setState(() {});
+        }
+      }
+    } catch (e) {
+      print('Error in getLoginEmployeeRecord: $e');
+      // Still update UI to trigger rebuild even on error
+      if (mounted) {
+        setState(() {});
+      }
+      rethrow;
     }
   }
 
   Future<void> getLoginEmployeeWorkInfoRecord(
       String requestsEmpMyWorkInfoId) async {
-    final prefs = await SharedPreferences.getInstance();
-    var token = prefs.getString("token");
-    var typedServerUrl = prefs.getString("typed_url");
-    if (typedServerUrl == null ||
-        token == null ||
-        requestsEmpMyWorkInfoId.isEmpty) return;
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      var token = prefs.getString("token");
+      var typedServerUrl = prefs.getString("typed_url");
+      if (typedServerUrl == null ||
+          token == null ||
+          requestsEmpMyWorkInfoId.isEmpty) return;
 
-    final uri = Uri.parse(
-        '$typedServerUrl/api/employee/employee-work-information/$requestsEmpMyWorkInfoId');
-    final response = await http.get(uri, headers: {
-      "Content-Type": "application/json",
-      "Authorization": "Bearer $token",
-    });
-    if (response.statusCode == 200) {
-      final body = jsonDecode(response.body);
-      setState(() {
-        requestsEmpMyShiftName = body['shift_name'] ?? "None";
-      });
+      final uri = Uri.parse(
+          '$typedServerUrl/api/employee/employee-work-information/$requestsEmpMyWorkInfoId');
+      final response = await http.get(uri, headers: {
+        "Content-Type": "application/json",
+        "Authorization": "Bearer $token",
+      }).timeout(const Duration(seconds: 3));
+      if (response.statusCode == 200) {
+        final body = jsonDecode(response.body);
+        if (mounted) {
+          setState(() {
+            requestsEmpMyShiftName = body['shift_name'] ?? "None";
+          });
+        }
+      }
+    } catch (e) {
+      print('Error in getLoginEmployeeWorkInfoRecord: $e');
+      rethrow;
     }
   }
 
@@ -1302,31 +1454,42 @@ class _CheckInCheckOutFormPageState extends State<CheckInCheckOutFormPage>
       }
       if (permission == LocationPermission.deniedForever) return null;
 
-      return await Geolocator.getCurrentPosition(
-        desiredAccuracy: LocationAccuracy.high,
-      );
-    } catch (_) {
+      try {
+        return await Geolocator.getCurrentPosition(
+          desiredAccuracy: LocationAccuracy.high,
+        ).timeout(const Duration(seconds: 5));
+      } on TimeoutException {
+        print('getCurrentPosition timed out');
+        return null;
+      }
+    } catch (e) {
+      print('Error in fetchCurrentLocation: $e');
       return null;
     }
   }
 
   Future<bool> getFaceDetection() async {
-    final prefs = await SharedPreferences.getInstance();
-    var token = prefs.getString("token");
-    var typedServerUrl = prefs.getString("typed_url");
-    if (typedServerUrl == null || token == null) return false;
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      var token = prefs.getString("token");
+      var typedServerUrl = prefs.getString("typed_url");
+      if (typedServerUrl == null || token == null) return false;
 
-    final uri = Uri.parse('$typedServerUrl/api/facedetection/config/');
-    final response = await http.get(uri, headers: {
-      "Content-Type": "application/json",
-      "Authorization": "Bearer $token",
-    });
+      final uri = Uri.parse('$typedServerUrl/api/facedetection/config/');
+      final response = await http.get(uri, headers: {
+        "Content-Type": "application/json",
+        "Authorization": "Bearer $token",
+      }).timeout(const Duration(seconds: 3));
 
-    if (response.statusCode == 200) {
-      final data = jsonDecode(response.body);
-      return (data['start'] ?? false) == true;
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+        return (data['start'] ?? false) == true;
+      }
+      return false;
+    } catch (e) {
+      print('Error in getFaceDetection: $e');
+      return false;
     }
-    return false;
   }
 
   Future<void> clearToken() async {

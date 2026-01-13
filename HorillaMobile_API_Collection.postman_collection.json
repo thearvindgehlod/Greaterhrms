@@ -1,0 +1,2230 @@
+{
+	"info": {
+		"_postman_id": "horilla-mobile-api-collection",
+		"name": "Horilla Mobile API Collection",
+		"description": "Complete API collection for Horilla Mobile Flutter application",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"variable": [
+		{
+			"key": "base_url",
+			"value": "https://greaterchange.ai",
+			"type": "string"
+		},
+		{
+			"key": "token",
+			"value": "your_bearer_token_here",
+			"type": "string"
+		},
+		{
+			"key": "employee_id",
+			"value": "1",
+			"type": "string"
+		}
+	],
+	"item": [
+		{
+			"name": "Authentication",
+			"item": [
+				{
+					"name": "Login",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/x-www-form-urlencoded"
+							}
+						],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "username",
+									"value": "your_username",
+									"type": "text"
+								},
+								{
+									"key": "password",
+									"value": "your_password",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{base_url}}/api/auth/login/",
+							"host": ["{{base_url}}"],
+							"path": ["api", "auth", "login", ""]
+						}
+					}
+				}
+			]
+		},
+		{
+			"name": "Employee",
+			"item": [
+				{
+					"name": "Get Employee by ID",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/employee/employees/{{employee_id}}",
+							"host": ["{{base_url}}"],
+							"path": ["api", "employee", "employees", "{{employee_id}}"]
+						}
+					}
+				},
+				{
+					"name": "Get All Employees",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/employee/employees/",
+							"host": ["{{base_url}}"],
+							"path": ["api", "employee", "employees", ""]
+						}
+					}
+				},
+				{
+					"name": "Employee Selector",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/employee/employee-selector?page=1",
+							"host": ["{{base_url}}"],
+							"path": ["api", "employee", "employee-selector"],
+							"query": [
+								{
+									"key": "page",
+									"value": "1"
+								}
+							]
+						}
+					}
+				}
+			]
+		},
+		{
+			"name": "Leave Management",
+			"item": [
+				{
+					"name": "Permissions",
+					"item": [
+						{
+							"name": "Check Leave Permission",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "Authorization",
+										"value": "Bearer {{token}}",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{base_url}}/api/leave/check-perm/",
+									"host": ["{{base_url}}"],
+									"path": ["api", "leave", "check-perm", ""]
+								}
+							}
+						},
+						{
+							"name": "Check Leave Type Permission",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "Authorization",
+										"value": "Bearer {{token}}",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{base_url}}/api/leave/check-type/",
+									"host": ["{{base_url}}"],
+									"path": ["api", "leave", "check-type", ""]
+								}
+							}
+						},
+						{
+							"name": "Check Leave Request Permission",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "Authorization",
+										"value": "Bearer {{token}}",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{base_url}}/api/leave/check-request/",
+									"host": ["{{base_url}}"],
+									"path": ["api", "leave", "check-request", ""]
+								}
+							}
+						},
+						{
+							"name": "Check Leave Assign Permission",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "Authorization",
+										"value": "Bearer {{token}}",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{base_url}}/api/leave/check-assign/",
+									"host": ["{{base_url}}"],
+									"path": ["api", "leave", "check-assign", ""]
+								}
+							}
+						},
+						{
+							"name": "Check Leave Allocation",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "Authorization",
+										"value": "Bearer {{token}}",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{base_url}}/api/leave/check-allocation",
+									"host": ["{{base_url}}"],
+									"path": ["api", "leave", "check-allocation"]
+								}
+							}
+						}
+					]
+				},
+				{
+					"name": "Leave Types",
+					"item": [
+						{
+							"name": "Get All Leave Types",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "Authorization",
+										"value": "Bearer {{token}}",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{base_url}}/api/leave/leave-type/",
+									"host": ["{{base_url}}"],
+									"path": ["api", "leave", "leave-type", ""]
+								}
+							}
+						},
+						{
+							"name": "Get Leave Type by ID",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "Authorization",
+										"value": "Bearer {{token}}",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{base_url}}/api/leave/leave-type/:typeId",
+									"host": ["{{base_url}}"],
+									"path": ["api", "leave", "leave-type", ":typeId"],
+									"variable": [
+										{
+											"key": "typeId",
+											"value": "1"
+										}
+									]
+								}
+							}
+						},
+						{
+							"name": "Get Employee Leave Types",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "Authorization",
+										"value": "Bearer {{token}}",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{base_url}}/api/leave/employee-leave-type/{{employee_id}}/",
+									"host": ["{{base_url}}"],
+									"path": ["api", "leave", "employee-leave-type", "{{employee_id}}", ""]
+								}
+							}
+						}
+					]
+				},
+				{
+					"name": "Leave Requests",
+					"item": [
+						{
+							"name": "Create Leave Request",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "Authorization",
+										"value": "Bearer {{token}}",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"employee_id\": \"{{employee_id}}\",\n  \"leave_type_id\": 1,\n  \"start_date\": \"2024-01-01\",\n  \"end_date\": \"2024-01-05\",\n  \"description\": \"Vacation leave\"\n}"
+								},
+								"url": {
+									"raw": "{{base_url}}/api/leave/request/",
+									"host": ["{{base_url}}"],
+									"path": ["api", "leave", "request", ""]
+								}
+							}
+						},
+						{
+							"name": "Get All Leave Requests",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "Authorization",
+										"value": "Bearer {{token}}",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{base_url}}/api/leave/request?page=1&search=",
+									"host": ["{{base_url}}"],
+									"path": ["api", "leave", "request"],
+									"query": [
+										{
+											"key": "page",
+											"value": "1"
+										},
+										{
+											"key": "search",
+											"value": ""
+										}
+									]
+								}
+							}
+						},
+						{
+							"name": "Get Leave Request by ID",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "Authorization",
+										"value": "Bearer {{token}}",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{base_url}}/api/leave/request/:recordId",
+									"host": ["{{base_url}}"],
+									"path": ["api", "leave", "request", ":recordId"],
+									"variable": [
+										{
+											"key": "recordId",
+											"value": "1"
+										}
+									]
+								}
+							}
+						},
+						{
+							"name": "Update Leave Request",
+							"request": {
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "Authorization",
+										"value": "Bearer {{token}}",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"start_date\": \"2024-01-01\",\n  \"end_date\": \"2024-01-10\",\n  \"description\": \"Updated vacation leave\"\n}"
+								},
+								"url": {
+									"raw": "{{base_url}}/api/leave/request/:itemId/",
+									"host": ["{{base_url}}"],
+									"path": ["api", "leave", "request", ":itemId", ""],
+									"variable": [
+										{
+											"key": "itemId",
+											"value": "1"
+										}
+									]
+								}
+							}
+						},
+						{
+							"name": "Delete Leave Request",
+							"request": {
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "Authorization",
+										"value": "Bearer {{token}}",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{base_url}}/api/leave/request/:leaveId/",
+									"host": ["{{base_url}}"],
+									"path": ["api", "leave", "request", ":leaveId", ""],
+									"variable": [
+										{
+											"key": "leaveId",
+											"value": "1"
+										}
+									]
+								}
+							}
+						},
+						{
+							"name": "Approve Leave Request",
+							"request": {
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "Authorization",
+										"value": "Bearer {{token}}",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{base_url}}/api/leave/approve/:approveId/",
+									"host": ["{{base_url}}"],
+									"path": ["api", "leave", "approve", ":approveId", ""],
+									"variable": [
+										{
+											"key": "approveId",
+											"value": "1"
+										}
+									]
+								}
+							}
+						},
+						{
+							"name": "Reject Leave Request",
+							"request": {
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "Authorization",
+										"value": "Bearer {{token}}",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{base_url}}/api/leave/reject/:rejectId/",
+									"host": ["{{base_url}}"],
+									"path": ["api", "leave", "reject", ":rejectId", ""],
+									"variable": [
+										{
+											"key": "rejectId",
+											"value": "1"
+										}
+									]
+								}
+							}
+						},
+						{
+							"name": "Cancel Leave Request",
+							"request": {
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "Authorization",
+										"value": "Bearer {{token}}",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"description\": \"Cancellation reason\"\n}"
+								},
+								"url": {
+									"raw": "{{base_url}}/api/leave/cancel/:cancelId/",
+									"host": ["{{base_url}}"],
+									"path": ["api", "leave", "cancel", ":cancelId", ""],
+									"variable": [
+										{
+											"key": "cancelId",
+											"value": "1"
+										}
+									]
+								}
+							}
+						},
+						{
+							"name": "Get Leave Requests by Status",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "Authorization",
+										"value": "Bearer {{token}}",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{base_url}}/api/leave/request?status=requested&page=1",
+									"host": ["{{base_url}}"],
+									"path": ["api", "leave", "request"],
+									"query": [
+										{
+											"key": "status",
+											"value": "requested",
+											"description": "requested, approved, cancelled, rejected"
+										},
+										{
+											"key": "page",
+											"value": "1"
+										}
+									]
+								}
+							}
+						},
+						{
+							"name": "Get Leave Requests by Date Range",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "Authorization",
+										"value": "Bearer {{token}}",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{base_url}}/api/leave/request/?from_date=2024-01-01&to_date=2024-01-31&status=approved",
+									"host": ["{{base_url}}"],
+									"path": ["api", "leave", "request", ""],
+									"query": [
+										{
+											"key": "from_date",
+											"value": "2024-01-01"
+										},
+										{
+											"key": "to_date",
+											"value": "2024-01-31"
+										},
+										{
+											"key": "status",
+											"value": "approved"
+										}
+									]
+								}
+							}
+						}
+					]
+				},
+				{
+					"name": "User Leave Requests",
+					"item": [
+						{
+							"name": "Get User Leave Requests",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "Authorization",
+										"value": "Bearer {{token}}",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{base_url}}/api/leave/user-request?employee_id={{employee_id}}&page=1",
+									"host": ["{{base_url}}"],
+									"path": ["api", "leave", "user-request"],
+									"query": [
+										{
+											"key": "employee_id",
+											"value": "{{employee_id}}"
+										},
+										{
+											"key": "page",
+											"value": "1"
+										}
+									]
+								}
+							}
+						},
+						{
+							"name": "Get User Leave Request by ID",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "Authorization",
+										"value": "Bearer {{token}}",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{base_url}}/api/leave/user-request/:recordId",
+									"host": ["{{base_url}}"],
+									"path": ["api", "leave", "user-request", ":recordId"],
+									"variable": [
+										{
+											"key": "recordId",
+											"value": "1"
+										}
+									]
+								}
+							}
+						},
+						{
+							"name": "Create User Leave Request",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "Authorization",
+										"value": "Bearer {{token}}",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"employee_id\": \"{{employee_id}}\",\n  \"leave_type_id\": 1,\n  \"start_date\": \"2024-01-01\",\n  \"end_date\": \"2024-01-05\",\n  \"description\": \"Vacation leave\"\n}"
+								},
+								"url": {
+									"raw": "{{base_url}}/api/leave/user-request/",
+									"host": ["{{base_url}}"],
+									"path": ["api", "leave", "user-request", ""]
+								}
+							}
+						},
+						{
+							"name": "Update User Leave Request",
+							"request": {
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "Authorization",
+										"value": "Bearer {{token}}",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"start_date\": \"2024-01-01\",\n  \"end_date\": \"2024-01-10\",\n  \"description\": \"Updated vacation leave\"\n}"
+								},
+								"url": {
+									"raw": "{{base_url}}/api/leave/user-request/:itemId/",
+									"host": ["{{base_url}}"],
+									"path": ["api", "leave", "user-request", ":itemId", ""],
+									"variable": [
+										{
+											"key": "itemId",
+											"value": "1"
+										}
+									]
+								}
+							}
+						},
+						{
+							"name": "Get User Leave Requests by Status",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "Authorization",
+										"value": "Bearer {{token}}",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{base_url}}/api/leave/user-request/?employee_id={{employee_id}}&status=requested",
+									"host": ["{{base_url}}"],
+									"path": ["api", "leave", "user-request", ""],
+									"query": [
+										{
+											"key": "employee_id",
+											"value": "{{employee_id}}"
+										},
+										{
+											"key": "status",
+											"value": "requested",
+											"description": "requested, approved, cancelled, rejected"
+										}
+									]
+								}
+							}
+						}
+					]
+				},
+				{
+					"name": "Leave Allocation",
+					"item": [
+						{
+							"name": "Get Allocation Requests",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "Authorization",
+										"value": "Bearer {{token}}",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{base_url}}/api/leave/allocation-request/?page=1&search=",
+									"host": ["{{base_url}}"],
+									"path": ["api", "leave", "allocation-request", ""],
+									"query": [
+										{
+											"key": "page",
+											"value": "1"
+										},
+										{
+											"key": "search",
+											"value": ""
+										}
+									]
+								}
+							}
+						},
+						{
+							"name": "Create Allocation Request",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "Authorization",
+										"value": "Bearer {{token}}",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"employee_id\": \"{{employee_id}}\",\n  \"leave_type_id\": 1,\n  \"alloted_days\": 10\n}"
+								},
+								"url": {
+									"raw": "{{base_url}}/api/leave/allocation-request/",
+									"host": ["{{base_url}}"],
+									"path": ["api", "leave", "allocation-request", ""]
+								}
+							}
+						},
+						{
+							"name": "Get Allocation Request by ID",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "Authorization",
+										"value": "Bearer {{token}}",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{base_url}}/api/leave/allocation-request/:itemId/",
+									"host": ["{{base_url}}"],
+									"path": ["api", "leave", "allocation-request", ":itemId", ""],
+									"variable": [
+										{
+											"key": "itemId",
+											"value": "1"
+										}
+									]
+								}
+							}
+						},
+						{
+							"name": "Approve Allocation Request",
+							"request": {
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "Authorization",
+										"value": "Bearer {{token}}",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{base_url}}/api/leave/allocation-approve/:approveId/",
+									"host": ["{{base_url}}"],
+									"path": ["api", "leave", "allocation-approve", ":approveId", ""],
+									"variable": [
+										{
+											"key": "approveId",
+											"value": "1"
+										}
+									]
+								}
+							}
+						},
+						{
+							"name": "Reject Allocation Request",
+							"request": {
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "Authorization",
+										"value": "Bearer {{token}}",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{base_url}}/api/leave/allocation-reject/:rejectId/",
+									"host": ["{{base_url}}"],
+									"path": ["api", "leave", "allocation-reject", ":rejectId", ""],
+									"variable": [
+										{
+											"key": "rejectId",
+											"value": "1"
+										}
+									]
+								}
+							}
+						},
+						{
+							"name": "Delete Allocation Request",
+							"request": {
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "Authorization",
+										"value": "Bearer {{token}}",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{base_url}}/api/leave/allocation-request/:allLeaveId/",
+									"host": ["{{base_url}}"],
+									"path": ["api", "leave", "allocation-request", ":allLeaveId", ""],
+									"variable": [
+										{
+											"key": "allLeaveId",
+											"value": "1"
+										}
+									]
+								}
+							}
+						},
+						{
+							"name": "Get User Allocation Requests",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "Authorization",
+										"value": "Bearer {{token}}",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{base_url}}/api/leave/user-allocation-request/?page=1&search=",
+									"host": ["{{base_url}}"],
+									"path": ["api", "leave", "user-allocation-request", ""],
+									"query": [
+										{
+											"key": "page",
+											"value": "1"
+										},
+										{
+											"key": "search",
+											"value": ""
+										}
+									]
+								}
+							}
+						},
+						{
+							"name": "Get User Allocation Request by ID",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "Authorization",
+										"value": "Bearer {{token}}",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{base_url}}/api/leave/user-allocation-request/:itemId/",
+									"host": ["{{base_url}}"],
+									"path": ["api", "leave", "user-allocation-request", ":itemId", ""],
+									"variable": [
+										{
+											"key": "itemId",
+											"value": "1"
+										}
+									]
+								}
+							}
+						},
+						{
+							"name": "Delete User Allocation Request",
+							"request": {
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "Authorization",
+										"value": "Bearer {{token}}",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{base_url}}/api/leave/user-allocation-request/:myLeaveId/",
+									"host": ["{{base_url}}"],
+									"path": ["api", "leave", "user-allocation-request", ":myLeaveId", ""],
+									"variable": [
+										{
+											"key": "myLeaveId",
+											"value": "1"
+										}
+									]
+								}
+							}
+						}
+					]
+				},
+				{
+					"name": "Assign Leave",
+					"item": [
+						{
+							"name": "Assign Leave",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "Authorization",
+										"value": "Bearer {{token}}",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"employee_id\": \"{{employee_id}}\",\n  \"leave_type_id\": 1\n}"
+								},
+								"url": {
+									"raw": "{{base_url}}/api/leave/assign-leave/?employee_id={{employee_id}}&leave_type_id=1",
+									"host": ["{{base_url}}"],
+									"path": ["api", "leave", "assign-leave", ""],
+									"query": [
+										{
+											"key": "employee_id",
+											"value": "{{employee_id}}"
+										},
+										{
+											"key": "leave_type_id",
+											"value": "1"
+										}
+									]
+								}
+							}
+						}
+					]
+				},
+				{
+					"name": "Available Leave",
+					"item": [
+						{
+							"name": "Get Available Leave",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "Authorization",
+										"value": "Bearer {{token}}",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{base_url}}/api/leave/available-leave/",
+									"host": ["{{base_url}}"],
+									"path": ["api", "leave", "available-leave", ""]
+								}
+							}
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "Attendance",
+			"item": [
+				{
+					"name": "Permission Check",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/attendance/permission-check/attendance",
+							"host": ["{{base_url}}"],
+							"path": ["api", "attendance", "permission-check", "attendance"]
+						}
+					}
+				},
+				{
+					"name": "Check In",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"employee_id\": \"{{employee_id}}\",\n  \"attendance_date\": \"2024-01-01\",\n  \"attendance_clock_in\": \"09:00:00\",\n  \"attendance_clock_out\": null\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/attendance/attendance-clock-in",
+							"host": ["{{base_url}}"],
+							"path": ["api", "attendance", "attendance-clock-in"]
+						}
+					}
+				},
+				{
+					"name": "Check Out",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"employee_id\": \"{{employee_id}}\",\n  \"attendance_clock_out\": \"17:00:00\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/attendance/attendance-clock-out",
+							"host": ["{{base_url}}"],
+							"path": ["api", "attendance", "attendance-clock-out"]
+						}
+					}
+				},
+				{
+					"name": "Get Check In Status",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/attendance/attendance-validate",
+							"host": ["{{base_url}}"],
+							"path": ["api", "attendance", "attendance-validate"]
+						}
+					}
+				},
+				{
+					"name": "Hour Account",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/attendance/attendance-hour-account/",
+							"host": ["{{base_url}}"],
+							"path": ["api", "attendance", "attendance-hour-account", ""]
+						}
+					}
+				}
+			]
+		},
+		{
+			"name": "Notifications",
+			"item": [
+				{
+					"name": "Get Unread Notifications",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/notifications/notifications/list/unread?page=1",
+							"host": ["{{base_url}}"],
+							"path": ["api", "notifications", "notifications", "list", "unread"],
+							"query": [
+								{
+									"key": "page",
+									"value": "1"
+								}
+							]
+						}
+					}
+				},
+				{
+					"name": "Get Unread Notifications Count",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/notifications/notifications/list/unread",
+							"host": ["{{base_url}}"],
+							"path": ["api", "notifications", "notifications", "list", "unread"]
+						}
+					}
+				},
+				{
+					"name": "Mark Notification as Read",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/notifications/notifications/:notificationId/",
+							"host": ["{{base_url}}"],
+							"path": ["api", "notifications", "notifications", ":notificationId", ""],
+							"variable": [
+								{
+									"key": "notificationId",
+									"value": "1"
+								}
+							]
+						}
+					}
+				},
+				{
+					"name": "Mark All Notifications as Read",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/notifications/notifications/bulk-read/",
+							"host": ["{{base_url}}"],
+							"path": ["api", "notifications", "notifications", "bulk-read", ""]
+						}
+					}
+				},
+				{
+					"name": "Delete All Unread Notifications",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/notifications/notifications/bulk-delete-unread/",
+							"host": ["{{base_url}}"],
+							"path": ["api", "notifications", "notifications", "bulk-delete-unread", ""]
+						}
+					}
+				}
+			]
+		},
+		{
+			"name": "Face Detection",
+			"item": [
+				{
+					"name": "Get Face Detection Config",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/facedetection/config/",
+							"host": ["{{base_url}}"],
+							"path": ["api", "facedetection", "config", ""]
+						}
+					}
+				},
+				{
+					"name": "Enable Face Detection",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"face_detection\": true\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/facedetection/config/",
+							"host": ["{{base_url}}"],
+							"path": ["api", "facedetection", "config", ""]
+						}
+					}
+				},
+				{
+					"name": "Disable Face Detection",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"face_detection\": false\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/facedetection/config/",
+							"host": ["{{base_url}}"],
+							"path": ["api", "facedetection", "config", ""]
+						}
+					}
+				}
+			]
+		},
+		{
+			"name": "Geo-Fencing",
+			"item": [
+				{
+					"name": "Check Geo-Fencing Setup",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/geofencing/setup-check/",
+							"host": ["{{base_url}}"],
+							"path": ["api", "geofencing", "setup-check", ""]
+						}
+					}
+				},
+				{
+					"name": "Get Geo-Fencing Setup",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/geofencing/setup/",
+							"host": ["{{base_url}}"],
+							"path": ["api", "geofencing", "setup", ""]
+						}
+					}
+				},
+				{
+					"name": "Create Geo-Fencing Setup",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"latitude\": 0.0,\n  \"longitude\": 0.0,\n  \"radius\": 100\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/geofencing/setup/",
+							"host": ["{{base_url}}"],
+							"path": ["api", "geofencing", "setup", ""]
+						}
+					}
+				},
+				{
+					"name": "Get Geo-Fencing Setup by ID",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/geofencing/setup/:locationId/",
+							"host": ["{{base_url}}"],
+							"path": ["api", "geofencing", "setup", ":locationId", ""],
+							"variable": [
+								{
+									"key": "locationId",
+									"value": "1"
+								}
+							]
+						}
+					}
+				},
+				{
+					"name": "Update Geo-Fencing Setup",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"latitude\": 0.0,\n  \"longitude\": 0.0,\n  \"radius\": 150\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/geofencing/setup/:locationId/",
+							"host": ["{{base_url}}"],
+							"path": ["api", "geofencing", "setup", ":locationId", ""],
+							"variable": [
+								{
+									"key": "locationId",
+									"value": "1"
+								}
+							]
+						}
+					}
+				},
+				{
+					"name": "Enable Geo-Fencing",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"geo_fencing\": true\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/geofencing/setup/:locationId/",
+							"host": ["{{base_url}}"],
+							"path": ["api", "geofencing", "setup", ":locationId", ""],
+							"variable": [
+								{
+									"key": "locationId",
+									"value": "1"
+								}
+							]
+						}
+					}
+				},
+				{
+					"name": "Disable Geo-Fencing",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"geo_fencing\": false\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/geofencing/setup/",
+							"host": ["{{base_url}}"],
+							"path": ["api", "geofencing", "setup", ""]
+						}
+					}
+				}
+			]
+		},
+		{
+			"name": "Base API",
+			"item": [
+				{
+					"name": "Work Types",
+					"item": [
+						{
+							"name": "Get All Work Types",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "Authorization",
+										"value": "Bearer {{token}}",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{base_url}}/api/base/worktypes",
+									"host": ["{{base_url}}"],
+									"path": ["api", "base", "worktypes"]
+								}
+							}
+						}
+					]
+				},
+				{
+					"name": "Work Type Requests",
+					"item": [
+						{
+							"name": "Get Work Type Requests",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "Authorization",
+										"value": "Bearer {{token}}",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{base_url}}/api/base/worktype-requests?employee_id={{employee_id}}&page=1",
+									"host": ["{{base_url}}"],
+									"path": ["api", "base", "worktype-requests"],
+									"query": [
+										{
+											"key": "employee_id",
+											"value": "{{employee_id}}"
+										},
+										{
+											"key": "page",
+											"value": "1"
+										}
+									]
+								}
+							}
+						},
+						{
+							"name": "Create Work Type Request",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "Authorization",
+										"value": "Bearer {{token}}",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"employee_id\": \"{{employee_id}}\",\n  \"work_type_id\": 1,\n  \"requested_date\": \"2024-01-01\"\n}"
+								},
+								"url": {
+									"raw": "{{base_url}}/api/base/worktype-requests/",
+									"host": ["{{base_url}}"],
+									"path": ["api", "base", "worktype-requests", ""]
+								}
+							}
+						},
+						{
+							"name": "Approve Work Type Request",
+							"request": {
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "Authorization",
+										"value": "Bearer {{token}}",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{base_url}}/api/base/worktype-requests/:requestId/",
+									"host": ["{{base_url}}"],
+									"path": ["api", "base", "worktype-requests", ":requestId", ""],
+									"variable": [
+										{
+											"key": "requestId",
+											"value": "1"
+										}
+									]
+								}
+							}
+						},
+						{
+							"name": "Delete Work Type Request",
+							"request": {
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "Authorization",
+										"value": "Bearer {{token}}",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{base_url}}/api/base/worktype-requests/:requestId/",
+									"host": ["{{base_url}}"],
+									"path": ["api", "base", "worktype-requests", ":requestId", ""],
+									"variable": [
+										{
+											"key": "requestId",
+											"value": "1"
+										}
+									]
+								}
+							}
+						}
+					]
+				},
+				{
+					"name": "Rotating Work Types",
+					"item": [
+						{
+							"name": "Get Rotating Work Types",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "Authorization",
+										"value": "Bearer {{token}}",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{base_url}}/api/base/rotating-worktypes",
+									"host": ["{{base_url}}"],
+									"path": ["api", "base", "rotating-worktypes"]
+								}
+							}
+						},
+						{
+							"name": "Get Rotating Work Type Assigns",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "Authorization",
+										"value": "Bearer {{token}}",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{base_url}}/api/base/rotating-worktype-assigns/",
+									"host": ["{{base_url}}"],
+									"path": ["api", "base", "rotating-worktype-assigns", ""]
+								}
+							}
+						},
+						{
+							"name": "Create Rotating Work Type Assign",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "Authorization",
+										"value": "Bearer {{token}}",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"employee_id\": \"{{employee_id}}\",\n  \"rotating_work_type_id\": 1\n}"
+								},
+								"url": {
+									"raw": "{{base_url}}/api/base/rotating-worktype-assigns/",
+									"host": ["{{base_url}}"],
+									"path": ["api", "base", "rotating-worktype-assigns", ""]
+								}
+							}
+						},
+						{
+							"name": "Delete Rotating Work Type Assign",
+							"request": {
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "Authorization",
+										"value": "Bearer {{token}}",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{base_url}}/api/base/rotating-worktype-assigns/:assignId/",
+									"host": ["{{base_url}}"],
+									"path": ["api", "base", "rotating-worktype-assigns", ":assignId", ""],
+									"variable": [
+										{
+											"key": "assignId",
+											"value": "1"
+										}
+									]
+								}
+							}
+						}
+					]
+				},
+				{
+					"name": "Shift Requests",
+					"item": [
+						{
+							"name": "Get Employee Shift",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "Authorization",
+										"value": "Bearer {{token}}",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{base_url}}/api/base/employee-shift/",
+									"host": ["{{base_url}}"],
+									"path": ["api", "base", "employee-shift", ""]
+								}
+							}
+						},
+						{
+							"name": "Get Shift Requests",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "Authorization",
+										"value": "Bearer {{token}}",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{base_url}}/api/base/shift-requests/",
+									"host": ["{{base_url}}"],
+									"path": ["api", "base", "shift-requests", ""]
+								}
+							}
+						},
+						{
+							"name": "Create Shift Request",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "Authorization",
+										"value": "Bearer {{token}}",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"employee_id\": \"{{employee_id}}\",\n  \"shift_id\": 1,\n  \"requested_date\": \"2024-01-01\"\n}"
+								},
+								"url": {
+									"raw": "{{base_url}}/api/base/shift-requests/",
+									"host": ["{{base_url}}"],
+									"path": ["api", "base", "shift-requests", ""]
+								}
+							}
+						},
+						{
+							"name": "Cancel Shift Request",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "Authorization",
+										"value": "Bearer {{token}}",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{base_url}}/api/base/shift-request-cancel/:requestId",
+									"host": ["{{base_url}}"],
+									"path": ["api", "base", "shift-request-cancel", ":requestId"],
+									"variable": [
+										{
+											"key": "requestId",
+											"value": "1"
+										}
+									]
+								}
+							}
+						},
+						{
+							"name": "Approve Shift Request",
+							"request": {
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "Authorization",
+										"value": "Bearer {{token}}",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{base_url}}/api/base/shift-request-approve/:requestId",
+									"host": ["{{base_url}}"],
+									"path": ["api", "base", "shift-request-approve", ":requestId"],
+									"variable": [
+										{
+											"key": "requestId",
+											"value": "1"
+										}
+									]
+								}
+							}
+						},
+						{
+							"name": "Update Shift Request",
+							"request": {
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "Authorization",
+										"value": "Bearer {{token}}",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"shift_id\": 2,\n  \"requested_date\": \"2024-01-02\"\n}"
+								},
+								"url": {
+									"raw": "{{base_url}}/api/base/shift-requests/:shiftRequestId/",
+									"host": ["{{base_url}}"],
+									"path": ["api", "base", "shift-requests", ":shiftRequestId", ""],
+									"variable": [
+										{
+											"key": "shiftRequestId",
+											"value": "1"
+										}
+									]
+								}
+							}
+						},
+						{
+							"name": "Delete Shift Request",
+							"request": {
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "Authorization",
+										"value": "Bearer {{token}}",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{base_url}}/api/base/shift-requests/:requestId/",
+									"host": ["{{base_url}}"],
+									"path": ["api", "base", "shift-requests", ":requestId", ""],
+									"variable": [
+										{
+											"key": "requestId",
+											"value": "1"
+										}
+									]
+								}
+							}
+						}
+					]
+				},
+				{
+					"name": "Rotating Shifts",
+					"item": [
+						{
+							"name": "Get Rotating Shifts",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "Authorization",
+										"value": "Bearer {{token}}",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{base_url}}/api/base/rotating-shifts/",
+									"host": ["{{base_url}}"],
+									"path": ["api", "base", "rotating-shifts", ""]
+								}
+							}
+						},
+						{
+							"name": "Get Rotating Shift Assigns",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "Authorization",
+										"value": "Bearer {{token}}",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{base_url}}/api/base/rotating-shift-assigns/",
+									"host": ["{{base_url}}"],
+									"path": ["api", "base", "rotating-shift-assigns", ""]
+								}
+							}
+						},
+						{
+							"name": "Create Rotating Shift Assign",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "Authorization",
+										"value": "Bearer {{token}}",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"employee_id\": \"{{employee_id}}\",\n  \"rotating_shift_id\": 1\n}"
+								},
+								"url": {
+									"raw": "{{base_url}}/api/base/rotating-shift-assigns/",
+									"host": ["{{base_url}}"],
+									"path": ["api", "base", "rotating-shift-assigns", ""]
+								}
+							}
+						},
+						{
+							"name": "Delete Rotating Shift Assign",
+							"request": {
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "Authorization",
+										"value": "Bearer {{token}}",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{base_url}}/api/base/rotating-shift-assigns/:assignId/",
+									"host": ["{{base_url}}"],
+									"path": ["api", "base", "rotating-shift-assigns", ":assignId", ""],
+									"variable": [
+										{
+											"key": "assignId",
+											"value": "1"
+										}
+									]
+								}
+							}
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "Ward",
+			"item": [
+				{
+					"name": "Check Ward Permission",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/ward/check-ward/",
+							"host": ["{{base_url}}"],
+							"path": ["api", "ward", "check-ward", ""]
+						}
+					}
+				}
+			]
+		}
+	]
+}
