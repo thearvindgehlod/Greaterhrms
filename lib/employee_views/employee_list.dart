@@ -52,14 +52,12 @@ class _EmployeeListPageState extends State<EmployeeListPage> {
       fetchToken(),
     ]).then((_) {
       if (mounted) {
-        setState(() {
-        });
+        setState(() {});
       }
     }).catchError((e) {
       print('Error loading employee list: $e');
       if (mounted) {
-        setState(() {
-        });
+        setState(() {});
       }
     });
   }

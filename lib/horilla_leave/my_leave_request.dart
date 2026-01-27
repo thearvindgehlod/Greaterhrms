@@ -171,13 +171,11 @@ class _MyLeaveRequest extends State<MyLeaveRequest>
       ]);
 
       if (mounted) {
-        setState(() {
-        });
+        setState(() {});
       }
     } catch (e) {
       if (mounted) {
-        setState(() {
-        });
+        setState(() {});
       }
     }
   }
@@ -2064,8 +2062,7 @@ class _MyLeaveRequest extends State<MyLeaveRequest>
                       style: ButtonStyle(
                         backgroundColor: WidgetStateProperty.all<Color>(
                             const Color(0xFF6B57F0)),
-                        shape:
-                            WidgetStateProperty.all<RoundedRectangleBorder>(
+                        shape: WidgetStateProperty.all<RoundedRectangleBorder>(
                           RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(6.0),
                           ),
@@ -3726,9 +3723,8 @@ class _MyLeaveRequest extends State<MyLeaveRequest>
                                                   backgroundColor:
                                                       WidgetStateProperty.all<
                                                           Color>(Colors.red),
-                                                  shape:
-                                                      WidgetStateProperty.all<
-                                                          RoundedRectangleBorder>(
+                                                  shape: WidgetStateProperty.all<
+                                                      RoundedRectangleBorder>(
                                                     RoundedRectangleBorder(
                                                       borderRadius:
                                                           BorderRadius.circular(

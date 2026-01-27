@@ -1036,8 +1036,7 @@ class _HourAccountFormPageState extends State<HourAccountFormPage> {
                       style: ButtonStyle(
                         backgroundColor: WidgetStateProperty.all<Color>(
                             const Color(0xFF6B57F0)),
-                        shape:
-                            WidgetStateProperty.all<RoundedRectangleBorder>(
+                        shape: WidgetStateProperty.all<RoundedRectangleBorder>(
                           RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(6.0),
                           ),
@@ -1496,8 +1495,7 @@ class _HourAccountFormPageState extends State<HourAccountFormPage> {
                       style: ButtonStyle(
                         backgroundColor: WidgetStateProperty.all<Color>(
                             const Color(0xFF6B57F0)),
-                        shape:
-                            WidgetStateProperty.all<RoundedRectangleBorder>(
+                        shape: WidgetStateProperty.all<RoundedRectangleBorder>(
                           RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(6.0),
                           ),
@@ -1926,9 +1924,8 @@ class _HourAccountFormPageState extends State<HourAccountFormPage> {
                                                   backgroundColor:
                                                       WidgetStateProperty.all<
                                                           Color>(Colors.red),
-                                                  shape:
-                                                      WidgetStateProperty.all<
-                                                          RoundedRectangleBorder>(
+                                                  shape: WidgetStateProperty.all<
+                                                      RoundedRectangleBorder>(
                                                     RoundedRectangleBorder(
                                                       borderRadius:
                                                           BorderRadius.circular(

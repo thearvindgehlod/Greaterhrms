@@ -126,7 +126,7 @@ class _FaceScannerState extends State<FaceScanner>
         imageUrl = '$cleanedServerUrl/$cleanedPath';
       } else {
         cleanedPath =
-          imagePath.startsWith('/') ? imagePath.substring(1) : imagePath;
+            imagePath.startsWith('/') ? imagePath.substring(1) : imagePath;
         imageUrl = '$cleanedServerUrl/media/$cleanedPath';
       }
 
@@ -265,7 +265,8 @@ class _FaceScannerState extends State<FaceScanner>
               if (mounted) {
                 Navigator.pushReplacement(
                   context,
-                  MaterialPageRoute(builder: (_) => const CheckInCheckOutFormPage()),
+                  MaterialPageRoute(
+                      builder: (_) => const CheckInCheckOutFormPage()),
                 );
               }
             },

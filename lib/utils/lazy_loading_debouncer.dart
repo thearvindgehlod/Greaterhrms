@@ -2,19 +2,19 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 
 /// Search Debouncer for Real-Time Search
-/// 
+///
 /// Debounces search input to avoid excessive API calls
-/// 
+///
 /// Usage:
 /// ```dart
 /// final _searchDebouncer = SearchDebouncer(
 ///   onSearch: (query) => _controller.searchEmployees(query),
 ///   delay: Duration(milliseconds: 300),
 /// );
-/// 
+///
 /// // In TextField:
 /// onChanged: (value) => _searchDebouncer.run(value),
-/// 
+///
 /// // Don't forget to dispose:
 /// @override
 /// void dispose() {
@@ -64,9 +64,9 @@ class SearchDebouncer {
 }
 
 /// Lazy List Loader for Pagination
-/// 
+///
 /// Handles automatic pagination on scroll
-/// 
+///
 /// Usage:
 /// ```dart
 /// final _lazyLoader = LazyListLoader(
@@ -74,7 +74,7 @@ class SearchDebouncer {
 ///   pageSize: 20,
 ///   onLoadMore: (page) => _controller.loadEmployees(page: page),
 /// );
-/// 
+///
 /// // In ListView.builder:
 /// itemCount: _lazyLoader.totalItems,
 /// onLoad: () => _lazyLoader.loadMoreIfNeeded(),
@@ -131,9 +131,9 @@ class LazyListLoader {
 }
 
 /// Infinite Scroll Listener
-/// 
+///
 /// ListView wrapper that automatically loads more data on scroll
-/// 
+///
 /// Usage:
 /// ```dart
 /// InfiniteScrollListener(
@@ -230,9 +230,9 @@ class _InfiniteScrollListenerState extends State<InfiniteScrollListener> {
 }
 
 /// Debounced Text Field Widget
-/// 
+///
 /// TextField with built-in debouncing for search
-/// 
+///
 /// Usage:
 /// ```dart
 /// DebouncedSearchField(

@@ -83,13 +83,11 @@ class _AllAssignedLeave extends State<AllAssignedLeave> {
       ]);
 
       if (mounted) {
-        setState(() {
-        });
+        setState(() {});
       }
     } catch (e) {
       if (mounted) {
-        setState(() {
-        });
+        setState(() {});
       }
     }
   }
@@ -545,9 +543,8 @@ class _AllAssignedLeave extends State<AllAssignedLeave> {
                                 showAssignAnimation();
                               },
                               style: ButtonStyle(
-                                backgroundColor:
-                                    WidgetStateProperty.all<Color>(
-                                        const Color(0xFF6B57F0)),
+                                backgroundColor: WidgetStateProperty.all<Color>(
+                                    const Color(0xFF6B57F0)),
                                 shape: WidgetStateProperty.all<
                                     RoundedRectangleBorder>(
                                   RoundedRectangleBorder(

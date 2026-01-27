@@ -2115,9 +2115,8 @@ class _WorkTypeRequestPageState extends State<WorkTypeRequestPage>
                                                 backgroundColor:
                                                     WidgetStateProperty.all<
                                                         Color>(Colors.red),
-                                                shape:
-                                                    WidgetStateProperty.all<
-                                                        RoundedRectangleBorder>(
+                                                shape: WidgetStateProperty.all<
+                                                    RoundedRectangleBorder>(
                                                   RoundedRectangleBorder(
                                                     borderRadius:
                                                         BorderRadius.circular(
@@ -2235,9 +2234,8 @@ class _WorkTypeRequestPageState extends State<WorkTypeRequestPage>
                                                 backgroundColor:
                                                     WidgetStateProperty.all<
                                                         Color>(Colors.green),
-                                                shape:
-                                                    WidgetStateProperty.all<
-                                                        RoundedRectangleBorder>(
+                                                shape: WidgetStateProperty.all<
+                                                    RoundedRectangleBorder>(
                                                   RoundedRectangleBorder(
                                                     borderRadius:
                                                         BorderRadius.circular(
@@ -2363,9 +2361,8 @@ class _WorkTypeRequestPageState extends State<WorkTypeRequestPage>
                                                 backgroundColor:
                                                     WidgetStateProperty.all<
                                                         Color>(Colors.red),
-                                                shape:
-                                                    WidgetStateProperty.all<
-                                                        RoundedRectangleBorder>(
+                                                shape: WidgetStateProperty.all<
+                                                    RoundedRectangleBorder>(
                                                   RoundedRectangleBorder(
                                                     borderRadius:
                                                         BorderRadius.circular(
@@ -2727,12 +2724,10 @@ class _WorkTypeRequestPageState extends State<WorkTypeRequestPage>
                                                   },
                                                   style: ButtonStyle(
                                                     backgroundColor:
-                                                        WidgetStateProperty
-                                                            .all<Color>(
-                                                                Colors.red),
-                                                    shape: WidgetStateProperty
-                                                        .all<
-                                                            RoundedRectangleBorder>(
+                                                        WidgetStateProperty.all<
+                                                            Color>(Colors.red),
+                                                    shape: WidgetStateProperty.all<
+                                                        RoundedRectangleBorder>(
                                                       RoundedRectangleBorder(
                                                         borderRadius:
                                                             BorderRadius

@@ -1,23 +1,23 @@
 import 'package:flutter/material.dart';
 
 /// Const Widget Optimization Guide
-/// 
+///
 /// This utility provides optimized const widgets that can be used
 /// throughout the application to reduce unnecessary rebuilds.
-/// 
+///
 /// Best practices:
 /// 1. Mark all widgets as const when possible
 /// 2. Extract child widgets to separate const classes
 /// 3. Use ValueKey for list items with unique identifiers
 /// 4. Separate mutable and immutable widgets
-/// 
+///
 /// Performance impact:
 /// - const widgets: 0% rebuild
 /// - optimized rebuild: 5-10% rebuild
 /// - non-optimized: 80%+ rebuild on parent change
 
 /// Optimized Empty State Widget
-/// 
+///
 /// Usage:
 /// ```dart
 /// if (items.isEmpty) {
@@ -83,7 +83,7 @@ class EmptyStateWidget extends StatelessWidget {
 }
 
 /// Optimized Loading Widget
-/// 
+///
 /// Usage:
 /// ```dart
 /// if (isLoading) {
@@ -129,7 +129,7 @@ class LoadingWidget extends StatelessWidget {
 }
 
 /// Optimized Error Widget
-/// 
+///
 /// Usage:
 /// ```dart
 /// if (error != null) {
@@ -211,7 +211,7 @@ class OptimizedDivider extends StatelessWidget {
 }
 
 /// Optimized Spacing Widget
-/// 
+///
 /// Usage:
 /// ```dart
 /// const Spacing.v8(),   // Vertical 8px
@@ -264,7 +264,7 @@ class Spacing extends StatelessWidget {
 }
 
 /// Optimized Section Header Widget
-/// 
+///
 /// Usage:
 /// ```dart
 /// const SectionHeader(
@@ -310,7 +310,7 @@ class SectionHeader extends StatelessWidget {
 }
 
 /// Optimized Card Widget
-/// 
+///
 /// Usage:
 /// ```dart
 /// const OptimizedCard(
@@ -345,7 +345,7 @@ class OptimizedCard extends StatelessWidget {
 }
 
 /// Optimized Badge Widget
-/// 
+///
 /// Usage:
 /// ```dart
 /// const BadgeWidget(
@@ -386,7 +386,7 @@ class BadgeWidget extends StatelessWidget {
 }
 
 /// Optimized Status Indicator
-/// 
+///
 /// Usage:
 /// ```dart
 /// const StatusIndicator(

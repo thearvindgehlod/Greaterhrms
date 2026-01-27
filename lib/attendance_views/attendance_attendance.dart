@@ -4924,152 +4924,143 @@ class _AttendanceAttendance extends State<AttendanceAttendance>
                         ),
                       ),
                       Row(
-                              mainAxisAlignment: MainAxisAlignment.end,
-                              children: [
-                                Container(
-                                  decoration: BoxDecoration(
-                                    borderRadius: const BorderRadius.only(
-                                      topLeft: Radius.circular(15.0),
-                                      bottomLeft: Radius.circular(15.0),
-                                    ),
-                                    color: Colors.blue[100],
-                                  ),
-                                  child: Padding(
-                                    padding: const EdgeInsets.symmetric(
-                                        vertical: 0.0),
-                                    child: IconButton(
-                                      icon: const Icon(
-                                        Icons.edit,
-                                        size: 18.0,
-                                        color: Colors.blue,
-                                      ),
-                                      onPressed: () {
-                                        setState(() {
-                                          isSaveClick = true;
-                                          _errorMessage = null;
-                                          isAction = false;
-                                        });
-                                        _showValidateAttendance(
-                                            context, record);
-                                      },
-                                    ),
-                                  ),
-                                ),
-                                Container(
-                                  decoration: BoxDecoration(
-                                    borderRadius: const BorderRadius.only(
-                                      topRight: Radius.circular(15.0),
-                                      bottomRight: Radius.circular(15.0),
-                                    ),
-                                    color: Colors.red[100],
-                                  ),
-                                  child: Padding(
-                                    padding: const EdgeInsets.symmetric(
-                                        vertical: 0.0),
-                                    child: IconButton(
-                                      icon: const Icon(
-                                        Icons.delete,
-                                        size: 18.0,
-                                        color: Color(0xFF6B57F0),
-                                      ),
-                                      onPressed: () async {
-                                        isSaveClick = true;
-                                        await showDialog(
-                                          context: context,
-                                          builder: (BuildContext context) {
-                                            return AlertDialog(
-                                              backgroundColor: Colors.white,
-                                              title: Row(
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment
-                                                        .spaceBetween,
-                                                children: [
-                                                  const Text(
-                                                    "Confirmation",
-                                                    style: TextStyle(
-                                                      fontWeight:
-                                                          FontWeight.bold,
-                                                      color: Colors.black,
-                                                    ),
-                                                  ),
-                                                  IconButton(
-                                                    icon:
-                                                        const Icon(Icons.close),
-                                                    onPressed: () {
-                                                      Navigator.of(context)
-                                                          .pop(true);
-                                                    },
-                                                  ),
-                                                ],
-                                              ),
-                                              content: SizedBox(
-                                                height: MediaQuery.of(context)
-                                                        .size
-                                                        .height *
-                                                    0.1,
-                                                child: const Center(
-                                                  child: Text(
-                                                    "Are you sure you want to delete this attendance?",
-                                                    style: TextStyle(
-                                                      fontWeight:
-                                                          FontWeight.bold,
-                                                      color: Colors.black,
-                                                      fontSize: 17,
-                                                    ),
-                                                  ),
-                                                ),
-                                              ),
-                                              actions: [
-                                                SizedBox(
-                                                  width: double.infinity,
-                                                  child: ElevatedButton(
-                                                    onPressed: () async {
-                                                      if (isSaveClick == true) {
-                                                        isSaveClick = false;
-                                                        Map<String, dynamic>
-                                                            deletedDetails = {
-                                                          'id': record['id'],
-                                                        };
-                                                        await deleteNonValidatedAttendance(
-                                                            deletedDetails);
-                                                        Navigator.of(context)
-                                                            .pop(true);
-                                                        showDeleteAnimation();
-                                                      }
-                                                    },
-                                                    style: ButtonStyle(
-                                                      backgroundColor:
-                                                          WidgetStateProperty
-                                                              .all<Color>(
-                                                                  Colors.red),
-                                                      shape: WidgetStateProperty
-                                                          .all<
-                                                              RoundedRectangleBorder>(
-                                                        RoundedRectangleBorder(
-                                                          borderRadius:
-                                                              BorderRadius
-                                                                  .circular(
-                                                                      8.0),
-                                                        ),
-                                                      ),
-                                                    ),
-                                                    child: const Text(
-                                                      "Continue",
-                                                      style: TextStyle(
-                                                          color: Colors.white),
-                                                    ),
-                                                  ),
-                                                ),
-                                              ],
-                                            );
-                                          },
-                                        );
-                                      },
-                                    ),
-                                  ),
-                                ),
-                              ],
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: [
+                          Container(
+                            decoration: BoxDecoration(
+                              borderRadius: const BorderRadius.only(
+                                topLeft: Radius.circular(15.0),
+                                bottomLeft: Radius.circular(15.0),
+                              ),
+                              color: Colors.blue[100],
                             ),
+                            child: Padding(
+                              padding:
+                                  const EdgeInsets.symmetric(vertical: 0.0),
+                              child: IconButton(
+                                icon: const Icon(
+                                  Icons.edit,
+                                  size: 18.0,
+                                  color: Colors.blue,
+                                ),
+                                onPressed: () {
+                                  setState(() {
+                                    isSaveClick = true;
+                                    _errorMessage = null;
+                                    isAction = false;
+                                  });
+                                  _showValidateAttendance(context, record);
+                                },
+                              ),
+                            ),
+                          ),
+                          Container(
+                            decoration: BoxDecoration(
+                              borderRadius: const BorderRadius.only(
+                                topRight: Radius.circular(15.0),
+                                bottomRight: Radius.circular(15.0),
+                              ),
+                              color: Colors.red[100],
+                            ),
+                            child: Padding(
+                              padding:
+                                  const EdgeInsets.symmetric(vertical: 0.0),
+                              child: IconButton(
+                                icon: const Icon(
+                                  Icons.delete,
+                                  size: 18.0,
+                                  color: Color(0xFF6B57F0),
+                                ),
+                                onPressed: () async {
+                                  isSaveClick = true;
+                                  await showDialog(
+                                    context: context,
+                                    builder: (BuildContext context) {
+                                      return AlertDialog(
+                                        backgroundColor: Colors.white,
+                                        title: Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceBetween,
+                                          children: [
+                                            const Text(
+                                              "Confirmation",
+                                              style: TextStyle(
+                                                fontWeight: FontWeight.bold,
+                                                color: Colors.black,
+                                              ),
+                                            ),
+                                            IconButton(
+                                              icon: const Icon(Icons.close),
+                                              onPressed: () {
+                                                Navigator.of(context).pop(true);
+                                              },
+                                            ),
+                                          ],
+                                        ),
+                                        content: SizedBox(
+                                          height: MediaQuery.of(context)
+                                                  .size
+                                                  .height *
+                                              0.1,
+                                          child: const Center(
+                                            child: Text(
+                                              "Are you sure you want to delete this attendance?",
+                                              style: TextStyle(
+                                                fontWeight: FontWeight.bold,
+                                                color: Colors.black,
+                                                fontSize: 17,
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                        actions: [
+                                          SizedBox(
+                                            width: double.infinity,
+                                            child: ElevatedButton(
+                                              onPressed: () async {
+                                                if (isSaveClick == true) {
+                                                  isSaveClick = false;
+                                                  Map<String, dynamic>
+                                                      deletedDetails = {
+                                                    'id': record['id'],
+                                                  };
+                                                  await deleteNonValidatedAttendance(
+                                                      deletedDetails);
+                                                  Navigator.of(context)
+                                                      .pop(true);
+                                                  showDeleteAnimation();
+                                                }
+                                              },
+                                              style: ButtonStyle(
+                                                backgroundColor:
+                                                    WidgetStateProperty.all<
+                                                        Color>(Colors.red),
+                                                shape: WidgetStateProperty.all<
+                                                    RoundedRectangleBorder>(
+                                                  RoundedRectangleBorder(
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            8.0),
+                                                  ),
+                                                ),
+                                              ),
+                                              child: const Text(
+                                                "Continue",
+                                                style: TextStyle(
+                                                    color: Colors.white),
+                                              ),
+                                            ),
+                                          ),
+                                        ],
+                                      );
+                                    },
+                                  );
+                                },
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
                     ],
                   ),
                   SizedBox(height: MediaQuery.of(context).size.height * 0.005),
@@ -5679,8 +5670,7 @@ class _AttendanceAttendance extends State<AttendanceAttendance>
                                   icon: const Icon(
                                     Icons.delete,
                                     size: 18.0, // Reduce icon size
-                                    color: Color(
-                                        0xFF6B57F0), // Set icon color
+                                    color: Color(0xFF6B57F0), // Set icon color
                                   ),
                                   onPressed: () async {
                                     isSaveClick = true;
@@ -5747,9 +5737,8 @@ class _AttendanceAttendance extends State<AttendanceAttendance>
                                                   backgroundColor:
                                                       WidgetStateProperty.all<
                                                           Color>(Colors.red),
-                                                  shape:
-                                                      WidgetStateProperty.all<
-                                                          RoundedRectangleBorder>(
+                                                  shape: WidgetStateProperty.all<
+                                                      RoundedRectangleBorder>(
                                                     RoundedRectangleBorder(
                                                       borderRadius:
                                                           BorderRadius.circular(
@@ -6307,4 +6296,3 @@ class _TimeInputFormatter extends TextInputFormatter {
     return newValue;
   }
 }
-

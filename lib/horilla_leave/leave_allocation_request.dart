@@ -140,13 +140,11 @@ class _LeaveAllocationRequest extends State<LeaveAllocationRequest>
       }
 
       if (mounted) {
-        setState(() {
-        });
+        setState(() {});
       }
     } catch (e) {
       if (mounted) {
-        setState(() {
-        });
+        setState(() {});
       }
     }
   }
@@ -3411,9 +3409,8 @@ class _LeaveAllocationRequest extends State<LeaveAllocationRequest>
                                                 backgroundColor:
                                                     WidgetStateProperty.all<
                                                         Color>(Colors.red),
-                                                shape:
-                                                    WidgetStateProperty.all<
-                                                        RoundedRectangleBorder>(
+                                                shape: WidgetStateProperty.all<
+                                                    RoundedRectangleBorder>(
                                                   RoundedRectangleBorder(
                                                     borderRadius:
                                                         BorderRadius.circular(
@@ -3840,9 +3837,8 @@ class _LeaveAllocationRequest extends State<LeaveAllocationRequest>
                                                 backgroundColor:
                                                     WidgetStateProperty.all<
                                                         Color>(Colors.red),
-                                                shape:
-                                                    WidgetStateProperty.all<
-                                                        RoundedRectangleBorder>(
+                                                shape: WidgetStateProperty.all<
+                                                    RoundedRectangleBorder>(
                                                   RoundedRectangleBorder(
                                                     borderRadius:
                                                         BorderRadius.circular(
@@ -3932,9 +3928,8 @@ class _LeaveAllocationRequest extends State<LeaveAllocationRequest>
                                                 backgroundColor:
                                                     WidgetStateProperty.all<
                                                         Color>(Colors.green),
-                                                shape:
-                                                    WidgetStateProperty.all<
-                                                        RoundedRectangleBorder>(
+                                                shape: WidgetStateProperty.all<
+                                                    RoundedRectangleBorder>(
                                                   RoundedRectangleBorder(
                                                     borderRadius:
                                                         BorderRadius.circular(
@@ -4200,9 +4195,8 @@ class _LeaveAllocationRequest extends State<LeaveAllocationRequest>
                                                   backgroundColor:
                                                       WidgetStateProperty.all<
                                                           Color>(Colors.red),
-                                                  shape:
-                                                      WidgetStateProperty.all<
-                                                          RoundedRectangleBorder>(
+                                                  shape: WidgetStateProperty.all<
+                                                      RoundedRectangleBorder>(
                                                     RoundedRectangleBorder(
                                                       borderRadius:
                                                           BorderRadius.circular(
@@ -4336,8 +4330,8 @@ class _LeaveAllocationRequest extends State<LeaveAllocationRequest>
                                           },
                                           style: ButtonStyle(
                                             backgroundColor:
-                                                WidgetStateProperty.all<
-                                                    Color>(Colors.red),
+                                                WidgetStateProperty.all<Color>(
+                                                    Colors.red),
                                             shape: WidgetStateProperty.all<
                                                 RoundedRectangleBorder>(
                                               RoundedRectangleBorder(
@@ -4431,9 +4425,8 @@ class _LeaveAllocationRequest extends State<LeaveAllocationRequest>
                                                   backgroundColor:
                                                       WidgetStateProperty.all<
                                                           Color>(Colors.green),
-                                                  shape:
-                                                      WidgetStateProperty.all<
-                                                          RoundedRectangleBorder>(
+                                                  shape: WidgetStateProperty.all<
+                                                      RoundedRectangleBorder>(
                                                     RoundedRectangleBorder(
                                                       borderRadius:
                                                           BorderRadius.circular(
@@ -4551,4 +4544,3 @@ class ImageViewer extends StatelessWidget {
     );
   }
 }
-
