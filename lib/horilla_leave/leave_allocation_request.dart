@@ -74,7 +74,6 @@ class _LeaveAllocationRequest extends State<LeaveAllocationRequest>
   bool permissionLeaveOverviewCheck = false;
   bool permissionMyLeaveRequestCheck = false;
   bool permissionLeaveAllocationCheck = false;
-  bool _isShimmer = true;
   XFile? pickedFile;
   String fileName = '';
   String filePath = '';
@@ -142,13 +141,11 @@ class _LeaveAllocationRequest extends State<LeaveAllocationRequest>
 
       if (mounted) {
         setState(() {
-          _isShimmer = false;
         });
       }
     } catch (e) {
       if (mounted) {
         setState(() {
-          _isShimmer = false;
         });
       }
     }
@@ -886,7 +883,7 @@ class _LeaveAllocationRequest extends State<LeaveAllocationRequest>
                               child: Text(
                                 _errorMessage ?? '',
                                 style: const TextStyle(
-                                    color: const Color(0xFF6B57F0),
+                                    color: Color(0xFF6B57F0),
                                     fontWeight: FontWeight.bold),
                               ),
                             ),
@@ -1250,10 +1247,10 @@ class _LeaveAllocationRequest extends State<LeaveAllocationRequest>
                           }
                         },
                         style: ButtonStyle(
-                          backgroundColor: MaterialStateProperty.all<Color>(
+                          backgroundColor: WidgetStateProperty.all<Color>(
                               const Color(0xFF6B57F0)),
                           shape:
-                              MaterialStateProperty.all<RoundedRectangleBorder>(
+                              WidgetStateProperty.all<RoundedRectangleBorder>(
                             RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(6.0),
                             ),
@@ -1322,7 +1319,7 @@ class _LeaveAllocationRequest extends State<LeaveAllocationRequest>
                       child: Text(
                         _errorMessage ?? '',
                         style: const TextStyle(
-                            color: const Color(0xFF6B57F0),
+                            color: Color(0xFF6B57F0),
                             fontWeight: FontWeight.bold),
                       ),
                     ),
@@ -1584,8 +1581,8 @@ class _LeaveAllocationRequest extends State<LeaveAllocationRequest>
                 },
                 style: ButtonStyle(
                   backgroundColor:
-                      MaterialStateProperty.all<Color>(const Color(0xFF6B57F0)),
-                  shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                      WidgetStateProperty.all<Color>(const Color(0xFF6B57F0)),
+                  shape: WidgetStateProperty.all<RoundedRectangleBorder>(
                     RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(6.0),
                     ),
@@ -1611,7 +1608,7 @@ class _LeaveAllocationRequest extends State<LeaveAllocationRequest>
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text('No image selected'),
-          backgroundColor: const Color(0xFF6B57F0),
+          backgroundColor: Color(0xFF6B57F0),
         ),
       );
       return null;
@@ -1625,7 +1622,6 @@ class _LeaveAllocationRequest extends State<LeaveAllocationRequest>
 
     final prefs = await SharedPreferences.getInstance();
     var token = prefs.getString("token");
-    var employeeID = prefs.getInt("employee_id");
     var typedServerUrl = prefs.getString("typed_url");
 
     try {
@@ -2019,7 +2015,7 @@ class _LeaveAllocationRequest extends State<LeaveAllocationRequest>
                               child: Text(
                                 _errorMessage ?? '',
                                 style: const TextStyle(
-                                    color: const Color(0xFF6B57F0),
+                                    color: Color(0xFF6B57F0),
                                     fontWeight: FontWeight.bold),
                               ),
                             ),
@@ -2380,10 +2376,10 @@ class _LeaveAllocationRequest extends State<LeaveAllocationRequest>
                           }
                         },
                         style: ButtonStyle(
-                          backgroundColor: MaterialStateProperty.all<Color>(
+                          backgroundColor: WidgetStateProperty.all<Color>(
                               const Color(0xFF6B57F0)),
                           shape:
-                              MaterialStateProperty.all<RoundedRectangleBorder>(
+                              WidgetStateProperty.all<RoundedRectangleBorder>(
                             RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(6.0),
                             ),
@@ -2643,7 +2639,7 @@ class _LeaveAllocationRequest extends State<LeaveAllocationRequest>
   Widget shimmerListTile() {
     return Shimmer.fromColors(
       baseColor: Colors.grey[300]!,
-      highlightColor: Colors.white!,
+      highlightColor: Colors.white,
       child: ListTile(
         title: Container(
           width: double.infinity,
@@ -2686,7 +2682,7 @@ class _LeaveAllocationRequest extends State<LeaveAllocationRequest>
                   elevation: 0,
                   child: Shimmer.fromColors(
                     baseColor: Colors.grey[300]!,
-                    highlightColor: Colors.white!,
+                    highlightColor: Colors.white,
                     child: Container(
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(4.0),
@@ -3353,7 +3349,7 @@ class _LeaveAllocationRequest extends State<LeaveAllocationRequest>
                                 icon: const Icon(
                                   Icons.delete,
                                   size: 18.0,
-                                  color: const Color(0xFF6B57F0),
+                                  color: Color(0xFF6B57F0),
                                 ),
                                 onPressed: () async {
                                   isSaveClick = true;
@@ -3413,10 +3409,10 @@ class _LeaveAllocationRequest extends State<LeaveAllocationRequest>
                                               },
                                               style: ButtonStyle(
                                                 backgroundColor:
-                                                    MaterialStateProperty.all<
+                                                    WidgetStateProperty.all<
                                                         Color>(Colors.red),
                                                 shape:
-                                                    MaterialStateProperty.all<
+                                                    WidgetStateProperty.all<
                                                         RoundedRectangleBorder>(
                                                   RoundedRectangleBorder(
                                                     borderRadius:
@@ -3527,8 +3523,8 @@ class _LeaveAllocationRequest extends State<LeaveAllocationRequest>
   }
 
   Widget _buildLoader() {
-    return Padding(
-      padding: const EdgeInsets.all(8.0),
+    return const Padding(
+      padding: EdgeInsets.all(8.0),
       child: Center(
         child: CircularProgressIndicator(),
       ),
@@ -3842,10 +3838,10 @@ class _LeaveAllocationRequest extends State<LeaveAllocationRequest>
                                               },
                                               style: ButtonStyle(
                                                 backgroundColor:
-                                                    MaterialStateProperty.all<
+                                                    WidgetStateProperty.all<
                                                         Color>(Colors.red),
                                                 shape:
-                                                    MaterialStateProperty.all<
+                                                    WidgetStateProperty.all<
                                                         RoundedRectangleBorder>(
                                                   RoundedRectangleBorder(
                                                     borderRadius:
@@ -3934,10 +3930,10 @@ class _LeaveAllocationRequest extends State<LeaveAllocationRequest>
                                               },
                                               style: ButtonStyle(
                                                 backgroundColor:
-                                                    MaterialStateProperty.all<
+                                                    WidgetStateProperty.all<
                                                         Color>(Colors.green),
                                                 shape:
-                                                    MaterialStateProperty.all<
+                                                    WidgetStateProperty.all<
                                                         RoundedRectangleBorder>(
                                                   RoundedRectangleBorder(
                                                     borderRadius:
@@ -4140,7 +4136,7 @@ class _LeaveAllocationRequest extends State<LeaveAllocationRequest>
                                   icon: const Icon(
                                     Icons.delete,
                                     size: 18.0,
-                                    color: const Color(0xFF6B57F0),
+                                    color: Color(0xFF6B57F0),
                                   ),
                                   onPressed: () async {
                                     isSaveClick = true;
@@ -4202,10 +4198,10 @@ class _LeaveAllocationRequest extends State<LeaveAllocationRequest>
                                                 },
                                                 style: ButtonStyle(
                                                   backgroundColor:
-                                                      MaterialStateProperty.all<
+                                                      WidgetStateProperty.all<
                                                           Color>(Colors.red),
                                                   shape:
-                                                      MaterialStateProperty.all<
+                                                      WidgetStateProperty.all<
                                                           RoundedRectangleBorder>(
                                                     RoundedRectangleBorder(
                                                       borderRadius:
@@ -4340,9 +4336,9 @@ class _LeaveAllocationRequest extends State<LeaveAllocationRequest>
                                           },
                                           style: ButtonStyle(
                                             backgroundColor:
-                                                MaterialStateProperty.all<
+                                                WidgetStateProperty.all<
                                                     Color>(Colors.red),
-                                            shape: MaterialStateProperty.all<
+                                            shape: WidgetStateProperty.all<
                                                 RoundedRectangleBorder>(
                                               RoundedRectangleBorder(
                                                 borderRadius:
@@ -4433,10 +4429,10 @@ class _LeaveAllocationRequest extends State<LeaveAllocationRequest>
                                                 },
                                                 style: ButtonStyle(
                                                   backgroundColor:
-                                                      MaterialStateProperty.all<
+                                                      WidgetStateProperty.all<
                                                           Color>(Colors.green),
                                                   shape:
-                                                      MaterialStateProperty.all<
+                                                      WidgetStateProperty.all<
                                                           RoundedRectangleBorder>(
                                                     RoundedRectangleBorder(
                                                       borderRadius:
@@ -4555,3 +4551,4 @@ class ImageViewer extends StatelessWidget {
     );
   }
 }
+

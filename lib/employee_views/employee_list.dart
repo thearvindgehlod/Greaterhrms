@@ -35,7 +35,6 @@ class _EmployeeListPageState extends State<EmployeeListPage> {
   late String baseUrl = '';
   late String getToken = '';
   bool isLoading = true;
-  bool _isShimmer = true;
   bool hasMore = true;
   bool hasNoMore = false;
   String nextPage = '';
@@ -54,14 +53,12 @@ class _EmployeeListPageState extends State<EmployeeListPage> {
     ]).then((_) {
       if (mounted) {
         setState(() {
-          _isShimmer = false;
         });
       }
     }).catchError((e) {
       print('Error loading employee list: $e');
       if (mounted) {
         setState(() {
-          _isShimmer = false;
         });
       }
     });

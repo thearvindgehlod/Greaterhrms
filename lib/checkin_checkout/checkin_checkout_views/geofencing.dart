@@ -9,7 +9,6 @@ import 'package:flutter_map_marker_popup/flutter_map_marker_popup.dart';
 import 'package:flutter_map_animations/flutter_map_animations.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:geocoding/geocoding.dart';
-import '../../horilla_main/login.dart';
 
 class MapScreen extends StatefulWidget {
   const MapScreen({Key? key}) : super(key: key);
@@ -313,7 +312,7 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => HomePage(),
+            builder: (context) => const HomePage(),
           ),
         );
       }
@@ -384,7 +383,7 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => HomePage(),
+            builder: (context) => const HomePage(),
           ),
         );
       }
@@ -527,9 +526,9 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
                                     );
                                   }
                                 },
-                                child: Icon(
+                                child: const Icon(
                                   Icons.location_on,
-                                  color: const Color(0xFF6B57F0),
+                                  color: Color(0xFF6B57F0),
                                   size: 40.0,
                                 ),
                               ),
@@ -730,8 +729,8 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
               onPressed: () async {
                 Navigator.of(context).pop();
                 final prefs = await SharedPreferences.getInstance();
-                var geo_fencing = prefs.getBool("geo_fencing");
-                if (geo_fencing == true) {
+                var geoFencing = prefs.getBool("geo_fencing");
+                if (geoFencing == true) {
                   await updateGeoFenceLocation();
                 } else {
                   await createGeoFenceLocation();

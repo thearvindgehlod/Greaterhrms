@@ -118,20 +118,16 @@ class _FaceScannerState extends State<FaceScanner>
           ? typedServerUrl.substring(0, typedServerUrl.length - 1)
           : typedServerUrl;
 
+      final cleanedPath;
       if (faceDetectionImage != null) {
-        final cleanedPath = faceDetectionImage.startsWith('/')
+        cleanedPath = faceDetectionImage.startsWith('/')
             ? faceDetectionImage.substring(1)
             : faceDetectionImage;
         imageUrl = '$cleanedServerUrl/$cleanedPath';
-      } else if (imagePath != null) {
-        final cleanedPath =
-            imagePath.startsWith('/') ? imagePath.substring(1) : imagePath;
+      } else {
+        cleanedPath =
+          imagePath.startsWith('/') ? imagePath.substring(1) : imagePath;
         imageUrl = '$cleanedServerUrl/media/$cleanedPath';
-      }
-
-      if (imageUrl == null) {
-        if (mounted) showImageAlertDialog(context);
-        return;
       }
 
       debugPrint("🔎 Fetching biometric image: $imageUrl");
@@ -215,8 +211,9 @@ class _FaceScannerState extends State<FaceScanner>
         await Future.delayed(
             const Duration(milliseconds: 500)); // Increased delay
 
-        if (!mounted || !_controller.cameraController.value.isInitialized)
+        if (!mounted || !_controller.cameraController.value.isInitialized) {
           break;
+        }
 
         setState(() => _isComparing = true);
         final image = await _controller.captureImage();
@@ -268,7 +265,7 @@ class _FaceScannerState extends State<FaceScanner>
               if (mounted) {
                 Navigator.pushReplacement(
                   context,
-                  MaterialPageRoute(builder: (_) => CheckInCheckOutFormPage()),
+                  MaterialPageRoute(builder: (_) => const CheckInCheckOutFormPage()),
                 );
               }
             },

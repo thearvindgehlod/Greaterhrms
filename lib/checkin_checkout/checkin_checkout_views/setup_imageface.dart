@@ -2,7 +2,6 @@ import 'dart:convert';
 import 'dart:io';
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
-import 'package:Greaterchange/horilla_main/home.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 import 'package:image_picker/image_picker.dart';
@@ -12,7 +11,7 @@ import 'checkin_checkout_form.dart';
 class CameraSetupPage extends StatefulWidget {
   final List<CameraDescription> cameras;
 
-  const CameraSetupPage({required this.cameras});
+  const CameraSetupPage({super.key, required this.cameras});
 
   @override
   _CameraSetupPageState createState() => _CameraSetupPageState();
@@ -168,11 +167,11 @@ class _CameraSetupPageState extends State<CameraSetupPage> {
       print("=============================");
 
       if (response.statusCode == 201) {
-        var face_detection_image = jsonDecode(response.body)['image'];
-        print('face_detection_image : $face_detection_image');
+        var faceDetectionImage = jsonDecode(response.body)['image'];
+        print('face_detection_image : $faceDetectionImage');
         final prefs = await SharedPreferences.getInstance();
         await prefs.remove('face_detection_image');
-        await prefs.setString("face_detection_image", face_detection_image);
+        await prefs.setString("face_detection_image", faceDetectionImage);
         _showCreateAnimation(context);
       } else {
         _showErrorDialog(context,
@@ -230,7 +229,7 @@ class _CameraSetupPageState extends State<CameraSetupPage> {
 
     Future.delayed(const Duration(seconds: 2), () {
       Navigator.pushReplacement(context,
-          MaterialPageRoute(builder: (_) => CheckInCheckOutFormPage()));
+          MaterialPageRoute(builder: (_) => const CheckInCheckOutFormPage()));
     });
   }
 
@@ -278,7 +277,7 @@ class _CameraSetupPageState extends State<CameraSetupPage> {
     return WillPopScope(
       onWillPop: () async {
         Navigator.pushReplacement(context,
-            MaterialPageRoute(builder: (_) => CheckInCheckOutFormPage()));
+            MaterialPageRoute(builder: (_) => const CheckInCheckOutFormPage()));
         return false;
       },
       child: Scaffold(
@@ -402,7 +401,7 @@ class _CameraSetupPageState extends State<CameraSetupPage> {
                         label: const Text('Retake'),
                         style: OutlinedButton.styleFrom(
                           foregroundColor: Colors.red[700],
-                          side: BorderSide(color: Colors.red!),
+                          side: const BorderSide(color: Colors.red),
                           padding: const EdgeInsets.symmetric(
                               horizontal: 20, vertical: 12),
                           shape: RoundedRectangleBorder(
@@ -416,18 +415,18 @@ class _CameraSetupPageState extends State<CameraSetupPage> {
                             style: TextStyle(color: Colors.white)),
                         style: ButtonStyle(
                           backgroundColor:
-                              MaterialStateProperty.resolveWith((states) {
-                            if (states.contains(MaterialState.pressed)) {
+                              WidgetStateProperty.resolveWith((states) {
+                            if (states.contains(WidgetState.pressed)) {
                               return Colors.green.withOpacity(0.6);
                             }
                             return Colors.green;
                           }),
                           foregroundColor:
-                              MaterialStateProperty.all(Colors.white),
-                          padding: MaterialStateProperty.all(
+                              WidgetStateProperty.all(Colors.white),
+                          padding: WidgetStateProperty.all(
                               const EdgeInsets.symmetric(
                                   horizontal: 20, vertical: 12)),
-                          shape: MaterialStateProperty.all(
+                          shape: WidgetStateProperty.all(
                               RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(8))),
                         ),

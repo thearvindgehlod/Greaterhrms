@@ -346,7 +346,7 @@ class _LeaveOverview extends State<LeaveOverview>
                     onTap: () {
                       Navigator.push(
                         context,
-                        MaterialPageRoute(builder: (context) => LeaveRequest()),
+                        MaterialPageRoute(builder: (context) => const LeaveRequest()),
                       );
                     },
                     child: LayoutBuilder(

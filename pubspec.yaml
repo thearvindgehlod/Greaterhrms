@@ -87,6 +87,8 @@ dependencies:
   google_ml_kit: ^0.20.0
   flutter_face_api: ^7.1.325
 
+  intl: any
+  html: any
 dependency_overrides:
   flutter_keyboard_visibility: ^6.0.0
 

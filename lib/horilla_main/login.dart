@@ -37,7 +37,7 @@ class _LoginPageState extends State<LoginPage> {
 
   void _startNotificationTimer() {
     _notificationTimer?.cancel();
-    _notificationTimer = Timer.periodic(Duration(seconds: 10), (timer) {
+    _notificationTimer = Timer.periodic(const Duration(seconds: 10), (timer) {
       if (isAuthenticated) {
         fetchNotifications();
         unreadNotificationsCount();
@@ -57,7 +57,7 @@ class _LoginPageState extends State<LoginPage> {
       http.Response response = await http.post(
         Uri.parse(url),
         body: {'username': username, 'password': password},
-      ).timeout(Duration(seconds: 8));
+      ).timeout(const Duration(seconds: 8));
 
       if (response.statusCode == 200) {
         final responseBody = jsonDecode(response.body);
@@ -65,17 +65,17 @@ class _LoginPageState extends State<LoginPage> {
         var token = responseBody['access'] ?? '';
         var employeeId = responseBody['employee']?['id'] ?? 0;
         var companyId = responseBody['company_id'] ?? 0;
-        bool face_detection = responseBody['face_detection'] ?? false;
-        bool geo_fencing = responseBody['geo_fencing'] ?? false;
-        var face_detection_image =
+        bool faceDetection = responseBody['face_detection'] ?? false;
+        bool geoFencing = responseBody['geo_fencing'] ?? false;
+        var faceDetectionImage =
             responseBody['face_detection_image']?.toString() ?? '';
 
         final prefs = await SharedPreferences.getInstance();
         await prefs.setString("token", token);
         await prefs.setString("typed_url", fixedServerAddress);
-        await prefs.setString("face_detection_image", face_detection_image);
-        await prefs.setBool("face_detection", face_detection);
-        await prefs.setBool("geo_fencing", geo_fencing);
+        await prefs.setString("face_detection_image", faceDetectionImage);
+        await prefs.setBool("face_detection", faceDetection);
+        await prefs.setBool("geo_fencing", geoFencing);
         await prefs.setInt("employee_id", employeeId);
         await prefs.setInt("company_id", companyId);
 
@@ -88,7 +88,7 @@ class _LoginPageState extends State<LoginPage> {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
             content: Text('Invalid email or password'),
-            backgroundColor: const Color(0xFF6B57F0),
+            backgroundColor: Color(0xFF6B57F0),
           ),
         );
       }
@@ -96,14 +96,14 @@ class _LoginPageState extends State<LoginPage> {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text('Connection timeout'),
-          backgroundColor: const Color(0xFF6B57F0),
+          backgroundColor: Color(0xFF6B57F0),
         ),
       );
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text('Unable to reach server'),
-          backgroundColor: const Color(0xFF6B57F0),
+          backgroundColor: Color(0xFF6B57F0),
         ),
       );
     }
@@ -123,7 +123,7 @@ class _LoginPageState extends State<LoginPage> {
           height: double.infinity,
 
           /// 🔥 Background Image Added Here
-          decoration: BoxDecoration(
+          decoration: const BoxDecoration(
             image: DecorationImage(
               image: AssetImage("Assets/bg.png"), // <-- your local image
               fit: BoxFit.fill,
@@ -133,7 +133,7 @@ class _LoginPageState extends State<LoginPage> {
           child: Stack(
             children: [
               SingleChildScrollView(
-                physics: ClampingScrollPhysics(),
+                physics: const ClampingScrollPhysics(),
                 child: Padding(
                   padding: EdgeInsets.only(
                     top: MediaQuery.of(context).size.height * 0.15,
@@ -157,7 +157,7 @@ class _LoginPageState extends State<LoginPage> {
                         ),
                       ),
 
-                      SizedBox(height: 30),
+                      const SizedBox(height: 30),
 
                       /// LOGIN CARD
                       Container(
@@ -171,7 +171,7 @@ class _LoginPageState extends State<LoginPage> {
                               color: Colors.black.withOpacity(0.15),
                               spreadRadius: 2,
                               blurRadius: 5,
-                              offset: Offset(0, 3),
+                              offset: const Offset(0, 3),
                             ),
                           ],
                         ),
@@ -236,7 +236,7 @@ class _LoginPageState extends State<LoginPage> {
                         ),
                       ),
 
-                      SizedBox(height: 30),
+                      const SizedBox(height: 30),
                     ],
                   ),
                 ),
@@ -265,7 +265,7 @@ class _LoginPageState extends State<LoginPage> {
             color: Colors.grey[600],
           ),
         ),
-        SizedBox(height: 5),
+        const SizedBox(height: 5),
         TextFormField(
           controller: controller,
           obscureText: isPassword ? !(passwordVisible ?? false) : false,
@@ -273,7 +273,7 @@ class _LoginPageState extends State<LoginPage> {
             filled: true,
             fillColor: Colors.white,
             border: OutlineInputBorder(
-              borderSide: BorderSide(width: 1),
+              borderSide: const BorderSide(width: 1),
               borderRadius: BorderRadius.circular(8.0),
             ),
             suffixIcon: isPassword

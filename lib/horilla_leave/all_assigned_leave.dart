@@ -41,7 +41,6 @@ class _AllAssignedLeave extends State<AllAssignedLeave> {
   int maxCount = 5;
   bool isLoading = true;
   bool isAction = true;
-  bool _isShimmer = true;
   bool _isShimmerVisible = true;
   bool permissionLeaveTypeCheck = false;
   bool permissionLeaveAssignCheck = false;
@@ -85,13 +84,11 @@ class _AllAssignedLeave extends State<AllAssignedLeave> {
 
       if (mounted) {
         setState(() {
-          _isShimmer = false;
         });
       }
     } catch (e) {
       if (mounted) {
         setState(() {
-          _isShimmer = false;
         });
       }
     }
@@ -549,9 +546,9 @@ class _AllAssignedLeave extends State<AllAssignedLeave> {
                               },
                               style: ButtonStyle(
                                 backgroundColor:
-                                    MaterialStateProperty.all<Color>(
+                                    WidgetStateProperty.all<Color>(
                                         const Color(0xFF6B57F0)),
-                                shape: MaterialStateProperty.all<
+                                shape: WidgetStateProperty.all<
                                     RoundedRectangleBorder>(
                                   RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(6.0),
@@ -594,7 +591,7 @@ class _AllAssignedLeave extends State<AllAssignedLeave> {
             "leave_type_ids": [leaveId],
           });
 
-          var response = await http.post(uri,
+          await http.post(uri,
               headers: {
                 "Content-Type": "application/json",
                 "Authorization": "Bearer $token",
@@ -999,8 +996,6 @@ class _AllAssignedLeave extends State<AllAssignedLeave> {
     Map<String, List<Map<String, dynamic>>> leaveGroups = {};
     for (var record in filteredLeaveType) {
       final leaveName = record['leave_type_id']['name'] ?? 'Unnamed Leave Type';
-      final leaveIcon =
-          record['leave_type_id']['icon'] ?? Icons.calendar_month_outlined;
       leaveGroups.putIfAbsent(leaveName, () => []).add(record);
     }
 

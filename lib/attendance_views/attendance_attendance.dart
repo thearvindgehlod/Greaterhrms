@@ -628,7 +628,7 @@ class _AttendanceAttendance extends State<AttendanceAttendance>
       return requestsNonValidAttendance.where((record) {
         final firstName = record['employee_first_name']?.toString() ?? '';
         final lastName = record['employee_last_name']?.toString() ?? '';
-        final fullName = (firstName + ' ' + lastName).toLowerCase();
+        final fullName = ('$firstName $lastName').toLowerCase();
         return fullName.contains(searchText.toLowerCase());
       }).toList();
     }
@@ -641,7 +641,7 @@ class _AttendanceAttendance extends State<AttendanceAttendance>
       return requestsMyAttendance.where((record) {
         final firstName = record['employee_first_name']?.toString() ?? '';
         final lastName = record['employee_last_name']?.toString() ?? '';
-        final fullName = (firstName + ' ' + lastName).toLowerCase();
+        final fullName = ('$firstName $lastName').toLowerCase();
         return fullName.contains(searchText.toLowerCase());
       }).toList();
     }
@@ -654,7 +654,7 @@ class _AttendanceAttendance extends State<AttendanceAttendance>
       return requestsOvertimeAttendance.where((record) {
         final firstName = record['employee_first_name']?.toString() ?? '';
         final lastName = record['employee_last_name']?.toString() ?? '';
-        final fullName = (firstName + ' ' + lastName).toLowerCase();
+        final fullName = ('$firstName $lastName').toLowerCase();
         return fullName.contains(searchText.toLowerCase());
       }).toList();
     }
@@ -667,7 +667,7 @@ class _AttendanceAttendance extends State<AttendanceAttendance>
       return requestsValidatedAttendance.where((record) {
         final firstName = record['employee_first_name']?.toString() ?? '';
         final lastName = record['employee_last_name']?.toString() ?? '';
-        final fullName = (firstName + ' ' + lastName).toLowerCase();
+        final fullName = ('$firstName $lastName').toLowerCase();
         return fullName.contains(searchText.toLowerCase());
       }).toList();
     }
@@ -1251,7 +1251,7 @@ class _AttendanceAttendance extends State<AttendanceAttendance>
                               child: Text(
                                 _errorMessage ?? '',
                                 style: const TextStyle(
-                                    color: const Color(0xFF6B57F0),
+                                    color: Color(0xFF6B57F0),
                                     fontWeight: FontWeight.bold),
                               ),
                             ),
@@ -1760,10 +1760,10 @@ class _AttendanceAttendance extends State<AttendanceAttendance>
                           }
                         },
                         style: ButtonStyle(
-                          backgroundColor: MaterialStateProperty.all<Color>(
+                          backgroundColor: WidgetStateProperty.all<Color>(
                               const Color(0xFF6B57F0)),
                           shape:
-                              MaterialStateProperty.all<RoundedRectangleBorder>(
+                              WidgetStateProperty.all<RoundedRectangleBorder>(
                             RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(6.0),
                             ),
@@ -1848,7 +1848,7 @@ class _AttendanceAttendance extends State<AttendanceAttendance>
                               child: Text(
                                 _errorMessage ?? '',
                                 style: const TextStyle(
-                                    color: const Color(0xFF6B57F0),
+                                    color: Color(0xFF6B57F0),
                                     fontWeight: FontWeight.bold),
                               ),
                             ),
@@ -2359,10 +2359,10 @@ class _AttendanceAttendance extends State<AttendanceAttendance>
                           }
                         },
                         style: ButtonStyle(
-                          backgroundColor: MaterialStateProperty.all<Color>(
+                          backgroundColor: WidgetStateProperty.all<Color>(
                               const Color(0xFF6B57F0)),
                           shape:
-                              MaterialStateProperty.all<RoundedRectangleBorder>(
+                              WidgetStateProperty.all<RoundedRectangleBorder>(
                             RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(6.0),
                             ),
@@ -2425,7 +2425,7 @@ class _AttendanceAttendance extends State<AttendanceAttendance>
                               child: Text(
                                 _errorMessage ?? '',
                                 style: const TextStyle(
-                                    color: const Color(0xFF6B57F0),
+                                    color: Color(0xFF6B57F0),
                                     fontWeight: FontWeight.bold),
                               ),
                             ),
@@ -3133,10 +3133,10 @@ class _AttendanceAttendance extends State<AttendanceAttendance>
                           }
                         },
                         style: ButtonStyle(
-                          backgroundColor: MaterialStateProperty.all<Color>(
+                          backgroundColor: WidgetStateProperty.all<Color>(
                               const Color(0xFF6B57F0)),
                           shape:
-                              MaterialStateProperty.all<RoundedRectangleBorder>(
+                              WidgetStateProperty.all<RoundedRectangleBorder>(
                             RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(6.0),
                             ),
@@ -3389,7 +3389,7 @@ class _AttendanceAttendance extends State<AttendanceAttendance>
   Widget shimmerListTile() {
     return Shimmer.fromColors(
       baseColor: Colors.grey[300]!,
-      highlightColor: Colors.white!,
+      highlightColor: Colors.white,
       child: ListTile(
         title: Container(
           width: double.infinity,
@@ -3413,7 +3413,7 @@ class _AttendanceAttendance extends State<AttendanceAttendance>
                   elevation: 0,
                   child: Shimmer.fromColors(
                     baseColor: Colors.grey[300]!,
-                    highlightColor: Colors.white!,
+                    highlightColor: Colors.white,
                     child: Container(
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(4.0),
@@ -3460,7 +3460,7 @@ class _AttendanceAttendance extends State<AttendanceAttendance>
   Widget _buildTabBarShimmer() {
     return Shimmer.fromColors(
       baseColor: Colors.grey[300]!,
-      highlightColor: Colors.white!,
+      highlightColor: Colors.white,
       child: SingleChildScrollView(
         scrollDirection: Axis.horizontal,
         child: Row(
@@ -3704,7 +3704,7 @@ class _AttendanceAttendance extends State<AttendanceAttendance>
         itemBuilder: (context, index) {
           return Shimmer.fromColors(
             baseColor: Colors.grey[300]!,
-            highlightColor: Colors.white!,
+            highlightColor: Colors.white,
             child: Container(
               padding: const EdgeInsets.all(8.0),
               child: Container(
@@ -3779,7 +3779,7 @@ class _AttendanceAttendance extends State<AttendanceAttendance>
         itemBuilder: (context, index) {
           return Shimmer.fromColors(
             baseColor: Colors.grey[300]!,
-            highlightColor: Colors.white!,
+            highlightColor: Colors.white,
             child: Container(
               padding: const EdgeInsets.all(8.0),
               child: Container(
@@ -3854,7 +3854,7 @@ class _AttendanceAttendance extends State<AttendanceAttendance>
         itemBuilder: (context, index) {
           return Shimmer.fromColors(
             baseColor: Colors.grey[300]!,
-            highlightColor: Colors.white!,
+            highlightColor: Colors.white,
             child: Container(
               padding: const EdgeInsets.all(8.0),
               child: Container(
@@ -3929,7 +3929,7 @@ class _AttendanceAttendance extends State<AttendanceAttendance>
         itemBuilder: (context, index) {
           return Shimmer.fromColors(
             baseColor: Colors.grey[300]!,
-            highlightColor: Colors.white!,
+            highlightColor: Colors.white,
             child: Container(
               padding: const EdgeInsets.all(8.0),
               child: Container(
@@ -4781,9 +4781,9 @@ class _AttendanceAttendance extends State<AttendanceAttendance>
                                   },
                                   style: ButtonStyle(
                                     backgroundColor:
-                                        MaterialStateProperty.all<Color>(
+                                        WidgetStateProperty.all<Color>(
                                             Colors.green),
-                                    shape: MaterialStateProperty.all<
+                                    shape: WidgetStateProperty.all<
                                         RoundedRectangleBorder>(
                                       RoundedRectangleBorder(
                                         borderRadius:
@@ -4923,8 +4923,7 @@ class _AttendanceAttendance extends State<AttendanceAttendance>
                           ],
                         ),
                       ),
-                      managerCheck != null
-                          ? Row(
+                      Row(
                               mainAxisAlignment: MainAxisAlignment.end,
                               children: [
                                 Container(
@@ -4971,7 +4970,7 @@ class _AttendanceAttendance extends State<AttendanceAttendance>
                                       icon: const Icon(
                                         Icons.delete,
                                         size: 18.0,
-                                        color: const Color(0xFF6B57F0),
+                                        color: Color(0xFF6B57F0),
                                       ),
                                       onPressed: () async {
                                         isSaveClick = true;
@@ -5040,10 +5039,10 @@ class _AttendanceAttendance extends State<AttendanceAttendance>
                                                     },
                                                     style: ButtonStyle(
                                                       backgroundColor:
-                                                          MaterialStateProperty
+                                                          WidgetStateProperty
                                                               .all<Color>(
                                                                   Colors.red),
-                                                      shape: MaterialStateProperty
+                                                      shape: WidgetStateProperty
                                                           .all<
                                                               RoundedRectangleBorder>(
                                                         RoundedRectangleBorder(
@@ -5065,41 +5064,6 @@ class _AttendanceAttendance extends State<AttendanceAttendance>
                                             );
                                           },
                                         );
-                                      },
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            )
-                          : Row(
-                              mainAxisAlignment: MainAxisAlignment.end,
-                              children: [
-                                Container(
-                                  decoration: BoxDecoration(
-                                    borderRadius: const BorderRadius.only(
-                                      topLeft: Radius.circular(15.0),
-                                      bottomLeft: Radius.circular(15.0),
-                                    ),
-                                    color: Colors.blue[
-                                        100], // Blue background for edit icon
-                                  ),
-                                  child: Padding(
-                                    padding: const EdgeInsets.symmetric(
-                                        vertical: 0.0),
-                                    child: IconButton(
-                                      icon: const Icon(
-                                        Icons.edit,
-                                        size: 18.0, // Reduce icon size
-                                        color: Colors.blue, // Set icon color
-                                      ),
-                                      onPressed: () {
-                                        setState(() {
-                                          isSaveClick = true;
-                                          _errorMessage = null;
-                                          isAction = false;
-                                        });
-                                        _showValidateAttendance(
-                                            context, record);
                                       },
                                     ),
                                   ),
@@ -5203,9 +5167,9 @@ class _AttendanceAttendance extends State<AttendanceAttendance>
                                       },
                                       style: ButtonStyle(
                                         backgroundColor:
-                                            MaterialStateProperty.all<Color>(
+                                            WidgetStateProperty.all<Color>(
                                                 Colors.green),
-                                        shape: MaterialStateProperty.all<
+                                        shape: WidgetStateProperty.all<
                                             RoundedRectangleBorder>(
                                           RoundedRectangleBorder(
                                             borderRadius:
@@ -5522,9 +5486,9 @@ class _AttendanceAttendance extends State<AttendanceAttendance>
                                         },
                                         style: ButtonStyle(
                                           backgroundColor:
-                                              MaterialStateProperty.all<Color>(
+                                              WidgetStateProperty.all<Color>(
                                                   Colors.green),
-                                          shape: MaterialStateProperty.all<
+                                          shape: WidgetStateProperty.all<
                                               RoundedRectangleBorder>(
                                             RoundedRectangleBorder(
                                               borderRadius:
@@ -5715,7 +5679,7 @@ class _AttendanceAttendance extends State<AttendanceAttendance>
                                   icon: const Icon(
                                     Icons.delete,
                                     size: 18.0, // Reduce icon size
-                                    color: const Color(
+                                    color: Color(
                                         0xFF6B57F0), // Set icon color
                                   ),
                                   onPressed: () async {
@@ -5781,10 +5745,10 @@ class _AttendanceAttendance extends State<AttendanceAttendance>
                                                 },
                                                 style: ButtonStyle(
                                                   backgroundColor:
-                                                      MaterialStateProperty.all<
+                                                      WidgetStateProperty.all<
                                                           Color>(Colors.red),
                                                   shape:
-                                                      MaterialStateProperty.all<
+                                                      WidgetStateProperty.all<
                                                           RoundedRectangleBorder>(
                                                     RoundedRectangleBorder(
                                                       borderRadius:
@@ -5910,9 +5874,9 @@ class _AttendanceAttendance extends State<AttendanceAttendance>
                                         },
                                         style: ButtonStyle(
                                           backgroundColor:
-                                              MaterialStateProperty.all<Color>(
+                                              WidgetStateProperty.all<Color>(
                                                   Colors.green),
-                                          shape: MaterialStateProperty.all<
+                                          shape: WidgetStateProperty.all<
                                               RoundedRectangleBorder>(
                                             RoundedRectangleBorder(
                                               borderRadius:
@@ -6343,3 +6307,4 @@ class _TimeInputFormatter extends TextInputFormatter {
     return newValue;
   }
 }
+

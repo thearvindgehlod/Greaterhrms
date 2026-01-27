@@ -1,17 +1,16 @@
-import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
 
 class ConnectivityBanner extends StatefulWidget {
   final Widget child;
 
-  ConnectivityBanner({required this.child});
+  const ConnectivityBanner({super.key, required this.child});
 
   @override
   _ConnectivityBannerState createState() => _ConnectivityBannerState();
 }
 
 class _ConnectivityBannerState extends State<ConnectivityBanner> {
-  bool _isOffline = false;
+  final bool _isOffline = false;
 
   @override
   void initState() {
@@ -31,8 +30,8 @@ class _ConnectivityBannerState extends State<ConnectivityBanner> {
           Container(
             color: const Color(0xFF6B57F0),
             width: double.infinity,
-            padding: EdgeInsets.all(10),
-            child: Text(
+            padding: const EdgeInsets.all(10),
+            child: const Text(
               'No Internet Connection',
               style: TextStyle(color: Colors.white),
               textAlign: TextAlign.center,

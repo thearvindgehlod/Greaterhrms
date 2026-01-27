@@ -48,7 +48,6 @@ class _MyLeaveRequest extends State<MyLeaveRequest>
   bool permissionLeaveOverviewCheck = false;
   bool permissionMyLeaveRequestCheck = false;
   bool permissionLeaveAllocationCheck = false;
-  bool _isShimmer = true;
   bool checkfile = false;
   bool dateCheckError = false;
   bool dateBreakDownError = false;
@@ -61,7 +60,6 @@ class _MyLeaveRequest extends State<MyLeaveRequest>
   bool _validateStartDateBreakdown = false;
   bool _validateEndDateBreakdown = false;
   bool _validateDescription = false;
-  bool _validateAttachment = false;
   bool _validateEndDate = false;
   bool userCheck = false;
   bool allocationCheck = false;
@@ -83,14 +81,7 @@ class _MyLeaveRequest extends State<MyLeaveRequest>
   bool hasMore = true;
   late String getToken = '';
 
-  // Button loading states
-  bool _isCreateLeaveLoading = false;
-  bool _isUpdateLeaveLoading = false;
-  bool _isDeleteLeaveLoading = false;
-  bool _isApproveLeaveLoading = false;
-  bool _isRejectLeaveLoading = false;
-  bool _isCancelLeaveLoading = false;
-
+  // Removed unused loading state variables
   String _getBreakdown(String breakdownValue) {
     final breakdownMap = {
       'full_day': 'Full Day',
@@ -181,13 +172,11 @@ class _MyLeaveRequest extends State<MyLeaveRequest>
 
       if (mounted) {
         setState(() {
-          _isShimmer = false;
         });
       }
     } catch (e) {
       if (mounted) {
         setState(() {
-          _isShimmer = false;
         });
       }
     }
@@ -382,7 +371,6 @@ class _MyLeaveRequest extends State<MyLeaveRequest>
 
     if (response.statusCode == 200) {
       final data = jsonDecode(response.body);
-      List<dynamic> newResults = List.from(data['results'] ?? []);
       int totalCount = data['count'] ?? 0;
 
       setState(() {
@@ -542,7 +530,7 @@ class _MyLeaveRequest extends State<MyLeaveRequest>
                               child: Text(
                                 _errorMessage ?? '',
                                 style: const TextStyle(
-                                  color: const Color(0xFF6B57F0),
+                                  color: Color(0xFF6B57F0),
                                   fontWeight: FontWeight.bold,
                                 ),
                               ),
@@ -562,7 +550,7 @@ class _MyLeaveRequest extends State<MyLeaveRequest>
                               fontWeight: FontWeight.normal,
                               color: Colors.black,
                             ),
-                            value: leaveTypeId,
+                            initialValue: leaveTypeId,
                             items: [
                               DropdownMenuItem<int>(
                                 value: leaveTypeId,
@@ -915,10 +903,10 @@ class _MyLeaveRequest extends State<MyLeaveRequest>
                           }
                         },
                         style: ButtonStyle(
-                          backgroundColor: MaterialStateProperty.all<Color>(
+                          backgroundColor: WidgetStateProperty.all<Color>(
                               const Color(0xFF6B57F0)),
                           shape:
-                              MaterialStateProperty.all<RoundedRectangleBorder>(
+                              WidgetStateProperty.all<RoundedRectangleBorder>(
                             RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(6.0),
                             ),
@@ -986,7 +974,7 @@ class _MyLeaveRequest extends State<MyLeaveRequest>
                               child: Text(
                                 _errorMessage ?? '',
                                 style: const TextStyle(
-                                  color: const Color(0xFF6B57F0),
+                                  color: Color(0xFF6B57F0),
                                   fontWeight: FontWeight.bold,
                                 ),
                               ),
@@ -1408,10 +1396,10 @@ class _MyLeaveRequest extends State<MyLeaveRequest>
                           }
                         },
                         style: ButtonStyle(
-                          backgroundColor: MaterialStateProperty.all<Color>(
+                          backgroundColor: WidgetStateProperty.all<Color>(
                               const Color(0xFF6B57F0)),
                           shape:
-                              MaterialStateProperty.all<RoundedRectangleBorder>(
+                              WidgetStateProperty.all<RoundedRectangleBorder>(
                             RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(6.0),
                             ),
@@ -1718,7 +1706,7 @@ class _MyLeaveRequest extends State<MyLeaveRequest>
                             child: Text(
                               _errorMessage ?? '',
                               style: const TextStyle(
-                                  color: const Color(0xFF6B57F0),
+                                  color: Color(0xFF6B57F0),
                                   fontWeight: FontWeight.bold),
                             ),
                           ),
@@ -2016,7 +2004,6 @@ class _MyLeaveRequest extends State<MyLeaveRequest>
                           onChanged: (newValue) {
                             setState(() {
                               fileName = newValue;
-                              _validateAttachment = newValue.isEmpty;
                             });
                           },
                         ),
@@ -2038,7 +2025,6 @@ class _MyLeaveRequest extends State<MyLeaveRequest>
                             });
                           } else {
                             setState(() {
-                              _validateAttachment = false;
                               isAction = true;
                             });
                             Map<String, dynamic> updatedDetails = {
@@ -2076,10 +2062,10 @@ class _MyLeaveRequest extends State<MyLeaveRequest>
                         }
                       },
                       style: ButtonStyle(
-                        backgroundColor: MaterialStateProperty.all<Color>(
+                        backgroundColor: WidgetStateProperty.all<Color>(
                             const Color(0xFF6B57F0)),
                         shape:
-                            MaterialStateProperty.all<RoundedRectangleBorder>(
+                            WidgetStateProperty.all<RoundedRectangleBorder>(
                           RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(6.0),
                           ),
@@ -2112,7 +2098,7 @@ class _MyLeaveRequest extends State<MyLeaveRequest>
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text('No image selected'),
-          backgroundColor: const Color(0xFF6B57F0),
+          backgroundColor: Color(0xFF6B57F0),
         ),
       );
       return null;
@@ -3676,7 +3662,7 @@ class _MyLeaveRequest extends State<MyLeaveRequest>
                                   icon: const Icon(
                                     Icons.delete,
                                     size: 18.0,
-                                    color: const Color(0xFF6B57F0),
+                                    color: Color(0xFF6B57F0),
                                   ),
                                   onPressed: () async {
                                     isSaveClick = true;
@@ -3738,10 +3724,10 @@ class _MyLeaveRequest extends State<MyLeaveRequest>
                                                 },
                                                 style: ButtonStyle(
                                                   backgroundColor:
-                                                      MaterialStateProperty.all<
+                                                      WidgetStateProperty.all<
                                                           Color>(Colors.red),
                                                   shape:
-                                                      MaterialStateProperty.all<
+                                                      WidgetStateProperty.all<
                                                           RoundedRectangleBorder>(
                                                     RoundedRectangleBorder(
                                                       borderRadius:

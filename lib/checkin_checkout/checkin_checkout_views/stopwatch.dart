@@ -7,7 +7,7 @@ class StopwatchManager {
 
   StopwatchManager._internal();
 
-  Stopwatch _stopwatch = Stopwatch();
+  final Stopwatch _stopwatch = Stopwatch();
   Duration _initialElapsedTime = Duration.zero;
   Duration _savedElapsedTime = Duration.zero;
 

@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'dart:convert';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:Greaterchange/checkin_checkout/checkin_checkout_views/stopwatch.dart';
 import 'package:permission_handler/permission_handler.dart' as AppSettings;
@@ -169,13 +168,6 @@ class _CheckInCheckOutFormPageState extends State<CheckInCheckOutFormPage>
     await prefs.setInt(_kLastElapsedMs, d.inMilliseconds);
   }
 
-  Future<Duration?> _getLastElapsed() async {
-    final prefs = await SharedPreferences.getInstance();
-    final ms = prefs.getInt(_kLastElapsedMs);
-    if (ms == null) return null;
-    return Duration(milliseconds: ms);
-  }
-
   Future<void> _saveCheckinDisplay(String value) async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setString(_kCheckinDisplay, value);
@@ -341,8 +333,8 @@ class _CheckInCheckOutFormPageState extends State<CheckInCheckOutFormPage>
 
   Future<void> _initializeLocation() async {
     final prefs = await SharedPreferences.getInstance();
-    var geo_fencing = prefs.getBool("geo_fencing");
-    if (geo_fencing != true) return;
+    var geoFencing = prefs.getBool("geo_fencing");
+    if (geoFencing != true) return;
 
     try {
       bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
@@ -571,9 +563,10 @@ class _CheckInCheckOutFormPageState extends State<CheckInCheckOutFormPage>
     if (response.statusCode == 200) {
       return jsonDecode(response.body);
     } else {
-      if (mounted)
+      if (mounted) {
         showActionFailedDialog(
             context, 'Check-Out Failed', getErrorMessage(response.body));
+      }
       return null;
     }
   }
@@ -602,9 +595,10 @@ class _CheckInCheckOutFormPageState extends State<CheckInCheckOutFormPage>
     if (response.statusCode == 200) {
       return jsonDecode(response.body);
     } else {
-      if (mounted)
+      if (mounted) {
         showActionFailedDialog(
             context, 'Check-In Failed', getErrorMessage(response.body));
+      }
       return null;
     }
   }
@@ -1261,7 +1255,7 @@ class _CheckInCheckOutFormPageState extends State<CheckInCheckOutFormPage>
               onPressed: () {
                 Navigator.pop(context);
                 Navigator.of(context).push(
-                  MaterialPageRoute(builder: (context) => HomePage()),
+                  MaterialPageRoute(builder: (context) => const HomePage()),
                 );
               },
               child: const Text('OK'),
@@ -1275,8 +1269,8 @@ class _CheckInCheckOutFormPageState extends State<CheckInCheckOutFormPage>
   Future<void> prefetchData() async {
     try {
       final prefs = await SharedPreferences.getInstance();
-      var geo_fencing = prefs.getBool("geo_fencing");
-      if (geo_fencing == true) {
+      var geoFencing = prefs.getBool("geo_fencing");
+      if (geoFencing == true) {
         userLocation = await fetchCurrentLocation();
       }
       var token = prefs.getString("token");
@@ -1341,15 +1335,6 @@ class _CheckInCheckOutFormPageState extends State<CheckInCheckOutFormPage>
     }
   }
 
-  Future<void> _loadClockStateUIOnly() async {
-    final prefs = await SharedPreferences.getInstance();
-    setState(() {
-      clockCheckedIn = prefs.getBool('clockCheckedIn') ?? false;
-      checkInFormattedTime = prefs.getString('checkin') ?? '00:00';
-      checkOutFormattedTime = prefs.getString('checkout') ?? '00:00';
-    });
-  }
-
   Future<void> _saveClockStateUIOnly(bool isCheckedIn, int option,
       [String? t]) async {
     final prefs = await SharedPreferences.getInstance();
@@ -1403,7 +1388,7 @@ class _CheckInCheckOutFormPageState extends State<CheckInCheckOutFormPage>
                 body['employee_work_info_id']?.toString() ?? '';
           });
           print(
-              'Employee data loaded: ${requestsEmpMyFirstName} ${requestsEmpMyLastName}');
+              'Employee data loaded: $requestsEmpMyFirstName $requestsEmpMyLastName');
         }
 
         // Load work info only if we have work info ID
@@ -1438,7 +1423,9 @@ class _CheckInCheckOutFormPageState extends State<CheckInCheckOutFormPage>
       var typedServerUrl = prefs.getString("typed_url");
       if (typedServerUrl == null ||
           token == null ||
-          requestsEmpMyWorkInfoId.isEmpty) return;
+          requestsEmpMyWorkInfoId.isEmpty) {
+        return;
+      }
 
       final uri = Uri.parse(
           '$typedServerUrl/api/employee/employee-work-information/$requestsEmpMyWorkInfoId');

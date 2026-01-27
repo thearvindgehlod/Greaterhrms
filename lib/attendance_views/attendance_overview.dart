@@ -1085,7 +1085,7 @@ Widget buildOfflineEmployeesTile(
                     leaveStatus,
                     style: const TextStyle(
                       fontSize: 13.0,
-                      color: const Color(0xFF6B57F0),
+                      color: Color(0xFF6B57F0),
                     ),
                     textAlign: TextAlign.center,
                   ),
@@ -1185,7 +1185,7 @@ void _showEmailDialog(
                         labelText: 'Select Template',
                         border: OutlineInputBorder(),
                       ),
-                      value: selectedTemplate,
+                      initialValue: selectedTemplate,
                       items: templateItems.isNotEmpty
                           ? templateItems.entries.map((entry) {
                               return DropdownMenuItem<String>(

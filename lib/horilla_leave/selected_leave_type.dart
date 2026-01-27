@@ -306,7 +306,7 @@ class _SelectedLeaveType extends State<SelectedLeaveType> {
     var typedServerUrl = prefs.getString("typed_url");
     var uri = Uri.parse(
         '$typedServerUrl/api/leave/assign-leave/?leave_type_id=$typeName');
-    var response = await http.post(uri,
+    await http.post(uri,
         headers: {
           "Content-Type": "application/json",
           "Authorization": "Bearer $token",
@@ -893,11 +893,11 @@ class _SelectedLeaveType extends State<SelectedLeaveType> {
                                                         },
                                                         style: ButtonStyle(
                                                           backgroundColor:
-                                                              MaterialStateProperty
+                                                              WidgetStateProperty
                                                                   .all<Color>(
                                                                       Colors
                                                                           .green),
-                                                          shape: MaterialStateProperty
+                                                          shape: WidgetStateProperty
                                                               .all<
                                                                   RoundedRectangleBorder>(
                                                             RoundedRectangleBorder(

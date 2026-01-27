@@ -6,6 +6,10 @@ mixin ButtonLoaderMixin<T extends StatefulWidget> on State<T> {
   /// Map to track loading state for each button by its unique key
   final Map<String, bool> _buttonLoadingStates = {};
 
+  /// Minimum duration (milliseconds) to show loader to ensure smooth UX
+  /// Even if API responds faster, loader will show for at least this duration
+  static const int minLoaderDuration = 1000; // 1 second minimum
+
   /// Set loading state for a button
   void setButtonLoading(String buttonKey, bool isLoading) {
     if (mounted) {
@@ -29,15 +33,55 @@ mixin ButtonLoaderMixin<T extends StatefulWidget> on State<T> {
     }
   }
 
-  /// Wrapper function to handle loading state for async operations
+  /// Wrapper function to handle loading state for async operations with minimum delay
+  /// Ensures loader shows for at least [minLoaderDuration] milliseconds for better UX
   /// Usage: await executeWithButtonLoading('button_key', myAsyncFunction())
   Future<T?> executeWithButtonLoading<T>(
     String buttonKey,
-    Future<T> Function() asyncFunction,
-  ) async {
+    Future<T> Function() asyncFunction, {
+    int? customMinDuration,
+  }) async {
     try {
       setButtonLoading(buttonKey, true);
+      final minDuration = customMinDuration ?? minLoaderDuration;
+
+      // Execute API call and minimum delay in parallel, wait for both to complete
+      final result = await Future.wait<dynamic>([
+        asyncFunction(),
+        Future.delayed(Duration(milliseconds: minDuration)),
+      ]).then((results) => results[0] as T?);
+
+      return result;
+    } catch (e) {
+      print('Error in button operation: $e');
+      rethrow;
+    } finally {
+      setButtonLoading(buttonKey, false);
+    }
+  }
+
+  /// Alternative method for quick API calls that need guaranteed minimum loader time
+  /// Use this when you want to ensure loader displays for at least the duration
+  /// regardless of API response speed
+  /// Usage: await executeWithMinLoadTime('button_key', myAsyncFunction(), duration: 2000)
+  Future<T?> executeWithMinLoadTime<T>(
+    String buttonKey,
+    Future<T> Function() asyncFunction, {
+    int duration = minLoaderDuration,
+  }) async {
+    try {
+      setButtonLoading(buttonKey, true);
+
+      // Start timer and API call simultaneously
+      final startTime = DateTime.now();
       final result = await asyncFunction();
+      final elapsedTime = DateTime.now().difference(startTime).inMilliseconds;
+
+      // If API responded faster than min duration, wait for the remaining time
+      if (elapsedTime < duration) {
+        await Future.delayed(Duration(milliseconds: duration - elapsedTime));
+      }
+
       return result;
     } catch (e) {
       print('Error in button operation: $e');

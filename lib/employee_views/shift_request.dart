@@ -110,13 +110,6 @@ class _ShiftRequestPageState extends State<ShiftRequestPage>
   bool isCreateButtonVisible = true;
   late String getToken = '';
 
-  // Button loading states
-  bool _isCreateShiftLoading = false;
-  bool _isUpdateShiftLoading = false;
-  bool _isDeleteShiftLoading = false;
-  bool _isApproveShiftLoading = false;
-  bool _isRejectShiftLoading = false;
-
   @override
   void initState() {
     super.initState();
@@ -1018,7 +1011,7 @@ class _ShiftRequestPageState extends State<ShiftRequestPage>
                               child: Text(
                                 _errorMessage ?? '',
                                 style: const TextStyle(
-                                    color: const Color(0xFF6B57F0),
+                                    color: Color(0xFF6B57F0),
                                     fontWeight: FontWeight.bold),
                               ),
                             ),
@@ -1313,10 +1306,10 @@ class _ShiftRequestPageState extends State<ShiftRequestPage>
                           }
                         },
                         style: ButtonStyle(
-                          backgroundColor: MaterialStateProperty.all<Color>(
+                          backgroundColor: WidgetStateProperty.all<Color>(
                               const Color(0xFF6B57F0)),
                           shape:
-                              MaterialStateProperty.all<RoundedRectangleBorder>(
+                              WidgetStateProperty.all<RoundedRectangleBorder>(
                             RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(6.0),
                             ),
@@ -1382,7 +1375,7 @@ class _ShiftRequestPageState extends State<ShiftRequestPage>
                               child: Text(
                                 _errorMessage ?? '',
                                 style: const TextStyle(
-                                    color: const Color(0xFF6B57F0),
+                                    color: Color(0xFF6B57F0),
                                     fontWeight: FontWeight.bold),
                               ),
                             ),
@@ -1730,10 +1723,10 @@ class _ShiftRequestPageState extends State<ShiftRequestPage>
                           }
                         },
                         style: ButtonStyle(
-                          backgroundColor: MaterialStateProperty.all<Color>(
+                          backgroundColor: WidgetStateProperty.all<Color>(
                               const Color(0xFF6B57F0)),
                           shape:
-                              MaterialStateProperty.all<RoundedRectangleBorder>(
+                              WidgetStateProperty.all<RoundedRectangleBorder>(
                             RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(6.0),
                             ),
@@ -1758,7 +1751,6 @@ class _ShiftRequestPageState extends State<ShiftRequestPage>
   }
 
   Widget buildListItem(Map<String, dynamic> record, baseUrl, token) {
-    final image = employeeDetails['employee_profile'] ?? '';
     return GestureDetector(
       onTap: () {
         showDialog(
@@ -2035,10 +2027,10 @@ class _ShiftRequestPageState extends State<ShiftRequestPage>
                                               },
                                               style: ButtonStyle(
                                                 backgroundColor:
-                                                    MaterialStateProperty.all<
+                                                    WidgetStateProperty.all<
                                                         Color>(Colors.red),
                                                 shape:
-                                                    MaterialStateProperty.all<
+                                                    WidgetStateProperty.all<
                                                         RoundedRectangleBorder>(
                                                   RoundedRectangleBorder(
                                                     borderRadius:
@@ -2145,10 +2137,10 @@ class _ShiftRequestPageState extends State<ShiftRequestPage>
                                               },
                                               style: ButtonStyle(
                                                 backgroundColor:
-                                                    MaterialStateProperty.all<
+                                                    WidgetStateProperty.all<
                                                         Color>(Colors.green),
                                                 shape:
-                                                    MaterialStateProperty.all<
+                                                    WidgetStateProperty.all<
                                                         RoundedRectangleBorder>(
                                                   RoundedRectangleBorder(
                                                     borderRadius:
@@ -2258,10 +2250,10 @@ class _ShiftRequestPageState extends State<ShiftRequestPage>
                                               },
                                               style: ButtonStyle(
                                                 backgroundColor:
-                                                    MaterialStateProperty.all<
+                                                    WidgetStateProperty.all<
                                                         Color>(Colors.red),
                                                 shape:
-                                                    MaterialStateProperty.all<
+                                                    WidgetStateProperty.all<
                                                         RoundedRectangleBorder>(
                                                   RoundedRectangleBorder(
                                                     borderRadius:
@@ -2529,7 +2521,7 @@ class _ShiftRequestPageState extends State<ShiftRequestPage>
                               icon: const Icon(
                                 Icons.delete,
                                 size: 18.0,
-                                color: const Color(0xFF6B57F0),
+                                color: Color(0xFF6B57F0),
                               ),
                               onPressed: () async {
                                 isSaveClick = true;
@@ -2593,9 +2585,9 @@ class _ShiftRequestPageState extends State<ShiftRequestPage>
                                             },
                                             style: ButtonStyle(
                                               backgroundColor:
-                                                  MaterialStateProperty.all<
+                                                  WidgetStateProperty.all<
                                                       Color>(Colors.red),
-                                              shape: MaterialStateProperty.all<
+                                              shape: WidgetStateProperty.all<
                                                   RoundedRectangleBorder>(
                                                 RoundedRectangleBorder(
                                                   borderRadius:
@@ -2768,10 +2760,10 @@ class _ShiftRequestPageState extends State<ShiftRequestPage>
                                                   },
                                                   style: ButtonStyle(
                                                     backgroundColor:
-                                                        MaterialStateProperty
+                                                        WidgetStateProperty
                                                             .all<Color>(
                                                                 Colors.red),
-                                                    shape: MaterialStateProperty
+                                                    shape: WidgetStateProperty
                                                         .all<
                                                             RoundedRectangleBorder>(
                                                       RoundedRectangleBorder(
@@ -2887,10 +2879,10 @@ class _ShiftRequestPageState extends State<ShiftRequestPage>
                                                   },
                                                   style: ButtonStyle(
                                                     backgroundColor:
-                                                        MaterialStateProperty
+                                                        WidgetStateProperty
                                                             .all<Color>(
                                                                 Colors.green),
-                                                    shape: MaterialStateProperty
+                                                    shape: WidgetStateProperty
                                                         .all<
                                                             RoundedRectangleBorder>(
                                                       RoundedRectangleBorder(
@@ -3010,10 +3002,10 @@ class _ShiftRequestPageState extends State<ShiftRequestPage>
                                                   },
                                                   style: ButtonStyle(
                                                     backgroundColor:
-                                                        MaterialStateProperty
+                                                        WidgetStateProperty
                                                             .all<Color>(
                                                                 Colors.red),
-                                                    shape: MaterialStateProperty
+                                                    shape: WidgetStateProperty
                                                         .all<
                                                             RoundedRectangleBorder>(
                                                       RoundedRectangleBorder(
@@ -3165,10 +3157,9 @@ class _ShiftRequestPageState extends State<ShiftRequestPage>
 
   @override
   Widget build(BuildContext context) {
-    final bool permissionCheck =
-        ModalRoute.of(context)?.settings.arguments != null
-            ? ModalRoute.of(context)!.settings.arguments as bool
-            : false;
+    ModalRoute.of(context)?.settings.arguments != null
+        ? ModalRoute.of(context)!.settings.arguments as bool
+        : false;
     return Scaffold(
       backgroundColor: Colors.white,
       key: _scaffoldKey,

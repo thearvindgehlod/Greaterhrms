@@ -74,7 +74,6 @@ class _LeaveRequest extends State<LeaveRequest>
   bool isSaveClick = true;
   bool isLoading = true;
   bool _isShimmerVisible = true;
-  bool _isShimmer = true;
   bool checkFile = false;
   bool dateCheckError = false;
   bool dateBreakDownError = false;
@@ -86,7 +85,6 @@ class _LeaveRequest extends State<LeaveRequest>
   bool _validateEndDate = false;
   bool _validateDescription = false;
   bool _validateEmployee = false;
-  bool _validateAttachment = false;
   int maxCount = 5;
   int allRequestsLength = 0;
   int requestedLength = 0;
@@ -144,12 +142,6 @@ class _LeaveRequest extends State<LeaveRequest>
   late String getToken = '';
 
   // Button loading states
-  bool _isCreateLeaveLoading = false;
-  bool _isUpdateLeaveLoading = false;
-  bool _isDeleteLeaveLoading = false;
-  bool _isApproveLeaveLoading = false;
-  bool _isRejectLeaveLoading = false;
-
   @override
   void initState() {
     super.initState();
@@ -159,7 +151,6 @@ class _LeaveRequest extends State<LeaveRequest>
 
     _isShimmerVisible = true;
     isLoading = true;
-    _isShimmer = true;
 
     startBreakdown.clear();
     startDateSelect.text = "Select Start Date";
@@ -209,7 +200,6 @@ class _LeaveRequest extends State<LeaveRequest>
         setState(() {
           _isShimmerVisible = false;
           isLoading = false;
-          _isShimmer = false;
         });
       }
     } catch (e) {
@@ -217,7 +207,6 @@ class _LeaveRequest extends State<LeaveRequest>
         setState(() {
           _isShimmerVisible = false;
           isLoading = false;
-          _isShimmer = false;
         });
       }
     }
@@ -745,7 +734,7 @@ class _LeaveRequest extends State<LeaveRequest>
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text('No image selected'),
-          backgroundColor: const Color(0xFF6B57F0),
+          backgroundColor: Color(0xFF6B57F0),
         ),
       );
       return null;
@@ -825,7 +814,7 @@ class _LeaveRequest extends State<LeaveRequest>
                             child: Text(
                               _errorMessage ?? '',
                               style: const TextStyle(
-                                  color: const Color(0xFF6B57F0),
+                                  color: Color(0xFF6B57F0),
                                   fontWeight: FontWeight.bold),
                             ),
                           ),
@@ -1288,7 +1277,6 @@ class _LeaveRequest extends State<LeaveRequest>
                               _validateStartDateBreakdown = false;
                               _validateEndDateBreakdown = false;
                               _validateDescription = false;
-                              _validateAttachment = false;
                               _validateDate = false;
                               _validateEndDate = false;
                               isAction = true;
@@ -1320,10 +1308,10 @@ class _LeaveRequest extends State<LeaveRequest>
                         }
                       },
                       style: ButtonStyle(
-                        backgroundColor: MaterialStateProperty.all<Color>(
+                        backgroundColor: WidgetStateProperty.all<Color>(
                             const Color(0xFF6B57F0)),
                         shape:
-                            MaterialStateProperty.all<RoundedRectangleBorder>(
+                            WidgetStateProperty.all<RoundedRectangleBorder>(
                           RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(6.0),
                           ),
@@ -1722,7 +1710,7 @@ class _LeaveRequest extends State<LeaveRequest>
                               child: Text(
                                 _errorMessage ?? '',
                                 style: const TextStyle(
-                                    color: const Color(0xFF6B57F0),
+                                    color: Color(0xFF6B57F0),
                                     fontWeight: FontWeight.bold),
                               ),
                             ),
@@ -2132,7 +2120,6 @@ class _LeaveRequest extends State<LeaveRequest>
                             });
                           } else {
                             setState(() {
-                              _validateAttachment = false;
                               isAction = true;
                             });
                             Map<String, dynamic> updatedDetails = {
@@ -2168,10 +2155,10 @@ class _LeaveRequest extends State<LeaveRequest>
                         }
                       },
                       style: ButtonStyle(
-                        backgroundColor: MaterialStateProperty.all<Color>(
+                        backgroundColor: WidgetStateProperty.all<Color>(
                             const Color(0xFF6B57F0)),
                         shape:
-                            MaterialStateProperty.all<RoundedRectangleBorder>(
+                            WidgetStateProperty.all<RoundedRectangleBorder>(
                           RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(6.0),
                           ),
@@ -2648,7 +2635,6 @@ class _LeaveRequest extends State<LeaveRequest>
                           _validateStartDateBreakdown = false;
                           _validateEndDateBreakdown = false;
                           _validateDescription = false;
-                          _validateAttachment = false;
                           _validateDate = false;
                           _validateEndDate = false;
                           startDateSelect.clear();
@@ -3043,8 +3029,9 @@ class _LeaveRequest extends State<LeaveRequest>
                         child: // Update the TextField in the _buildLeaveRequestWidget method
                             TextField(
                           onChanged: (value) {
-                            if (_debounce?.isActive ?? false)
+                            if (_debounce?.isActive ?? false) {
                               _debounce!.cancel();
+                            }
                             _debounce =
                                 Timer(const Duration(milliseconds: 500), () {
                               setState(() {
@@ -4019,10 +4006,10 @@ class _LeaveRequest extends State<LeaveRequest>
                                               },
                                               style: ButtonStyle(
                                                 backgroundColor:
-                                                    MaterialStateProperty.all<
+                                                    WidgetStateProperty.all<
                                                         Color>(Colors.red),
                                                 shape:
-                                                    MaterialStateProperty.all<
+                                                    WidgetStateProperty.all<
                                                         RoundedRectangleBorder>(
                                                   RoundedRectangleBorder(
                                                     borderRadius:
@@ -4127,10 +4114,10 @@ class _LeaveRequest extends State<LeaveRequest>
                                                     },
                                                     style: ButtonStyle(
                                                       backgroundColor:
-                                                          MaterialStateProperty
+                                                          WidgetStateProperty
                                                               .all<Color>(
                                                                   Colors.green),
-                                                      shape: MaterialStateProperty
+                                                      shape: WidgetStateProperty
                                                           .all<
                                                               RoundedRectangleBorder>(
                                                         RoundedRectangleBorder(
@@ -4235,10 +4222,10 @@ class _LeaveRequest extends State<LeaveRequest>
                                               },
                                               style: ButtonStyle(
                                                 backgroundColor:
-                                                    MaterialStateProperty.all<
+                                                    WidgetStateProperty.all<
                                                         Color>(Colors.red),
                                                 shape:
-                                                    MaterialStateProperty.all<
+                                                    WidgetStateProperty.all<
                                                         RoundedRectangleBorder>(
                                                   RoundedRectangleBorder(
                                                     borderRadius:
@@ -4451,7 +4438,7 @@ class _LeaveRequest extends State<LeaveRequest>
                                   icon: const Icon(
                                     Icons.delete,
                                     size: 18.0,
-                                    color: const Color(0xFF6B57F0),
+                                    color: Color(0xFF6B57F0),
                                   ),
                                   onPressed: () async {
                                     isSaveClick = true;
@@ -4515,10 +4502,10 @@ class _LeaveRequest extends State<LeaveRequest>
                                                 },
                                                 style: ButtonStyle(
                                                   backgroundColor:
-                                                      MaterialStateProperty.all<
+                                                      WidgetStateProperty.all<
                                                           Color>(Colors.red),
                                                   shape:
-                                                      MaterialStateProperty.all<
+                                                      WidgetStateProperty.all<
                                                           RoundedRectangleBorder>(
                                                     RoundedRectangleBorder(
                                                       borderRadius:
@@ -4668,9 +4655,9 @@ class _LeaveRequest extends State<LeaveRequest>
                                             },
                                             style: ButtonStyle(
                                               backgroundColor:
-                                                  MaterialStateProperty.all<
+                                                  WidgetStateProperty.all<
                                                       Color>(Colors.red),
-                                              shape: MaterialStateProperty.all<
+                                              shape: WidgetStateProperty.all<
                                                   RoundedRectangleBorder>(
                                                 RoundedRectangleBorder(
                                                   borderRadius:
@@ -4779,10 +4766,10 @@ class _LeaveRequest extends State<LeaveRequest>
                                                   },
                                                   style: ButtonStyle(
                                                     backgroundColor:
-                                                        MaterialStateProperty
+                                                        WidgetStateProperty
                                                             .all<Color>(
                                                                 Colors.green),
-                                                    shape: MaterialStateProperty
+                                                    shape: WidgetStateProperty
                                                         .all<
                                                             RoundedRectangleBorder>(
                                                       RoundedRectangleBorder(
@@ -4884,9 +4871,9 @@ class _LeaveRequest extends State<LeaveRequest>
                                             },
                                             style: ButtonStyle(
                                               backgroundColor:
-                                                  MaterialStateProperty.all<
+                                                  WidgetStateProperty.all<
                                                       Color>(Colors.red),
-                                              shape: MaterialStateProperty.all<
+                                              shape: WidgetStateProperty.all<
                                                   RoundedRectangleBorder>(
                                                 RoundedRectangleBorder(
                                                   borderRadius:

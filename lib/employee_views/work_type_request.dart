@@ -92,13 +92,6 @@ class _WorkTypeRequestPageState extends State<WorkTypeRequestPage>
   bool isCreateButtonVisible = true;
   late String getToken = '';
 
-  // Button loading states
-  bool _isCreateRequestLoading = false;
-  bool _isUpdateRequestLoading = false;
-  bool _isDeleteRequestLoading = false;
-  bool _isApproveRequestLoading = false;
-  bool _isRejectRequestLoading = false;
-
   @override
   void initState() {
     super.initState();
@@ -1071,7 +1064,7 @@ class _WorkTypeRequestPageState extends State<WorkTypeRequestPage>
                               child: Text(
                                 _errorMessage ?? '',
                                 style: const TextStyle(
-                                    color: const Color(0xFF6B57F0),
+                                    color: Color(0xFF6B57F0),
                                     fontWeight: FontWeight.bold),
                               ),
                             ),
@@ -1368,10 +1361,10 @@ class _WorkTypeRequestPageState extends State<WorkTypeRequestPage>
                           }
                         },
                         style: ButtonStyle(
-                          backgroundColor: MaterialStateProperty.all<Color>(
+                          backgroundColor: WidgetStateProperty.all<Color>(
                               const Color(0xFF6B57F0)),
                           shape:
-                              MaterialStateProperty.all<RoundedRectangleBorder>(
+                              WidgetStateProperty.all<RoundedRectangleBorder>(
                             RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(6.0),
                             ),
@@ -1437,7 +1430,7 @@ class _WorkTypeRequestPageState extends State<WorkTypeRequestPage>
                               child: Text(
                                 _errorMessage ?? '',
                                 style: const TextStyle(
-                                    color: const Color(0xFF6B57F0),
+                                    color: Color(0xFF6B57F0),
                                     fontWeight: FontWeight.bold),
                               ),
                             ),
@@ -1788,10 +1781,10 @@ class _WorkTypeRequestPageState extends State<WorkTypeRequestPage>
                           }
                         },
                         style: ButtonStyle(
-                          backgroundColor: MaterialStateProperty.all<Color>(
+                          backgroundColor: WidgetStateProperty.all<Color>(
                               const Color(0xFF6B57F0)),
                           shape:
-                              MaterialStateProperty.all<RoundedRectangleBorder>(
+                              WidgetStateProperty.all<RoundedRectangleBorder>(
                             RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(6.0),
                             ),
@@ -1963,7 +1956,7 @@ class _WorkTypeRequestPageState extends State<WorkTypeRequestPage>
                           ),
                         ],
                       ),
-                      SizedBox(height: 8),
+                      const SizedBox(height: 8),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
@@ -1981,7 +1974,7 @@ class _WorkTypeRequestPageState extends State<WorkTypeRequestPage>
                           ),
                         ],
                       ),
-                      SizedBox(height: 8),
+                      const SizedBox(height: 8),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
@@ -1999,7 +1992,7 @@ class _WorkTypeRequestPageState extends State<WorkTypeRequestPage>
                           ),
                         ],
                       ),
-                      SizedBox(height: 8),
+                      const SizedBox(height: 8),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
@@ -2017,7 +2010,7 @@ class _WorkTypeRequestPageState extends State<WorkTypeRequestPage>
                           ),
                         ],
                       ),
-                      SizedBox(height: 8),
+                      const SizedBox(height: 8),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
@@ -2120,10 +2113,10 @@ class _WorkTypeRequestPageState extends State<WorkTypeRequestPage>
                                               },
                                               style: ButtonStyle(
                                                 backgroundColor:
-                                                    MaterialStateProperty.all<
+                                                    WidgetStateProperty.all<
                                                         Color>(Colors.red),
                                                 shape:
-                                                    MaterialStateProperty.all<
+                                                    WidgetStateProperty.all<
                                                         RoundedRectangleBorder>(
                                                   RoundedRectangleBorder(
                                                     borderRadius:
@@ -2240,10 +2233,10 @@ class _WorkTypeRequestPageState extends State<WorkTypeRequestPage>
                                               },
                                               style: ButtonStyle(
                                                 backgroundColor:
-                                                    MaterialStateProperty.all<
+                                                    WidgetStateProperty.all<
                                                         Color>(Colors.green),
                                                 shape:
-                                                    MaterialStateProperty.all<
+                                                    WidgetStateProperty.all<
                                                         RoundedRectangleBorder>(
                                                   RoundedRectangleBorder(
                                                     borderRadius:
@@ -2275,14 +2268,14 @@ class _WorkTypeRequestPageState extends State<WorkTypeRequestPage>
                                       MediaQuery.of(context).size.height * 0.01,
                                 ),
                               ),
-                              child: FittedBox(
+                              child: const FittedBox(
                                 fit: BoxFit.scaleDown,
                                 child: Text(
                                   'Approve',
                                   textAlign: TextAlign.center,
                                   maxLines: 1,
                                   overflow: TextOverflow.ellipsis,
-                                  style: const TextStyle(
+                                  style: TextStyle(
                                     color: Colors.white,
                                     fontSize: 13,
                                   ),
@@ -2368,10 +2361,10 @@ class _WorkTypeRequestPageState extends State<WorkTypeRequestPage>
                                               },
                                               style: ButtonStyle(
                                                 backgroundColor:
-                                                    MaterialStateProperty.all<
+                                                    WidgetStateProperty.all<
                                                         Color>(Colors.red),
                                                 shape:
-                                                    MaterialStateProperty.all<
+                                                    WidgetStateProperty.all<
                                                         RoundedRectangleBorder>(
                                                   RoundedRectangleBorder(
                                                     borderRadius:
@@ -2662,7 +2655,7 @@ class _WorkTypeRequestPageState extends State<WorkTypeRequestPage>
                                   icon: const Icon(
                                     Icons.delete,
                                     size: 18.0,
-                                    color: const Color(0xFF6B57F0),
+                                    color: Color(0xFF6B57F0),
                                   ),
                                   onPressed: () async {
                                     setState(() {
@@ -2734,10 +2727,10 @@ class _WorkTypeRequestPageState extends State<WorkTypeRequestPage>
                                                   },
                                                   style: ButtonStyle(
                                                     backgroundColor:
-                                                        MaterialStateProperty
+                                                        WidgetStateProperty
                                                             .all<Color>(
                                                                 Colors.red),
-                                                    shape: MaterialStateProperty
+                                                    shape: WidgetStateProperty
                                                         .all<
                                                             RoundedRectangleBorder>(
                                                       RoundedRectangleBorder(
@@ -2795,7 +2788,7 @@ class _WorkTypeRequestPageState extends State<WorkTypeRequestPage>
                             ),
                           ],
                         ),
-                        SizedBox(height: 8),
+                        const SizedBox(height: 8),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
@@ -2811,7 +2804,7 @@ class _WorkTypeRequestPageState extends State<WorkTypeRequestPage>
                             ),
                           ],
                         ),
-                        SizedBox(height: 8),
+                        const SizedBox(height: 8),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
@@ -2827,7 +2820,7 @@ class _WorkTypeRequestPageState extends State<WorkTypeRequestPage>
                             ),
                           ],
                         ),
-                        SizedBox(height: 8),
+                        const SizedBox(height: 8),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
@@ -2932,11 +2925,11 @@ class _WorkTypeRequestPageState extends State<WorkTypeRequestPage>
                                                         },
                                                         style: ButtonStyle(
                                                           backgroundColor:
-                                                              MaterialStateProperty
+                                                              WidgetStateProperty
                                                                   .all<Color>(
                                                                       Colors
                                                                           .red),
-                                                          shape: MaterialStateProperty
+                                                          shape: WidgetStateProperty
                                                               .all<
                                                                   RoundedRectangleBorder>(
                                                             RoundedRectangleBorder(
@@ -2968,10 +2961,10 @@ class _WorkTypeRequestPageState extends State<WorkTypeRequestPage>
                                           backgroundColor:
                                               const Color(0xFF6B57F0),
                                         ),
-                                        child: Row(
+                                        child: const Row(
                                           mainAxisAlignment:
                                               MainAxisAlignment.center,
-                                          children: const [
+                                          children: [
                                             Flexible(
                                               child: Text(
                                                 'Reject',
@@ -3070,11 +3063,11 @@ class _WorkTypeRequestPageState extends State<WorkTypeRequestPage>
                                                         },
                                                         style: ButtonStyle(
                                                           backgroundColor:
-                                                              MaterialStateProperty
+                                                              WidgetStateProperty
                                                                   .all<Color>(
                                                                       Colors
                                                                           .green),
-                                                          shape: MaterialStateProperty
+                                                          shape: WidgetStateProperty
                                                               .all<
                                                                   RoundedRectangleBorder>(
                                                             RoundedRectangleBorder(
@@ -3109,7 +3102,7 @@ class _WorkTypeRequestPageState extends State<WorkTypeRequestPage>
                                           mainAxisAlignment:
                                               MainAxisAlignment.center,
                                           children: [
-                                            const Flexible(
+                                            Flexible(
                                               child: Flexible(
                                                 child: Text(
                                                   'Approve',
@@ -3214,11 +3207,11 @@ class _WorkTypeRequestPageState extends State<WorkTypeRequestPage>
                                                         },
                                                         style: ButtonStyle(
                                                           backgroundColor:
-                                                              MaterialStateProperty
+                                                              WidgetStateProperty
                                                                   .all<Color>(
                                                                       Colors
                                                                           .red),
-                                                          shape: MaterialStateProperty
+                                                          shape: WidgetStateProperty
                                                               .all<
                                                                   RoundedRectangleBorder>(
                                                             RoundedRectangleBorder(
@@ -3395,10 +3388,9 @@ class _WorkTypeRequestPageState extends State<WorkTypeRequestPage>
 
   @override
   Widget build(BuildContext context) {
-    final bool permissionCheck =
-        ModalRoute.of(context)?.settings.arguments != null
-            ? ModalRoute.of(context)!.settings.arguments as bool
-            : false;
+    ModalRoute.of(context)?.settings.arguments != null
+        ? ModalRoute.of(context)!.settings.arguments as bool
+        : false;
     return Scaffold(
       backgroundColor: Colors.white,
       key: _scaffoldKey,

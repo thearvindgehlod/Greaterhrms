@@ -25,7 +25,6 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
   late StreamSubscription subscription;
   var isDeviceConnected = false;
   final ScrollController _scrollController = ScrollController();
-  final _pageController = PageController(initialPage: 0);
   final _controller = NotchBottomBarController(index: 0);
   late Map<String, dynamic> arguments = {};
   bool permissionCheck = false;
@@ -568,7 +567,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
     var token = prefs.getString("token");
     var typedServerUrl = prefs.getString("typed_url");
 
-    Future<bool> _getPerm(String endpoint) async {
+    Future<bool> getPerm(String endpoint) async {
       try {
         var uri = Uri.parse('$typedServerUrl$endpoint');
         var res = await http.get(uri, headers: {
@@ -584,7 +583,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
     }
 
     bool overview =
-        await _getPerm("/api/attendance/permission-check/attendance");
+        await getPerm("/api/attendance/permission-check/attendance");
     bool att = true;
     bool attReq = true;
     bool hourAcc = true;
@@ -673,7 +672,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
       var response = await http.get(uri, headers: {
         "Content-Type": "application/json",
         "Authorization": "Bearer $token",
-      }).timeout(Duration(seconds: 8));
+      }).timeout(const Duration(seconds: 8));
       if (response.statusCode == 200) {
         var data = jsonDecode(response.body);
         bool isEnabled = data['start'] ?? false;
@@ -701,7 +700,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
       var response = await http.get(uri, headers: {
         "Content-Type": "application/json",
         "Authorization": "Bearer $token",
-      }).timeout(Duration(seconds: 8));
+      }).timeout(const Duration(seconds: 8));
 
       if (response.statusCode == 200 && response.body.isNotEmpty) {
         var data = jsonDecode(response.body);
@@ -1193,9 +1192,9 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
               ),
             ),
             const SizedBox(width: 12),
-            Text(
+            const Text(
               'Greaterchange',
-              style: const TextStyle(
+              style: TextStyle(
                 fontWeight: FontWeight.bold,
                 fontSize: 18,
               ),
@@ -1224,7 +1223,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
             Visibility(
               visible: permissionGeoFencingMapViewCheck,
               child: IconButton(
-                icon: Icon(
+                icon: const Icon(
                   Icons.settings,
                   color: _baseColor,
                 ),
@@ -1338,7 +1337,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
             Visibility(
               visible: permissionGeoFencingMapViewCheck && geoFencingEnabled,
               child: IconButton(
-                icon: Icon(
+                icon: const Icon(
                   Icons.location_on,
                   color: _baseColor,
                 ),
@@ -1357,7 +1356,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
               alignment: Alignment.center,
               children: [
                 IconButton(
-                  icon: Icon(
+                  icon: const Icon(
                     Icons.notifications,
                     color: _baseColor,
                   ),
@@ -1403,7 +1402,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
               ],
             ),
             IconButton(
-              icon: Icon(
+              icon: const Icon(
                 Icons.logout,
                 color: _baseColor,
               ),
@@ -1743,80 +1742,6 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
     );
   }
 
-  Widget _buildNotificationsPreview(BuildContext context) {
-    if (notifications.isEmpty) {
-      return Container(
-        padding: const EdgeInsets.all(20),
-        decoration: BoxDecoration(
-          color: Colors.grey[100],
-          borderRadius: BorderRadius.circular(20),
-        ),
-        child: Row(
-          children: const [
-            Icon(Icons.inbox_outlined, color: Colors.grey),
-            SizedBox(width: 12),
-            Expanded(
-              child: Text(
-                'You are all caught up. Enjoy your day!',
-                style: TextStyle(color: Colors.grey),
-              ),
-            ),
-          ],
-        ),
-      );
-    }
-
-    final latestNotifications = notifications.take(3).toList();
-    return Container(
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(24),
-        border: Border.all(color: Colors.grey.withOpacity(0.1)),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.05),
-            blurRadius: 18,
-            offset: const Offset(0, 10),
-          ),
-        ],
-      ),
-      child: Column(
-        children: [
-          for (var notification in latestNotifications) ...[
-            ListTile(
-              onTap: () {
-                Navigator.pushNamed(context, '/notifications_list');
-              },
-              leading: CircleAvatar(
-                backgroundColor: _baseColor.withOpacity(0.15),
-                child: Icon(
-                  Icons.notifications_active,
-                  color: _baseColor,
-                ),
-              ),
-              title: Text(
-                notification['verb'] ?? 'Notification',
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-              ),
-              subtitle: Text(
-                timeago.format(DateTime.parse(notification['timestamp'])),
-              ),
-            ),
-            if (notification != latestNotifications.last)
-              const Divider(height: 0),
-          ],
-          TextButton(
-            onPressed: () {
-              Navigator.pushNamed(context, '/notifications_list');
-            },
-            child: const Text('View all notifications'),
-          ),
-        ],
-      ),
-    );
-  }
-
   List<_ModuleTile> _moduleTiles(BuildContext context) {
     return [
       _ModuleTile(
@@ -1824,6 +1749,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
         subtitle: 'Manage workforce records',
         icon: Icons.people,
         accentColor: _baseColor,
+        isVisible: permissionCheck,
         onTap: () {
           Navigator.pushNamed(
             context,
@@ -1837,6 +1763,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
         subtitle: 'Oversee daily presence',
         icon: Icons.fingerprint,
         accentColor: _baseColor,
+        isVisible: permissionCheck,
         onTap: () {
           if (permissionCheck) {
             Navigator.pushNamed(
@@ -1858,6 +1785,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
         subtitle: 'Approve or request time off',
         icon: Icons.calendar_month_outlined,
         accentColor: _baseColor,
+        isVisible: permissionLeaveOverviewCheck,
         onTap: () {
           if (permissionLeaveOverviewCheck) {
             Navigator.pushNamed(context, '/leave_overview');
@@ -1938,7 +1866,7 @@ class _ModuleTile {
     required this.subtitle,
     required this.icon,
     required this.onTap,
-    this.isVisible = true,
+    required this.isVisible,
     this.accentColor = _baseColor,
   });
 }

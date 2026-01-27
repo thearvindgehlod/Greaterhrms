@@ -4,7 +4,6 @@ import 'dart:io';
 // import 'package:flutter_face_api_beta/flutter_face_api.dart';
 import 'package:flutter_ringtone_player/flutter_ringtone_player.dart';
 import 'package:timeago/timeago.dart' as timeago;
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -39,7 +38,7 @@ List<Map<String, dynamic>> notifications = [];
 int notificationsCount = 0;
 bool isLoading = true;
 Timer? _notificationTimer;
-late Map<String, dynamic> arguments = {};
+Map<String, dynamic> arguments = {};
 List<Map<String, dynamic>> fetchedNotifications = [];
 Map<String, dynamic> newNotificationList = {};
 bool isAuthenticated = false;
@@ -53,7 +52,7 @@ Future<void> notificationTapBackground(
       '${notificationResponse.actionId} with'
       ' payload: ${notificationResponse.payload}');
   if (notificationResponse.input?.isNotEmpty ?? false) {
-    final context = await navigatorKey.currentState?.context;
+    final context = navigatorKey.currentState?.context;
     if (context != null) {
       _onSelectNotification(context);
     }
@@ -65,7 +64,7 @@ Future<void> notificationTapBackground(
 void _startNotificationTimer() {
   _notificationTimer?.cancel();
   // Increased from 3s to 10s to reduce server load and timeout errors
-  _notificationTimer = Timer.periodic(Duration(seconds: 10), (timer) {
+  _notificationTimer = Timer.periodic(const Duration(seconds: 10), (timer) {
     if (isAuthenticated) {
       fetchNotifications();
       unreadNotificationsCount();
@@ -96,14 +95,14 @@ Future<void> main() async {
   const AndroidInitializationSettings initializationSettingsAndroid =
       AndroidInitializationSettings('@mipmap/horilla_logo');
 
-  final DarwinInitializationSettings initializationSettingsIOS =
+  const DarwinInitializationSettings initializationSettingsIOS =
       DarwinInitializationSettings(
     requestAlertPermission: true,
     requestBadgePermission: true,
     requestSoundPermission: true,
   );
 
-  final InitializationSettings initializationSettings = InitializationSettings(
+  const InitializationSettings initializationSettings = InitializationSettings(
     android: initializationSettingsAndroid,
     iOS: initializationSettingsIOS,
   );
@@ -111,7 +110,7 @@ Future<void> main() async {
   await flutterLocalNotificationsPlugin.initialize(
     initializationSettings,
     onDidReceiveNotificationResponse: (NotificationResponse details) async {
-      final context = await navigatorKey.currentState?.context;
+      final context = navigatorKey.currentState?.context;
       if (context != null && isAuthenticated) {
         _onSelectNotification(context);
       }
@@ -135,7 +134,7 @@ Future<void> main() async {
     prefetchData();
   }
 
-  runApp(LoginApp());
+  runApp(const LoginApp());
   clearSharedPrefs();
 }
 
@@ -186,12 +185,12 @@ Future<void> prefetchData() async {
 
   final prefs = await SharedPreferences.getInstance();
   var token = prefs.getString("token");
-  var typed_serverUrl = prefs.getString("typed_url");
+  var typedServerurl = prefs.getString("typed_url");
   var employeeId = prefs.getInt("employee_id");
 
-  if (token == null || typed_serverUrl == null || employeeId == null) return;
+  if (token == null || typedServerurl == null || employeeId == null) return;
 
-  var uri = Uri.parse('$typed_serverUrl/api/employee/employees/$employeeId');
+  var uri = Uri.parse('$typedServerurl/api/employee/employees/$employeeId');
   var response = await http.get(uri, headers: {
     "Content-Type": "application/json",
     "Authorization": "Bearer $token",
@@ -232,12 +231,12 @@ Future<void> markAllReadNotification() async {
 
   final prefs = await SharedPreferences.getInstance();
   var token = prefs.getString("token");
-  var typed_serverUrl = prefs.getString("typed_url");
+  var typedServerurl = prefs.getString("typed_url");
 
-  if (token == null || typed_serverUrl == null) return;
+  if (token == null || typedServerurl == null) return;
 
   var uri =
-      Uri.parse('$typed_serverUrl/api/notifications/notifications/bulk-read/');
+      Uri.parse('$typedServerurl/api/notifications/notifications/bulk-read/');
   var response = await http.post(uri, headers: {
     "Content-Type": "application/json",
     "Authorization": "Bearer $token",
@@ -258,9 +257,9 @@ Future<void> fetchNotifications() async {
 
   final prefs = await SharedPreferences.getInstance();
   var token = prefs.getString("token");
-  var typed_serverUrl = prefs.getString("typed_url");
+  var typedServerurl = prefs.getString("typed_url");
 
-  if (token == null || typed_serverUrl == null) {
+  if (token == null || typedServerurl == null) {
     print('Missing required data for notifications');
     return;
   }
@@ -268,12 +267,12 @@ Future<void> fetchNotifications() async {
   try {
     print('Fetching notifications...');
     var uri = Uri.parse(
-        '$typed_serverUrl/api/notifications/notifications/list/unread?page=${currentPage == 0 ? 1 : currentPage}');
+        '$typedServerurl/api/notifications/notifications/list/unread?page=${currentPage == 0 ? 1 : currentPage}');
 
     var response = await http.get(uri, headers: {
       "Content-Type": "application/json",
       "Authorization": "Bearer $token",
-    }).timeout(Duration(seconds: 8));
+    }).timeout(const Duration(seconds: 8));
 
     if (response.statusCode == 200) {
       List<Map<String, dynamic>> fetchedNotifications =
@@ -327,12 +326,12 @@ Future<void> unreadNotificationsCount() async {
 
   final prefs = await SharedPreferences.getInstance();
   var token = prefs.getString("token");
-  var typed_serverUrl = prefs.getString("typed_url");
+  var typedServerurl = prefs.getString("typed_url");
 
-  if (token == null || typed_serverUrl == null) return;
+  if (token == null || typedServerurl == null) return;
 
   var uri =
-      Uri.parse('$typed_serverUrl/api/notifications/notifications/list/unread');
+      Uri.parse('$typedServerurl/api/notifications/notifications/list/unread');
   var response = await http.get(uri, headers: {
     "Content-Type": "application/json",
     "Authorization": "Bearer $token",
@@ -350,37 +349,41 @@ void _playNotificationSound() {
 }
 
 class LoginApp extends StatelessWidget {
+  const LoginApp({super.key});
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Login Page',
       navigatorKey: navigatorKey,
-      home: FutureBuilderPage(),
+      home: const FutureBuilderPage(),
       routes: {
-        '/login': (context) => LoginPage(),
-        '/home': (context) => HomePage(),
-        '/employees_list': (context) => EmployeeListPage(),
-        '/employees_form': (context) => EmployeeFormPage(),
-        '/attendance_overview': (context) => AttendanceOverview(),
-        '/attendance_attendance': (context) => AttendanceAttendance(),
-        '/attendance_request': (context) => AttendanceRequest(),
-        '/my_attendance_view': (context) => MyAttendanceViews(),
-        '/employee_hour_account': (context) => HourAccountFormPage(),
-        '/employee_checkin_checkout': (context) => CheckInCheckOutFormPage(),
-        '/leave_overview': (context) => LeaveOverview(),
-        '/leave_types': (context) => LeaveTypes(),
-        '/my_leave_request': (context) => MyLeaveRequest(),
-        '/leave_request': (context) => LeaveRequest(),
-        '/leave_allocation_request': (context) => LeaveAllocationRequest(),
-        '/all_assigned_leave': (context) => AllAssignedLeave(),
-        '/selected_leave_type': (context) => SelectedLeaveType(),
-        '/notifications_list': (context) => NotificationsList(),
+        '/login': (context) => const LoginPage(),
+        '/home': (context) => const HomePage(),
+        '/employees_list': (context) => const EmployeeListPage(),
+        '/employees_form': (context) => const EmployeeFormPage(),
+        '/attendance_overview': (context) => const AttendanceOverview(),
+        '/attendance_attendance': (context) => const AttendanceAttendance(),
+        '/attendance_request': (context) => const AttendanceRequest(),
+        '/my_attendance_view': (context) => const MyAttendanceViews(),
+        '/employee_hour_account': (context) => const HourAccountFormPage(),
+        '/employee_checkin_checkout': (context) => const CheckInCheckOutFormPage(),
+        '/leave_overview': (context) => const LeaveOverview(),
+        '/leave_types': (context) => const LeaveTypes(),
+        '/my_leave_request': (context) => const MyLeaveRequest(),
+        '/leave_request': (context) => const LeaveRequest(),
+        '/leave_allocation_request': (context) => const LeaveAllocationRequest(),
+        '/all_assigned_leave': (context) => const AllAssignedLeave(),
+        '/selected_leave_type': (context) => const SelectedLeaveType(),
+        '/notifications_list': (context) => const NotificationsList(),
       },
     );
   }
 }
 
 class SplashScreen extends StatelessWidget {
+  const SplashScreen({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -428,14 +431,14 @@ class _FutureBuilderPageState extends State<FutureBuilderPage> {
       future: Future.delayed(const Duration(seconds: 2), () => _futurePath),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return SplashScreen();
+          return const SplashScreen();
         }
 
         if (snapshot.connectionState == ConnectionState.done) {
           if (snapshot.hasData && snapshot.data == true) {
             return const CheckInCheckOutFormPage();
           } else {
-            return LoginPage();
+            return const LoginPage();
           }
         }
         return const Center(child: CircularProgressIndicator());

@@ -819,7 +819,7 @@ class _WorkTypeRequestPageState extends State<RotatingShiftPage> {
                               child: Text(
                                 _errorMessage ?? '',
                                 style: const TextStyle(
-                                    color: const Color(0xFF6B57F0),
+                                    color: Color(0xFF6B57F0),
                                     fontWeight: FontWeight.bold),
                               ),
                             ),
@@ -1006,7 +1006,7 @@ class _WorkTypeRequestPageState extends State<RotatingShiftPage> {
                               fontWeight: FontWeight.normal,
                               color: Colors.black,
                             ),
-                            value: selectedBasedOnValue,
+                            initialValue: selectedBasedOnValue,
                             items: basedOnItems,
                             onChanged: (newValue) {
                               setState(() {
@@ -1126,10 +1126,10 @@ class _WorkTypeRequestPageState extends State<RotatingShiftPage> {
                           }
                         },
                         style: ButtonStyle(
-                          backgroundColor: MaterialStateProperty.all<Color>(
+                          backgroundColor: WidgetStateProperty.all<Color>(
                               const Color(0xFF6B57F0)),
                           shape:
-                              MaterialStateProperty.all<RoundedRectangleBorder>(
+                              WidgetStateProperty.all<RoundedRectangleBorder>(
                             RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(6.0),
                             ),
@@ -1200,7 +1200,7 @@ class _WorkTypeRequestPageState extends State<RotatingShiftPage> {
                               child: Text(
                                 _errorMessage ?? '',
                                 style: const TextStyle(
-                                    color: const Color(0xFF6B57F0),
+                                    color: Color(0xFF6B57F0),
                                     fontWeight: FontWeight.bold),
                               ),
                             ),
@@ -1595,10 +1595,10 @@ class _WorkTypeRequestPageState extends State<RotatingShiftPage> {
                           }
                         },
                         style: ButtonStyle(
-                          backgroundColor: MaterialStateProperty.all<Color>(
+                          backgroundColor: WidgetStateProperty.all<Color>(
                               const Color(0xFF6B57F0)),
                           shape:
-                              MaterialStateProperty.all<RoundedRectangleBorder>(
+                              WidgetStateProperty.all<RoundedRectangleBorder>(
                             RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(6.0),
                             ),
@@ -1623,8 +1623,6 @@ class _WorkTypeRequestPageState extends State<RotatingShiftPage> {
   }
 
   Widget buildListItem(Map<String, dynamic> record, baseUrl, token) {
-    final image = employeeDetails['employee_profile'] ?? '';
-
     return GestureDetector(
       onTap: () {
         showDialog(
@@ -1977,7 +1975,7 @@ class _WorkTypeRequestPageState extends State<RotatingShiftPage> {
                               icon: const Icon(
                                 Icons.delete,
                                 size: 18.0,
-                                color: const Color(0xFF6B57F0),
+                                color: Color(0xFF6B57F0),
                               ),
                               onPressed: () async {
                                 isSaveClick = true;
@@ -2035,9 +2033,9 @@ class _WorkTypeRequestPageState extends State<RotatingShiftPage> {
                                             },
                                             style: ButtonStyle(
                                               backgroundColor:
-                                                  MaterialStateProperty.all<
+                                                  WidgetStateProperty.all<
                                                       Color>(Colors.red),
-                                              shape: MaterialStateProperty.all<
+                                              shape: WidgetStateProperty.all<
                                                   RoundedRectangleBorder>(
                                                 RoundedRectangleBorder(
                                                   borderRadius:
@@ -2161,10 +2159,9 @@ class _WorkTypeRequestPageState extends State<RotatingShiftPage> {
 
   @override
   Widget build(BuildContext context) {
-    final bool permissionCheck =
-        ModalRoute.of(context)?.settings.arguments != null
-            ? ModalRoute.of(context)!.settings.arguments as bool
-            : false;
+    ModalRoute.of(context)?.settings.arguments != null
+        ? ModalRoute.of(context)!.settings.arguments as bool
+        : false;
     return Scaffold(
       backgroundColor: Colors.white,
       key: _scaffoldKey,

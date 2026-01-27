@@ -98,8 +98,6 @@ class _HourAccountFormPageState extends State<HourAccountFormPage> {
   late String baseUrl = '';
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
-  List<Widget> _drawerItems = [];
-
   bool permissionOverview = false;
   bool permissionAttendance = false;
   bool permissionAttendanceRequest = false;
@@ -755,7 +753,7 @@ class _HourAccountFormPageState extends State<HourAccountFormPage> {
                             child: Text(
                               _errorMessage ?? '',
                               style: const TextStyle(
-                                  color: const Color(0xFF6B57F0),
+                                  color: Color(0xFF6B57F0),
                                   fontWeight: FontWeight.bold),
                             ),
                           ),
@@ -841,7 +839,7 @@ class _HourAccountFormPageState extends State<HourAccountFormPage> {
                                 horizontal:
                                     MediaQuery.of(context).size.width * 0.008),
                           ),
-                          value: record['month'],
+                          initialValue: record['month'],
                           onChanged: (newValue) {
                             setState(() {
                               selectedMonth = newValue;
@@ -1036,10 +1034,10 @@ class _HourAccountFormPageState extends State<HourAccountFormPage> {
                         }
                       },
                       style: ButtonStyle(
-                        backgroundColor: MaterialStateProperty.all<Color>(
+                        backgroundColor: WidgetStateProperty.all<Color>(
                             const Color(0xFF6B57F0)),
                         shape:
-                            MaterialStateProperty.all<RoundedRectangleBorder>(
+                            WidgetStateProperty.all<RoundedRectangleBorder>(
                           RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(6.0),
                           ),
@@ -1103,7 +1101,7 @@ class _HourAccountFormPageState extends State<HourAccountFormPage> {
                             child: Text(
                               _errorMessage ?? '',
                               style: const TextStyle(
-                                  color: const Color(0xFF6B57F0),
+                                  color: Color(0xFF6B57F0),
                                   fontWeight: FontWeight.bold),
                             ),
                           ),
@@ -1196,7 +1194,7 @@ class _HourAccountFormPageState extends State<HourAccountFormPage> {
                             errorText:
                                 _validateMonth ? 'Please select a Month' : null,
                           ),
-                          value: selectedMonth,
+                          initialValue: selectedMonth,
                           onChanged: (newValue) {
                             setState(() {
                               selectedMonth = newValue;
@@ -1222,9 +1220,9 @@ class _HourAccountFormPageState extends State<HourAccountFormPage> {
                           decoration: InputDecoration(
                             labelText: 'Select Year',
                             // Add a label
-                            border: OutlineInputBorder(),
+                            border: const OutlineInputBorder(),
                             // You can customize the border
-                            contentPadding: EdgeInsets.symmetric(
+                            contentPadding: const EdgeInsets.symmetric(
                                 horizontal: 10, vertical: 5),
                             errorText:
                                 _validateYear ? 'Please select a Year' : null,
@@ -1496,10 +1494,10 @@ class _HourAccountFormPageState extends State<HourAccountFormPage> {
                         }
                       },
                       style: ButtonStyle(
-                        backgroundColor: MaterialStateProperty.all<Color>(
+                        backgroundColor: WidgetStateProperty.all<Color>(
                             const Color(0xFF6B57F0)),
                         shape:
-                            MaterialStateProperty.all<RoundedRectangleBorder>(
+                            WidgetStateProperty.all<RoundedRectangleBorder>(
                           RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(6.0),
                           ),
@@ -1863,7 +1861,7 @@ class _HourAccountFormPageState extends State<HourAccountFormPage> {
                                   icon: const Icon(
                                     Icons.delete,
                                     size: 18.0,
-                                    color: const Color(0xFF6B57F0),
+                                    color: Color(0xFF6B57F0),
                                   ),
                                   onPressed: () async {
                                     isSaveClick = true;
@@ -1926,10 +1924,10 @@ class _HourAccountFormPageState extends State<HourAccountFormPage> {
                                                 },
                                                 style: ButtonStyle(
                                                   backgroundColor:
-                                                      MaterialStateProperty.all<
+                                                      WidgetStateProperty.all<
                                                           Color>(Colors.red),
                                                   shape:
-                                                      MaterialStateProperty.all<
+                                                      WidgetStateProperty.all<
                                                           RoundedRectangleBorder>(
                                                     RoundedRectangleBorder(
                                                       borderRadius:
@@ -2219,7 +2217,7 @@ class _HourAccountFormPageState extends State<HourAccountFormPage> {
   Widget shimmerListTile() {
     return Shimmer.fromColors(
       baseColor: Colors.grey[300]!,
-      highlightColor: Colors.white!,
+      highlightColor: Colors.white,
       child: ListTile(
         title: Container(
           width: double.infinity,
@@ -2245,7 +2243,7 @@ class _HourAccountFormPageState extends State<HourAccountFormPage> {
                     elevation: 0,
                     child: Shimmer.fromColors(
                       baseColor: Colors.grey[300]!,
-                      highlightColor: Colors.white!,
+                      highlightColor: Colors.white,
                       child: Container(
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(4.0),
@@ -2280,7 +2278,7 @@ class _HourAccountFormPageState extends State<HourAccountFormPage> {
               itemBuilder: (context, index) {
                 return Shimmer.fromColors(
                   baseColor: Colors.grey[300]!,
-                  highlightColor: Colors.white!,
+                  highlightColor: Colors.white,
                   child: Container(
                     padding: const EdgeInsets.all(8.0),
                     child: Container(
@@ -2447,7 +2445,7 @@ class _HourAccountFormPageState extends State<HourAccountFormPage> {
                           (searchText.isEmpty
                               ? requests.length
                               : filteredRecords.length)) {
-                        return Center(child: CircularProgressIndicator());
+                        return const Center(child: CircularProgressIndicator());
                       }
                       final record = searchText.isEmpty
                           ? requests[index]

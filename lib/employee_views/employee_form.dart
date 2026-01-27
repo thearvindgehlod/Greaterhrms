@@ -1280,7 +1280,7 @@ class _EmployeeFormPageState extends State<EmployeeFormPage>
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text('No image selected'),
-          backgroundColor: const Color(0xFF6B57F0),
+          backgroundColor: Color(0xFF6B57F0),
         ),
       );
       return null;
@@ -1412,7 +1412,7 @@ class _EmployeeFormPageState extends State<EmployeeFormPage>
                               child: Text(
                                 _errorMessage ?? '',
                                 style: const TextStyle(
-                                    color: const Color(0xFF6B57F0),
+                                    color: Color(0xFF6B57F0),
                                     fontWeight: FontWeight.bold),
                               ),
                             ),
@@ -1651,7 +1651,7 @@ class _EmployeeFormPageState extends State<EmployeeFormPage>
                                         fontWeight: FontWeight.normal,
                                         color: Colors.black,
                                       ),
-                                      value: genderController.text.isNotEmpty
+                                      initialValue: genderController.text.isNotEmpty
                                           ? genderController.text
                                           : null,
                                       items: const [
@@ -1977,7 +1977,7 @@ class _EmployeeFormPageState extends State<EmployeeFormPage>
                                         fontWeight: FontWeight.normal,
                                         color: Colors.black,
                                       ),
-                                      value: martialStatusController
+                                      initialValue: martialStatusController
                                               .text.isNotEmpty
                                           ? martialStatusController.text
                                           : null,
@@ -2094,10 +2094,10 @@ class _EmployeeFormPageState extends State<EmployeeFormPage>
                           }
                         },
                         style: ButtonStyle(
-                          backgroundColor: MaterialStateProperty.all<Color>(
+                          backgroundColor: WidgetStateProperty.all<Color>(
                               const Color(0xFF6B57F0)),
                           shape:
-                              MaterialStateProperty.all<RoundedRectangleBorder>(
+                              WidgetStateProperty.all<RoundedRectangleBorder>(
                             RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(6.0),
                             ),
@@ -2192,7 +2192,7 @@ class _EmployeeFormPageState extends State<EmployeeFormPage>
                               child: Text(
                                 _errorMessage ?? '',
                                 style: const TextStyle(
-                                    color: const Color(0xFF6B57F0),
+                                    color: Color(0xFF6B57F0),
                                     fontWeight: FontWeight.bold),
                               ),
                             ),
@@ -2252,7 +2252,7 @@ class _EmployeeFormPageState extends State<EmployeeFormPage>
                               padding: const EdgeInsets.all(8.0),
                               child: Text(
                                 'Error: $error',
-                                style: TextStyle(fontSize: 16),
+                                style: const TextStyle(fontSize: 16),
                               ),
                             ),
                             hideOnEmpty: true,
@@ -2997,10 +2997,10 @@ class _EmployeeFormPageState extends State<EmployeeFormPage>
                           }
                         },
                         style: ButtonStyle(
-                          backgroundColor: MaterialStateProperty.all<Color>(
+                          backgroundColor: WidgetStateProperty.all<Color>(
                               const Color(0xFF6B57F0)),
                           shape:
-                              MaterialStateProperty.all<RoundedRectangleBorder>(
+                              WidgetStateProperty.all<RoundedRectangleBorder>(
                             RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(6.0),
                             ),
@@ -3065,7 +3065,7 @@ class _EmployeeFormPageState extends State<EmployeeFormPage>
                               child: Text(
                                 _errorMessage ?? '',
                                 style: const TextStyle(
-                                    color: const Color(0xFF6B57F0),
+                                    color: Color(0xFF6B57F0),
                                     fontWeight: FontWeight.bold),
                               ),
                             ),
@@ -3425,10 +3425,10 @@ class _EmployeeFormPageState extends State<EmployeeFormPage>
                           }
                         },
                         style: ButtonStyle(
-                          backgroundColor: MaterialStateProperty.all<Color>(
+                          backgroundColor: WidgetStateProperty.all<Color>(
                               const Color(0xFF6B57F0)),
                           shape:
-                              MaterialStateProperty.all<RoundedRectangleBorder>(
+                              WidgetStateProperty.all<RoundedRectangleBorder>(
                             RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(6.0),
                             ),
@@ -3845,7 +3845,7 @@ class _EmployeeFormPageState extends State<EmployeeFormPage>
                     children: [
                       Shimmer.fromColors(
                         baseColor: Colors.grey[300]!,
-                        highlightColor: Colors.white!,
+                        highlightColor: Colors.white,
                         child: const CircleAvatar(
                           radius: 30.0,
                           backgroundColor: Colors.white,
@@ -3887,7 +3887,7 @@ class _EmployeeFormPageState extends State<EmployeeFormPage>
                       children: [
                         Shimmer.fromColors(
                           baseColor: Colors.grey[300]!,
-                          highlightColor: Colors.white!,
+                          highlightColor: Colors.white,
                           child: Container(
                             decoration: BoxDecoration(
                               boxShadow: [
@@ -3988,7 +3988,7 @@ class _EmployeeFormPageState extends State<EmployeeFormPage>
                                                         MainAxisSize.min,
                                                     children: [
                                                       Icon(Icons.phone,
-                                                          color: const Color(
+                                                          color: Color(
                                                               0xFF6B57F0),
                                                           size: 15),
                                                       Text(
@@ -4108,7 +4108,7 @@ class _EmployeeFormPageState extends State<EmployeeFormPage>
                                                       MainAxisSize.min,
                                                   children: [
                                                     Icon(Icons.phone,
-                                                        color: const Color(
+                                                        color: Color(
                                                             0xFF6B57F0),
                                                         size: 15),
                                                     Text(
@@ -4185,7 +4185,7 @@ class _EmployeeFormPageState extends State<EmployeeFormPage>
                                     children: [
                                       Shimmer.fromColors(
                                         baseColor: Colors.grey[300]!,
-                                        highlightColor: Colors.white!,
+                                        highlightColor: Colors.white,
                                         child: buildTabContentAbout(
                                           context,
                                           employeeDetails,
@@ -4291,7 +4291,7 @@ class _EmployeeFormPageState extends State<EmployeeFormPage>
                                     },
                                     child: const CircleAvatar(
                                       radius: 12.0,
-                                      backgroundColor: const Color(0xFF6B57F0),
+                                      backgroundColor: Color(0xFF6B57F0),
                                       child: Icon(
                                         Icons.camera_alt,
                                         size: 12.0,
@@ -4437,7 +4437,7 @@ class _EmployeeFormPageState extends State<EmployeeFormPage>
                                                 mainAxisSize: MainAxisSize.min,
                                                 children: [
                                                   Icon(Icons.phone,
-                                                      color: const Color(
+                                                      color: Color(
                                                           0xFF6B57F0),
                                                       size: 15),
                                                   Text(
@@ -4547,7 +4547,7 @@ class _EmployeeFormPageState extends State<EmployeeFormPage>
                                               children: [
                                                 Icon(Icons.phone,
                                                     color:
-                                                        const Color(0xFF6B57F0),
+                                                        Color(0xFF6B57F0),
                                                     size: 15),
                                                 Text(
                                                   '   Phone',

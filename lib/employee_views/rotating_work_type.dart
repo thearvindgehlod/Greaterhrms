@@ -826,7 +826,7 @@ class _RotatingWorkTypePageState extends State<RotatingWorkTypePage> {
                               child: Text(
                                 _errorMessage ?? '',
                                 style: const TextStyle(
-                                    color: const Color(0xFF6B57F0),
+                                    color: Color(0xFF6B57F0),
                                     fontWeight: FontWeight.bold),
                               ),
                             ),
@@ -1013,7 +1013,7 @@ class _RotatingWorkTypePageState extends State<RotatingWorkTypePage> {
                               fontWeight: FontWeight.normal,
                               color: Colors.black,
                             ),
-                            value: selectedBasedOnValue,
+                            initialValue: selectedBasedOnValue,
                             items: basedOnItems,
                             onChanged: (newValue) {
                               setState(() {
@@ -1135,10 +1135,10 @@ class _RotatingWorkTypePageState extends State<RotatingWorkTypePage> {
                           }
                         },
                         style: ButtonStyle(
-                          backgroundColor: MaterialStateProperty.all<Color>(
+                          backgroundColor: WidgetStateProperty.all<Color>(
                               const Color(0xFF6B57F0)),
                           shape:
-                              MaterialStateProperty.all<RoundedRectangleBorder>(
+                              WidgetStateProperty.all<RoundedRectangleBorder>(
                             RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(6.0),
                             ),
@@ -1209,7 +1209,7 @@ class _RotatingWorkTypePageState extends State<RotatingWorkTypePage> {
                               child: Text(
                                 _errorMessage ?? '',
                                 style: const TextStyle(
-                                    color: const Color(0xFF6B57F0),
+                                    color: Color(0xFF6B57F0),
                                     fontWeight: FontWeight.bold),
                               ),
                             ),
@@ -1350,7 +1350,7 @@ class _RotatingWorkTypePageState extends State<RotatingWorkTypePage> {
                           SizedBox(
                               height:
                                   MediaQuery.of(context).size.height * 0.03),
-                          Text(
+                          const Text(
                             "Start Date",
                             style: TextStyle(color: Colors.black),
                           ),
@@ -1603,10 +1603,10 @@ class _RotatingWorkTypePageState extends State<RotatingWorkTypePage> {
                           }
                         },
                         style: ButtonStyle(
-                          backgroundColor: MaterialStateProperty.all<Color>(
+                          backgroundColor: WidgetStateProperty.all<Color>(
                               const Color(0xFF6B57F0)),
                           shape:
-                              MaterialStateProperty.all<RoundedRectangleBorder>(
+                              WidgetStateProperty.all<RoundedRectangleBorder>(
                             RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(6.0),
                             ),
@@ -1631,8 +1631,6 @@ class _RotatingWorkTypePageState extends State<RotatingWorkTypePage> {
   }
 
   Widget buildListItem(Map<String, dynamic> record, baseUrl, token) {
-    final image = employeeDetails['employee_profile'] ?? '';
-
     return GestureDetector(
       onTap: () {
         showDialog(
@@ -1989,7 +1987,7 @@ class _RotatingWorkTypePageState extends State<RotatingWorkTypePage> {
                               icon: const Icon(
                                 Icons.delete,
                                 size: 18.0,
-                                color: const Color(0xFF6B57F0),
+                                color: Color(0xFF6B57F0),
                               ),
                               onPressed: () async {
                                 isSaveClick = true;
@@ -2047,9 +2045,9 @@ class _RotatingWorkTypePageState extends State<RotatingWorkTypePage> {
                                             },
                                             style: ButtonStyle(
                                               backgroundColor:
-                                                  MaterialStateProperty.all<
+                                                  WidgetStateProperty.all<
                                                       Color>(Colors.red),
-                                              shape: MaterialStateProperty.all<
+                                              shape: WidgetStateProperty.all<
                                                   RoundedRectangleBorder>(
                                                 RoundedRectangleBorder(
                                                   borderRadius:
@@ -2179,10 +2177,9 @@ class _RotatingWorkTypePageState extends State<RotatingWorkTypePage> {
 
   @override
   Widget build(BuildContext context) {
-    final bool permissionCheck =
-        ModalRoute.of(context)?.settings.arguments != null
-            ? ModalRoute.of(context)!.settings.arguments as bool
-            : false;
+    ModalRoute.of(context)?.settings.arguments != null
+        ? ModalRoute.of(context)!.settings.arguments as bool
+        : false;
     return Scaffold(
       backgroundColor: Colors.white,
       key: _scaffoldKey,

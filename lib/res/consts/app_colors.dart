@@ -1,14 +1,13 @@
 
-import 'dart:ui';
 
 import 'package:flutter/material.dart';
 
-final primaryColor = Color(0xFF9EA700);
+const primaryColor = Color(0xFF9EA700);
 
-final whiteColor = Colors.white;
+const whiteColor = Colors.white;
 
-final backgroundColor = const Color(0xFFF5F5F5);
+const backgroundColor = Color(0xFFF5F5F5);
 
-final secondaryColor = const Color(0xFF9EA700);
+const secondaryColor = Color(0xFF9EA700);
 
-final blackColor =  Colors.black87;
+const blackColor =  Colors.black87;

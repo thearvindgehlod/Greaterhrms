@@ -92,11 +92,11 @@ class _AttendanceRequest extends State<AttendanceRequest>
   late String getToken = '';
 
   // Button loading states
-  bool _isCreateAttendanceLoading = false;
-  bool _isUpdateAttendanceLoading = false;
-  bool _isDeleteAttendanceLoading = false;
-  bool _isApproveAttendanceLoading = false;
-  bool _isRejectAttendanceLoading = false;
+  final bool _isCreateAttendanceLoading = false;
+  final bool _isUpdateAttendanceLoading = false;
+  final bool _isDeleteAttendanceLoading = false;
+  final bool _isApproveAttendanceLoading = false;
+  final bool _isRejectAttendanceLoading = false;
 
   @override
   void initState() {
@@ -495,7 +495,7 @@ class _AttendanceRequest extends State<AttendanceRequest>
                               child: Text(
                                 _errorMessage ?? '',
                                 style: const TextStyle(
-                                    color: const Color(0xFF6B57F0),
+                                    color: Color(0xFF6B57F0),
                                     fontWeight: FontWeight.bold),
                               ),
                             ),
@@ -1298,10 +1298,10 @@ class _AttendanceRequest extends State<AttendanceRequest>
                           }
                         },
                         style: ButtonStyle(
-                          backgroundColor: MaterialStateProperty.all<Color>(
+                          backgroundColor: WidgetStateProperty.all<Color>(
                               const Color(0xFF6B57F0)),
                           shape:
-                              MaterialStateProperty.all<RoundedRectangleBorder>(
+                              WidgetStateProperty.all<RoundedRectangleBorder>(
                             RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(6.0),
                             ),
@@ -1930,7 +1930,7 @@ class _AttendanceRequest extends State<AttendanceRequest>
   Widget shimmerListTile() {
     return Shimmer.fromColors(
       baseColor: Colors.grey[300]!,
-      highlightColor: Colors.white!,
+      highlightColor: Colors.white,
       child: ListTile(
         title: Container(
           width: double.infinity,
@@ -1954,7 +1954,7 @@ class _AttendanceRequest extends State<AttendanceRequest>
                   elevation: 0,
                   child: Shimmer.fromColors(
                     baseColor: Colors.grey[300]!,
-                    highlightColor: Colors.white!,
+                    highlightColor: Colors.white,
                     child: Container(
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(4.0),
@@ -2187,7 +2187,7 @@ class _AttendanceRequest extends State<AttendanceRequest>
         itemBuilder: (context, index) {
           return Shimmer.fromColors(
             baseColor: Colors.grey[300]!,
-            highlightColor: Colors.white!,
+            highlightColor: Colors.white,
             child: Container(
               padding: const EdgeInsets.all(8.0),
               child: Container(
@@ -2260,7 +2260,7 @@ class _AttendanceRequest extends State<AttendanceRequest>
         itemBuilder: (context, index) {
           return Shimmer.fromColors(
             baseColor: Colors.grey[300]!,
-            highlightColor: Colors.white!,
+            highlightColor: Colors.white,
             child: Container(
               padding: const EdgeInsets.all(8.0),
               child: Container(
@@ -2624,9 +2624,9 @@ class _AttendanceRequest extends State<AttendanceRequest>
                                           },
                                           style: ButtonStyle(
                                             backgroundColor:
-                                                MaterialStateProperty.all<
+                                                WidgetStateProperty.all<
                                                     Color>(Colors.red),
-                                            shape: MaterialStateProperty.all<
+                                            shape: WidgetStateProperty.all<
                                                 RoundedRectangleBorder>(
                                               RoundedRectangleBorder(
                                                 borderRadius:
@@ -2715,9 +2715,9 @@ class _AttendanceRequest extends State<AttendanceRequest>
                                           },
                                           style: ButtonStyle(
                                             backgroundColor:
-                                                MaterialStateProperty.all<
+                                                WidgetStateProperty.all<
                                                     Color>(Colors.green),
-                                            shape: MaterialStateProperty.all<
+                                            shape: WidgetStateProperty.all<
                                                 RoundedRectangleBorder>(
                                               RoundedRectangleBorder(
                                                 borderRadius:
@@ -2952,9 +2952,9 @@ class _AttendanceRequest extends State<AttendanceRequest>
                                             },
                                             style: ButtonStyle(
                                               backgroundColor:
-                                                  MaterialStateProperty.all<
+                                                  WidgetStateProperty.all<
                                                       Color>(Colors.red),
-                                              shape: MaterialStateProperty.all<
+                                              shape: WidgetStateProperty.all<
                                                   RoundedRectangleBorder>(
                                                 RoundedRectangleBorder(
                                                   borderRadius:
@@ -3049,9 +3049,9 @@ class _AttendanceRequest extends State<AttendanceRequest>
                                             },
                                             style: ButtonStyle(
                                               backgroundColor:
-                                                  MaterialStateProperty.all<
+                                                  WidgetStateProperty.all<
                                                       Color>(Colors.green),
-                                              shape: MaterialStateProperty.all<
+                                              shape: WidgetStateProperty.all<
                                                   RoundedRectangleBorder>(
                                                 RoundedRectangleBorder(
                                                   borderRadius:

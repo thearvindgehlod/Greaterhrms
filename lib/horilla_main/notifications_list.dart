@@ -356,7 +356,7 @@ class _NotificationsListState extends State<NotificationsList> {
                         ),
                         child: const Icon(
                           Icons.circle,
-                          color: const Color(0xFF6B57F0),
+                          color: Color(0xFF6B57F0),
                           size: 17,
                         ),
                       ),
