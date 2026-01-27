@@ -108,10 +108,10 @@ class _LeaveAllocationRequest extends State<LeaveAllocationRequest>
 
     // Start loading permissions immediately (non-blocking)
     checkPermissions();
-    
+
     _loadInitialDataOptimized();
   }
-  
+
   Future<void> _loadInitialDataOptimized() async {
     try {
       // Load local data first (fast, can be parallel)
@@ -120,7 +120,7 @@ class _LeaveAllocationRequest extends State<LeaveAllocationRequest>
         fetchToken(),
         prefetchData(),
       ]);
-      
+
       // Load all API data in parallel for faster loading
       if (!allocationCheck) {
         await Future.wait([
@@ -139,7 +139,7 @@ class _LeaveAllocationRequest extends State<LeaveAllocationRequest>
           getAllEmployeesName(),
         ]);
       }
-      
+
       if (mounted) {
         setState(() {
           _isShimmer = false;
@@ -360,16 +360,32 @@ class _LeaveAllocationRequest extends State<LeaveAllocationRequest>
       context: context,
       builder: (BuildContext dialogContext) {
         return Dialog(
+          backgroundColor: Colors.white,
           child: SizedBox(
-            height: MediaQuery.of(context).size.height * 0.3,
+            height: MediaQuery.of(context).size.height * 0.35,
             width: MediaQuery.of(context).size.width * 0.85,
             child: SingleChildScrollView(
               child: Center(
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    Image.asset(imagePath),
-                    const SizedBox(height: 16),
+                    Padding(
+                      padding: const EdgeInsets.all(16.0),
+                      child: Container(
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(12),
+                          color: Colors.white,
+                        ),
+                        padding: const EdgeInsets.all(12),
+                        child: Image.asset(
+                          imagePath,
+                          width: 150,
+                          height: 150,
+                          fit: BoxFit.contain,
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 8),
                     const Text(
                       "Allocation Created Successfully",
                       style: TextStyle(
@@ -403,16 +419,32 @@ class _LeaveAllocationRequest extends State<LeaveAllocationRequest>
       context: context,
       builder: (BuildContext dialogContext) {
         return Dialog(
+          backgroundColor: Colors.white,
           child: SizedBox(
-            height: MediaQuery.of(context).size.height * 0.3,
+            height: MediaQuery.of(context).size.height * 0.35,
             width: MediaQuery.of(context).size.width * 0.85,
             child: SingleChildScrollView(
               child: Center(
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    Image.asset(imagePath),
-                    const SizedBox(height: 16),
+                    Padding(
+                      padding: const EdgeInsets.all(16.0),
+                      child: Container(
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(12),
+                          color: Colors.white,
+                        ),
+                        padding: const EdgeInsets.all(12),
+                        child: Image.asset(
+                          imagePath,
+                          width: 150,
+                          height: 150,
+                          fit: BoxFit.contain,
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 8),
                     const Text(
                       "Allocation Deleted Successfully",
                       style: TextStyle(
@@ -446,16 +478,32 @@ class _LeaveAllocationRequest extends State<LeaveAllocationRequest>
       context: context,
       builder: (BuildContext dialogContext) {
         return Dialog(
+          backgroundColor: Colors.white,
           child: SizedBox(
-            height: MediaQuery.of(context).size.height * 0.3,
+            height: MediaQuery.of(context).size.height * 0.35,
             width: MediaQuery.of(context).size.width * 0.85,
             child: SingleChildScrollView(
               child: Center(
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    Image.asset(imagePath),
-                    const SizedBox(height: 16),
+                    Padding(
+                      padding: const EdgeInsets.all(16.0),
+                      child: Container(
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(12),
+                          color: Colors.white,
+                        ),
+                        padding: const EdgeInsets.all(12),
+                        child: Image.asset(
+                          imagePath,
+                          width: 150,
+                          height: 150,
+                          fit: BoxFit.contain,
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 8),
                     const Text(
                       "Allocation Approved Successfully",
                       style: TextStyle(
@@ -489,16 +537,32 @@ class _LeaveAllocationRequest extends State<LeaveAllocationRequest>
       context: context,
       builder: (BuildContext dialogContext) {
         return Dialog(
+          backgroundColor: Colors.white,
           child: SizedBox(
-            height: MediaQuery.of(context).size.height * 0.3,
+            height: MediaQuery.of(context).size.height * 0.35,
             width: MediaQuery.of(context).size.width * 0.85,
             child: SingleChildScrollView(
               child: Center(
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    Image.asset(imagePath),
-                    const SizedBox(height: 16),
+                    Padding(
+                      padding: const EdgeInsets.all(16.0),
+                      child: Container(
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(12),
+                          color: Colors.white,
+                        ),
+                        padding: const EdgeInsets.all(12),
+                        child: Image.asset(
+                          imagePath,
+                          width: 150,
+                          height: 150,
+                          fit: BoxFit.contain,
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 8),
                     const Text(
                       "Allocation Rejected Successfully",
                       style: TextStyle(
@@ -532,16 +596,32 @@ class _LeaveAllocationRequest extends State<LeaveAllocationRequest>
       context: context,
       builder: (BuildContext dialogContext) {
         return Dialog(
+          backgroundColor: Colors.white,
           child: SizedBox(
-            height: MediaQuery.of(context).size.height * 0.3,
+            height: MediaQuery.of(context).size.height * 0.35,
             width: MediaQuery.of(context).size.width * 0.85,
             child: SingleChildScrollView(
               child: Center(
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    Image.asset(imagePath),
-                    const SizedBox(height: 16),
+                    Padding(
+                      padding: const EdgeInsets.all(16.0),
+                      child: Container(
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(12),
+                          color: Colors.white,
+                        ),
+                        padding: const EdgeInsets.all(12),
+                        child: Image.asset(
+                          imagePath,
+                          width: 150,
+                          height: 150,
+                          fit: BoxFit.contain,
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 8),
                     const Text(
                       "Allocation Updated Successfully",
                       style: TextStyle(
@@ -2474,8 +2554,7 @@ class _LeaveAllocationRequest extends State<LeaveAllocationRequest>
                   ? ListTile(
                       title: const Text('All Assigned Leave'),
                       onTap: () {
-                        Navigator.pushNamed(
-                            context, '/all_assigned_leave');
+                        Navigator.pushNamed(context, '/all_assigned_leave');
                       },
                     )
                   : const SizedBox.shrink(),
@@ -2486,8 +2565,8 @@ class _LeaveAllocationRequest extends State<LeaveAllocationRequest>
             ? SafeArea(
                 child: Padding(
                   padding: EdgeInsets.only(
-                    bottom: MediaQuery.of(context).padding.bottom > 0 
-                        ? MediaQuery.of(context).padding.bottom - 8 
+                    bottom: MediaQuery.of(context).padding.bottom > 0
+                        ? MediaQuery.of(context).padding.bottom - 8
                         : 8,
                   ),
                   child: AnimatedNotchBottomBar(
@@ -2503,41 +2582,42 @@ class _LeaveAllocationRequest extends State<LeaveAllocationRequest>
                     removeMargins: false,
                     bottomBarWidth: MediaQuery.of(context).size.width * 1,
                     durationInMilliSeconds: 300,
-                bottomBarItems: const [
-                  BottomBarItem(
-                    inActiveItem: Icon(
-                      Icons.home_filled,
-                      color: Colors.white,
-                    ),
-                    activeItem: Icon(
-                      Icons.home_filled,
-                      color: Colors.white,
-                    ),
-                    // itemLabel: 'Home',
-                  ),
-                  BottomBarItem(
-                    inActiveItem: Icon(
-                      Icons.update_outlined,
-                      color: Colors.white,
-                    ),
-                    activeItem: Icon(
-                      Icons.update_outlined,
-                      color: Colors.white,
-                    ),
-                  ),
-                  BottomBarItem(
-                    inActiveItem: Icon(
-                      Icons.person,
-                      color: Colors.white,
-                    ),
-                    activeItem: Icon(
-                      Icons.person,
-                      color: Colors.white,
-                    ),
-                  ),
-                ],
+                    bottomBarItems: const [
+                      BottomBarItem(
+                        inActiveItem: Icon(
+                          Icons.home_filled,
+                          color: Colors.white,
+                        ),
+                        activeItem: Icon(
+                          Icons.home_filled,
+                          color: Colors.white,
+                        ),
+                        // itemLabel: 'Home',
+                      ),
+                      BottomBarItem(
+                        inActiveItem: Icon(
+                          Icons.update_outlined,
+                          color: Colors.white,
+                        ),
+                        activeItem: Icon(
+                          Icons.update_outlined,
+                          color: Colors.white,
+                        ),
+                      ),
+                      BottomBarItem(
+                        inActiveItem: Icon(
+                          Icons.person,
+                          color: Colors.white,
+                        ),
+                        activeItem: Icon(
+                          Icons.person,
+                          color: Colors.white,
+                        ),
+                      ),
+                    ],
 
                     onTap: (index) async {
+                      _controller.index = index;
                       switch (index) {
                         case 0:
                           Navigator.pushNamed(context, '/home');
@@ -2563,7 +2643,7 @@ class _LeaveAllocationRequest extends State<LeaveAllocationRequest>
   Widget shimmerListTile() {
     return Shimmer.fromColors(
       baseColor: Colors.grey[300]!,
-      highlightColor: Colors.grey[100]!,
+      highlightColor: Colors.white!,
       child: ListTile(
         title: Container(
           width: double.infinity,
@@ -2606,7 +2686,7 @@ class _LeaveAllocationRequest extends State<LeaveAllocationRequest>
                   elevation: 0,
                   child: Shimmer.fromColors(
                     baseColor: Colors.grey[300]!,
-                    highlightColor: Colors.grey[100]!,
+                    highlightColor: Colors.white!,
                     child: Container(
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(4.0),
@@ -2791,7 +2871,7 @@ class _LeaveAllocationRequest extends State<LeaveAllocationRequest>
                             hintStyle: TextStyle(
                                 color: Colors.blueGrey.shade300, fontSize: 14),
                             filled: true,
-                            fillColor: Colors.grey[100],
+                            fillColor: Colors.white,
                           ),
                           style: const TextStyle(fontSize: 14),
                         ),
@@ -4475,3 +4555,5 @@ class ImageViewer extends StatelessWidget {
     );
   }
 }
+
+

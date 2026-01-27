@@ -59,13 +59,13 @@ class _AllAssignedLeave extends State<AllAssignedLeave> {
   void initState() {
     super.initState();
     leaveType.clear();
-    
+
     // Start loading permissions immediately (non-blocking)
     checkPermissions();
-    
+
     _loadInitialData();
   }
-  
+
   Future<void> _loadInitialData() async {
     try {
       // Load local data first (fast, can be parallel)
@@ -74,7 +74,7 @@ class _AllAssignedLeave extends State<AllAssignedLeave> {
         fetchToken(),
         prefetchData(),
       ]);
-      
+
       // Load all API data in parallel for faster loading
       await Future.wait([
         getLeaveType(),
@@ -82,7 +82,7 @@ class _AllAssignedLeave extends State<AllAssignedLeave> {
         getLeaveTypes(),
         getEmployees(),
       ]);
-      
+
       if (mounted) {
         setState(() {
           _isShimmer = false;
@@ -113,7 +113,7 @@ class _AllAssignedLeave extends State<AllAssignedLeave> {
       permissionLeaveRequestChecks(),
       permissionLeaveAssignChecks(),
     ]);
-    
+
     // Update UI when permissions are loaded
     if (mounted) {
       setState(() {});
@@ -333,8 +333,23 @@ class _AllAssignedLeave extends State<AllAssignedLeave> {
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    Image.asset(imagePath),
-                    const SizedBox(height: 16),
+                    Padding(
+                      padding: const EdgeInsets.all(16.0),
+                      child: Container(
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(12),
+                          color: Colors.white,
+                        ),
+                        padding: const EdgeInsets.all(12),
+                        child: Image.asset(
+                          imagePath,
+                          width: 150,
+                          height: 150,
+                          fit: BoxFit.contain,
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 8),
                     const Text(
                       "Leave Assigned Successfully",
                       style: TextStyle(
@@ -759,8 +774,7 @@ class _AllAssignedLeave extends State<AllAssignedLeave> {
                 ? ListTile(
                     title: const Text('Leave Allocation Request'),
                     onTap: () {
-                      Navigator.pushNamed(
-                          context, '/leave_allocation_request');
+                      Navigator.pushNamed(context, '/leave_allocation_request');
                     },
                   )
                 : const SizedBox.shrink(),
@@ -779,8 +793,8 @@ class _AllAssignedLeave extends State<AllAssignedLeave> {
           ? SafeArea(
               child: Padding(
                 padding: EdgeInsets.only(
-                  bottom: MediaQuery.of(context).padding.bottom > 0 
-                      ? MediaQuery.of(context).padding.bottom - 8 
+                  bottom: MediaQuery.of(context).padding.bottom > 0
+                      ? MediaQuery.of(context).padding.bottom - 8
                       : 8,
                 ),
                 child: AnimatedNotchBottomBar(
@@ -796,46 +810,48 @@ class _AllAssignedLeave extends State<AllAssignedLeave> {
                   removeMargins: false,
                   bottomBarWidth: MediaQuery.of(context).size.width * 1,
                   durationInMilliSeconds: 300,
-              bottomBarItems: const [
-                BottomBarItem(
-                  inActiveItem: Icon(
-                    Icons.home_filled,
-                    color: Colors.white,
-                  ),
-                  activeItem: Icon(
-                    Icons.home_filled,
-                    color: Colors.white,
-                  ),
-                ),
-                BottomBarItem(
-                  inActiveItem: Icon(
-                    Icons.update_outlined,
-                    color: Colors.white,
-                  ),
-                  activeItem: Icon(
-                    Icons.update_outlined,
-                    color: Colors.white,
-                  ),
-                ),
-                BottomBarItem(
-                  inActiveItem: Icon(
-                    Icons.person,
-                    color: Colors.white,
-                  ),
-                  activeItem: Icon(
-                    Icons.person,
-                    color: Colors.white,
-                  ),
-                ),
-              ],
+                  bottomBarItems: const [
+                    BottomBarItem(
+                      inActiveItem: Icon(
+                        Icons.home_filled,
+                        color: Colors.white,
+                      ),
+                      activeItem: Icon(
+                        Icons.home_filled,
+                        color: Colors.white,
+                      ),
+                    ),
+                    BottomBarItem(
+                      inActiveItem: Icon(
+                        Icons.update_outlined,
+                        color: Colors.white,
+                      ),
+                      activeItem: Icon(
+                        Icons.update_outlined,
+                        color: Colors.white,
+                      ),
+                    ),
+                    BottomBarItem(
+                      inActiveItem: Icon(
+                        Icons.person,
+                        color: Colors.white,
+                      ),
+                      activeItem: Icon(
+                        Icons.person,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ],
 
                   onTap: (index) async {
+                    _controller.index = index;
                     switch (index) {
                       case 0:
                         Navigator.pushNamed(context, '/home');
                         break;
                       case 1:
-                        Navigator.pushNamed(context, '/employee_checkin_checkout');
+                        Navigator.pushNamed(
+                            context, '/employee_checkin_checkout');
                         break;
                       case 2:
                         Navigator.pushNamed(context, '/employees_form',

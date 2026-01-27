@@ -50,13 +50,13 @@ class _LeaveTypes extends State<LeaveTypes> {
     setState(() {
       isLoading = false;
     });
-    
+
     // Start loading permissions immediately (non-blocking)
     checkPermissions();
-    
+
     _loadInitialData();
   }
-  
+
   Future<void> _loadInitialData() async {
     try {
       // Load local data first (fast, can be parallel)
@@ -65,7 +65,7 @@ class _LeaveTypes extends State<LeaveTypes> {
         fetchToken(),
         prefetchData(),
       ]);
-      
+
       // Load API data
       await getLeaveType();
     } catch (e) {
@@ -81,7 +81,7 @@ class _LeaveTypes extends State<LeaveTypes> {
       permissionLeaveRequestChecks(),
       permissionLeaveAssignChecks(),
     ]);
-    
+
     // Update UI when permissions are loaded
     if (mounted) {
       setState(() {});
@@ -377,8 +377,7 @@ class _LeaveTypes extends State<LeaveTypes> {
                 ? ListTile(
                     title: const Text('Leave Allocation Request'),
                     onTap: () {
-                      Navigator.pushNamed(
-                          context, '/leave_allocation_request');
+                      Navigator.pushNamed(context, '/leave_allocation_request');
                     },
                   )
                 : const SizedBox.shrink(),
@@ -397,8 +396,8 @@ class _LeaveTypes extends State<LeaveTypes> {
           ? SafeArea(
               child: Padding(
                 padding: EdgeInsets.only(
-                  bottom: MediaQuery.of(context).padding.bottom > 0 
-                      ? MediaQuery.of(context).padding.bottom - 8 
+                  bottom: MediaQuery.of(context).padding.bottom > 0
+                      ? MediaQuery.of(context).padding.bottom - 8
                       : 8,
                 ),
                 child: AnimatedNotchBottomBar(
@@ -414,46 +413,48 @@ class _LeaveTypes extends State<LeaveTypes> {
                   removeMargins: false,
                   bottomBarWidth: MediaQuery.of(context).size.width * 1,
                   durationInMilliSeconds: 300,
-              bottomBarItems: const [
-                BottomBarItem(
-                  inActiveItem: Icon(
-                    Icons.home_filled,
-                    color: Colors.white,
-                  ),
-                  activeItem: Icon(
-                    Icons.home_filled,
-                    color: Colors.white,
-                  ),
-                ),
-                BottomBarItem(
-                  inActiveItem: Icon(
-                    Icons.update_outlined,
-                    color: Colors.white,
-                  ),
-                  activeItem: Icon(
-                    Icons.update_outlined,
-                    color: Colors.white,
-                  ),
-                ),
-                BottomBarItem(
-                  inActiveItem: Icon(
-                    Icons.person,
-                    color: Colors.white,
-                  ),
-                  activeItem: Icon(
-                    Icons.person,
-                    color: Colors.white,
-                  ),
-                ),
-              ],
+                  bottomBarItems: const [
+                    BottomBarItem(
+                      inActiveItem: Icon(
+                        Icons.home_filled,
+                        color: Colors.white,
+                      ),
+                      activeItem: Icon(
+                        Icons.home_filled,
+                        color: Colors.white,
+                      ),
+                    ),
+                    BottomBarItem(
+                      inActiveItem: Icon(
+                        Icons.update_outlined,
+                        color: Colors.white,
+                      ),
+                      activeItem: Icon(
+                        Icons.update_outlined,
+                        color: Colors.white,
+                      ),
+                    ),
+                    BottomBarItem(
+                      inActiveItem: Icon(
+                        Icons.person,
+                        color: Colors.white,
+                      ),
+                      activeItem: Icon(
+                        Icons.person,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ],
 
                   onTap: (index) async {
+                    _controller.index = index;
                     switch (index) {
                       case 0:
                         Navigator.pushNamed(context, '/home');
                         break;
                       case 1:
-                        Navigator.pushNamed(context, '/employee_checkin_checkout');
+                        Navigator.pushNamed(
+                            context, '/employee_checkin_checkout');
                         break;
                       case 2:
                         Navigator.pushNamed(context, '/employees_form',

@@ -10,6 +10,7 @@ import 'package:dropdown_search/dropdown_search.dart';
 import 'package:animated_notch_bottom_bar/animated_notch_bottom_bar/animated_notch_bottom_bar.dart';
 import 'package:shimmer/shimmer.dart';
 import 'dart:io';
+import '../utils/button_loader_mixin.dart';
 
 class LeaveRequest extends StatefulWidget {
   const LeaveRequest({super.key});
@@ -19,7 +20,7 @@ class LeaveRequest extends StatefulWidget {
 }
 
 class _LeaveRequest extends State<LeaveRequest>
-    with SingleTickerProviderStateMixin {
+    with SingleTickerProviderStateMixin, ButtonLoaderMixin {
   String _getBreakdown(String breakdownValue) {
     final breakdownMap = {
       'full_day': 'Full Day',
@@ -141,6 +142,13 @@ class _LeaveRequest extends State<LeaveRequest>
   bool hasMoreCancelled = true;
   bool hasMoreRejected = true;
   late String getToken = '';
+  
+  // Button loading states
+  bool _isCreateLeaveLoading = false;
+  bool _isUpdateLeaveLoading = false;
+  bool _isDeleteLeaveLoading = false;
+  bool _isApproveLeaveLoading = false;
+  bool _isRejectLeaveLoading = false;
 
   @override
   void initState() {
@@ -179,14 +187,14 @@ class _LeaveRequest extends State<LeaveRequest>
         getBaseUrl(),
         fetchToken(),
       ]);
-      
+
       // Load employee data in parallel
       await Future.wait([
         getEmployees(),
         getListEmployees(),
         getAllEmployeesName(),
       ]);
-      
+
       // Load permissions and leave data in parallel
       await Future.wait([
         checkPermissions(),
@@ -360,16 +368,32 @@ class _LeaveRequest extends State<LeaveRequest>
       context: context,
       builder: (BuildContext dialogContext) {
         return Dialog(
+          backgroundColor: Colors.white,
           child: SizedBox(
-            height: MediaQuery.of(context).size.height * 0.3,
+            height: MediaQuery.of(context).size.height * 0.35,
             width: MediaQuery.of(context).size.width * 0.85,
             child: SingleChildScrollView(
               child: Center(
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    Image.asset(imagePath),
-                    const SizedBox(height: 16),
+                    Padding(
+                      padding: const EdgeInsets.all(16.0),
+                      child: Container(
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(12),
+                          color: Colors.grey[100],
+                        ),
+                        padding: const EdgeInsets.all(12),
+                        child: Image.asset(
+                          imagePath,
+                          width: 150,
+                          height: 150,
+                          fit: BoxFit.contain,
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 8),
                     const Text(
                       "Leave Deleted Successfully",
                       style: TextStyle(
@@ -403,16 +427,32 @@ class _LeaveRequest extends State<LeaveRequest>
       context: context,
       builder: (BuildContext dialogContext) {
         return Dialog(
+          backgroundColor: Colors.white,
           child: SizedBox(
-            height: MediaQuery.of(context).size.height * 0.3,
+            height: MediaQuery.of(context).size.height * 0.35,
             width: MediaQuery.of(context).size.width * 0.85,
             child: SingleChildScrollView(
               child: Center(
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    Image.asset(imagePath),
-                    const SizedBox(height: 16),
+                    Padding(
+                      padding: const EdgeInsets.all(16.0),
+                      child: Container(
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(12),
+                          color: Colors.white,
+                        ),
+                        padding: const EdgeInsets.all(12),
+                        child: Image.asset(
+                          imagePath,
+                          width: 150,
+                          height: 150,
+                          fit: BoxFit.contain,
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 8),
                     const Text(
                       "Leave Rejected Successfully",
                       style: TextStyle(
@@ -446,16 +486,32 @@ class _LeaveRequest extends State<LeaveRequest>
       context: context,
       builder: (BuildContext dialogContext) {
         return Dialog(
+          backgroundColor: Colors.white,
           child: SizedBox(
-            height: MediaQuery.of(context).size.height * 0.3,
+            height: MediaQuery.of(context).size.height * 0.35,
             width: MediaQuery.of(context).size.width * 0.85,
             child: SingleChildScrollView(
               child: Center(
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    Image.asset(imagePath),
-                    const SizedBox(height: 16),
+                    Padding(
+                      padding: const EdgeInsets.all(16.0),
+                      child: Container(
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(12),
+                          color: Colors.grey[100],
+                        ),
+                        padding: const EdgeInsets.all(12),
+                        child: Image.asset(
+                          imagePath,
+                          width: 150,
+                          height: 150,
+                          fit: BoxFit.contain,
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 8),
                     const Text(
                       "Leave Approved Successfully",
                       style: TextStyle(
@@ -489,16 +545,32 @@ class _LeaveRequest extends State<LeaveRequest>
       context: context,
       builder: (BuildContext dialogContext) {
         return Dialog(
+          backgroundColor: Colors.white,
           child: SizedBox(
-            height: MediaQuery.of(context).size.height * 0.3,
+            height: MediaQuery.of(context).size.height * 0.35,
             width: MediaQuery.of(context).size.width * 0.85,
             child: SingleChildScrollView(
               child: Center(
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    Image.asset(imagePath),
-                    const SizedBox(height: 16),
+                    Padding(
+                      padding: const EdgeInsets.all(16.0),
+                      child: Container(
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(12),
+                          color: Colors.grey[100],
+                        ),
+                        padding: const EdgeInsets.all(12),
+                        child: Image.asset(
+                          imagePath,
+                          width: 150,
+                          height: 150,
+                          fit: BoxFit.contain,
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 8),
                     const Text(
                       "Leave Created Successfully",
                       style: TextStyle(
@@ -532,16 +604,32 @@ class _LeaveRequest extends State<LeaveRequest>
       context: context,
       builder: (BuildContext dialogContext) {
         return Dialog(
+          backgroundColor: Colors.white,
           child: SizedBox(
-            height: MediaQuery.of(context).size.height * 0.3,
+            height: MediaQuery.of(context).size.height * 0.35,
             width: MediaQuery.of(context).size.width * 0.85,
             child: SingleChildScrollView(
               child: Center(
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    Image.asset(imagePath),
-                    const SizedBox(height: 16),
+                    Padding(
+                      padding: const EdgeInsets.all(16.0),
+                      child: Container(
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(12),
+                          color: Colors.grey[100],
+                        ),
+                        padding: const EdgeInsets.all(12),
+                        child: Image.asset(
+                          imagePath,
+                          width: 150,
+                          height: 150,
+                          fit: BoxFit.contain,
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 8),
                     const Text(
                       "Leave Updated Successfully",
                       style: TextStyle(
@@ -691,7 +779,7 @@ class _LeaveRequest extends State<LeaveRequest>
   void showCreateLeaveDialog(BuildContext context) async {
     final prefs = await SharedPreferences.getInstance();
     var employeeID = prefs.getInt("employee_id");
-    
+
     // Reset button state when dialog opens
     setState(() {
       isSaveClick = true;
@@ -2705,8 +2793,8 @@ class _LeaveRequest extends State<LeaveRequest>
             ? SafeArea(
                 child: Padding(
                   padding: EdgeInsets.only(
-                    bottom: MediaQuery.of(context).padding.bottom > 0 
-                        ? MediaQuery.of(context).padding.bottom - 8 
+                    bottom: MediaQuery.of(context).padding.bottom > 0
+                        ? MediaQuery.of(context).padding.bottom - 8
                         : 8,
                   ),
                   child: AnimatedNotchBottomBar(
@@ -2722,42 +2810,43 @@ class _LeaveRequest extends State<LeaveRequest>
                     removeMargins: false,
                     bottomBarWidth: MediaQuery.of(context).size.width * 1,
                     durationInMilliSeconds: 300,
-                bottomBarItems: const [
-                  BottomBarItem(
-                    inActiveItem: Icon(
-                      Icons.home_filled,
-                      color: Colors.white,
-                    ),
-                    activeItem: Icon(
-                      Icons.home_filled,
-                      color: Colors.white,
-                    ),
-                    // itemLabel: 'Home',
-                  ),
-                  BottomBarItem(
-                    inActiveItem: Icon(
-                      Icons.update_outlined,
-                      color: Colors.white,
-                    ),
-                    activeItem: Icon(
-                      Icons.update_outlined,
-                      color: Colors.white,
-                    ),
-                  ),
-                  BottomBarItem(
-                    inActiveItem: Icon(
-                      Icons.person,
-                      color: Colors.white,
-                    ),
-                    activeItem: Icon(
-                      Icons.person,
-                      color: Colors.white,
-                    ),
-                    // itemLabel: 'Profile',
-                  ),
-                ],
+                    bottomBarItems: const [
+                      BottomBarItem(
+                        inActiveItem: Icon(
+                          Icons.home_filled,
+                          color: Colors.white,
+                        ),
+                        activeItem: Icon(
+                          Icons.home_filled,
+                          color: Colors.white,
+                        ),
+                        // itemLabel: 'Home',
+                      ),
+                      BottomBarItem(
+                        inActiveItem: Icon(
+                          Icons.update_outlined,
+                          color: Colors.white,
+                        ),
+                        activeItem: Icon(
+                          Icons.update_outlined,
+                          color: Colors.white,
+                        ),
+                      ),
+                      BottomBarItem(
+                        inActiveItem: Icon(
+                          Icons.person,
+                          color: Colors.white,
+                        ),
+                        activeItem: Icon(
+                          Icons.person,
+                          color: Colors.white,
+                        ),
+                        // itemLabel: 'Profile',
+                      ),
+                    ],
 
                     onTap: (index) async {
+                      _controller.index = index;
                       switch (index) {
                         case 0:
                           Navigator.pushNamed(context, '/home');

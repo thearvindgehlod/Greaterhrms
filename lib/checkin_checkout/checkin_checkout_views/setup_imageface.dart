@@ -196,9 +196,23 @@ class _CameraSetupPageState extends State<CameraSetupPage> {
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Image.asset("Assets/gif22.gif",
-                      width: 180, height: 180, fit: BoxFit.cover),
-                  const SizedBox(height: 16),
+                  Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: Container(
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(12),
+                          color: Colors.white,
+                      ),
+                      padding: const EdgeInsets.all(12),
+                      child: Image.asset(
+                        "Assets/gif22.gif",
+                        width: 150,
+                        height: 150,
+                        fit: BoxFit.contain,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 8),
                   const Text(
                     "Face Image Uploaded Successfully",
                     style: TextStyle(

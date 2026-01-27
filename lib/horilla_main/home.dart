@@ -61,13 +61,13 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
     super.initState();
     _mapController = AnimatedMapController(vsync: this);
     _scrollController.addListener(_scrollListener);
-    
+
     // Show UI immediately - don't wait for data
     setState(() {
       isLoading = false;
       _isPermissionLoading = false;
     });
-    
+
     // Load data in background (non-blocking)
     _initializePermissionsAndData().catchError((e) {
       print('Error in _initializePermissionsAndData: $e');
@@ -85,7 +85,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
     try {
       // Load local preferences first (fast, non-blocking)
       loadGeoFencingPreference();
-      
+
       // Load critical permissions in parallel with timeout protection
       try {
         await Future.wait([
@@ -113,18 +113,18 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
           prefetchData().catchError((e) {
             print('Error in prefetchData: $e');
           }),
-        ]).timeout(const Duration(seconds: 5));
+        ]).timeout(const Duration(seconds: 10));
       } on TimeoutException {
         print('Permission checks timed out after 5 seconds, continuing anyway');
       }
     } catch (e) {
       print('Error in _initializePermissionsAndData: $e');
     }
-    
+
     // Load notifications in background (non-critical, can load after UI shows)
     _loadNotificationsInBackground();
   }
-  
+
   Future<void> _loadNotificationsInBackground() async {
     try {
       await Future.wait([
@@ -153,7 +153,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
       var response = await http.get(uri, headers: {
         "Content-Type": "application/json",
         "Authorization": "Bearer $token",
-      }).timeout(const Duration(seconds: 3));
+      }).timeout(const Duration(seconds: 8));
       if (mounted) {
         setState(() {
           if (response.statusCode == 200) {
@@ -181,7 +181,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
       var response = await http.get(uri, headers: {
         "Content-Type": "application/json",
         "Authorization": "Bearer $token",
-      }).timeout(const Duration(seconds: 3));
+      }).timeout(const Duration(seconds: 8));
       if (mounted) {
         setState(() {
           if (response.statusCode == 200) {
@@ -209,7 +209,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
       var response = await http.get(uri, headers: {
         "Content-Type": "application/json",
         "Authorization": "Bearer $token",
-      }).timeout(const Duration(seconds: 3));
+      }).timeout(const Duration(seconds: 8));
       if (mounted) {
         setState(() {
           permissionGeoFencingMapViewCheck = response.statusCode == 200;
@@ -230,7 +230,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
       var response = await http.get(uri, headers: {
         "Content-Type": "application/json",
         "Authorization": "Bearer $token",
-      }).timeout(const Duration(seconds: 3));
+      }).timeout(const Duration(seconds: 8));
       if (mounted) {
         setState(() {
           if (response.statusCode == 200) {
@@ -258,7 +258,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
       var response = await http.get(uri, headers: {
         "Content-Type": "application/json",
         "Authorization": "Bearer $token",
-      }).timeout(const Duration(seconds: 3));
+      }).timeout(const Duration(seconds: 8));
       if (mounted) {
         setState(() {
           if (response.statusCode == 200) {
@@ -345,8 +345,8 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
       final prefs = await SharedPreferences.getInstance();
       var token = prefs.getString("token");
       var typedServerUrl = prefs.getString("typed_url");
-      var uri =
-          Uri.parse('$typedServerUrl/api/attendance/permission-check/attendance');
+      var uri = Uri.parse(
+          '$typedServerUrl/api/attendance/permission-check/attendance');
       var response = await http.get(uri, headers: {
         "Content-Type": "application/json",
         "Authorization": "Bearer $token",
@@ -370,7 +370,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
       var response = await http.get(uri, headers: {
         "Content-Type": "application/json",
         "Authorization": "Bearer $token",
-      }).timeout(const Duration(seconds: 3));
+      }).timeout(const Duration(seconds: 8));
       if (mounted) {
         setState(() {
           permissionWardCheck = response.statusCode == 200;
@@ -392,39 +392,40 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
       var response = await http.get(uri, headers: {
         "Content-Type": "application/json",
         "Authorization": "Bearer $token",
-      }).timeout(const Duration(seconds: 3));
+      }).timeout(const Duration(seconds: 8));
 
       if (response.statusCode == 200 && mounted) {
-      final responseData = jsonDecode(response.body);
-      setState(() {
-        arguments = {
-          'employee_id': responseData['id'] ?? '',
-          'employee_name': (responseData['employee_first_name'] ?? '') +
-              ' ' +
-              (responseData['employee_last_name'] ?? ''),
-          'badge_id': responseData['badge_id'] ?? '',
-          'email': responseData['email'] ?? '',
-          'phone': responseData['phone'] ?? '',
-          'date_of_birth': responseData['dob'] ?? '',
-          'gender': responseData['gender'] ?? '',
-          'address': responseData['address'] ?? '',
-          'country': responseData['country'] ?? '',
-          'state': responseData['state'] ?? '',
-          'city': responseData['city'] ?? '',
-          'qualification': responseData['qualification'] ?? '',
-          'experience': responseData['experience'] ?? '',
-          'marital_status': responseData['marital_status'] ?? '',
-          'children': responseData['children'] ?? '',
-          'emergency_contact': responseData['emergency_contact'] ?? '',
-          'emergency_contact_name':
-              responseData['emergency_contact_name'] ?? '',
-          'employee_work_info_id': responseData['employee_work_info_id'] ?? '',
-          'employee_bank_details_id':
-              responseData['employee_bank_details_id'] ?? '',
-          'employee_profile': responseData['employee_profile'] ?? '',
-          'job_position_name': responseData['job_position_name'] ?? ''
-        };
-      });
+        final responseData = jsonDecode(response.body);
+        setState(() {
+          arguments = {
+            'employee_id': responseData['id'] ?? '',
+            'employee_name': (responseData['employee_first_name'] ?? '') +
+                ' ' +
+                (responseData['employee_last_name'] ?? ''),
+            'badge_id': responseData['badge_id'] ?? '',
+            'email': responseData['email'] ?? '',
+            'phone': responseData['phone'] ?? '',
+            'date_of_birth': responseData['dob'] ?? '',
+            'gender': responseData['gender'] ?? '',
+            'address': responseData['address'] ?? '',
+            'country': responseData['country'] ?? '',
+            'state': responseData['state'] ?? '',
+            'city': responseData['city'] ?? '',
+            'qualification': responseData['qualification'] ?? '',
+            'experience': responseData['experience'] ?? '',
+            'marital_status': responseData['marital_status'] ?? '',
+            'children': responseData['children'] ?? '',
+            'emergency_contact': responseData['emergency_contact'] ?? '',
+            'emergency_contact_name':
+                responseData['emergency_contact_name'] ?? '',
+            'employee_work_info_id':
+                responseData['employee_work_info_id'] ?? '',
+            'employee_bank_details_id':
+                responseData['employee_bank_details_id'] ?? '',
+            'employee_profile': responseData['employee_profile'] ?? '',
+            'job_position_name': responseData['job_position_name'] ?? ''
+          };
+        });
       }
     } catch (e) {
       // Handle timeout/errors gracefully - don't block UI
@@ -433,7 +434,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
 
   Future<void> fetchNotifications() async {
     if (!mounted) return;
-    
+
     final prefs = await SharedPreferences.getInstance();
     var token = prefs.getString("token");
     var typedServerUrl = prefs.getString("typed_url");
@@ -441,7 +442,8 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
     List<Map<String, dynamic>> allNotifications = [];
     int page = 1;
     bool hasMore = true;
-    int maxPages = 2; // Reduced to 2 pages for faster initial load (can load more on scroll)
+    int maxPages =
+        2; // Reduced to 2 pages for faster initial load (can load more on scroll)
 
     while (hasMore && page <= maxPages) {
       var uri = Uri.parse(
@@ -500,18 +502,18 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
 
   Future<void> unreadNotificationsCount() async {
     if (!mounted) return;
-    
+
     final prefs = await SharedPreferences.getInstance();
     var token = prefs.getString("token");
     var typedServerUrl = prefs.getString("typed_url");
     var uri = Uri.parse(
         '$typedServerUrl/api/notifications/notifications/list/unread');
-    
+
     try {
       var response = await http.get(uri, headers: {
         "Content-Type": "application/json",
         "Authorization": "Bearer $token",
-        });
+      });
 
       if (response.statusCode == 200 && mounted) {
         setState(() {
@@ -572,7 +574,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
         var res = await http.get(uri, headers: {
           "Content-Type": "application/json",
           "Authorization": "Bearer $token",
-        }).timeout(const Duration(seconds: 3));
+        }).timeout(const Duration(seconds: 8));
         return res.statusCode == 200;
       } catch (e) {
         // Handle timeout/errors gracefully - return false (permission not granted)
@@ -663,20 +665,28 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
   }
 
   Future<bool> getFaceDetection() async {
-    final prefs = await SharedPreferences.getInstance();
-    var token = prefs.getString("token");
-    var typedServerUrl = prefs.getString("typed_url");
-    var uri = Uri.parse('$typedServerUrl/api/facedetection/config/');
-    var response = await http.get(uri, headers: {
-      "Content-Type": "application/json",
-      "Authorization": "Bearer $token",
-    });
-    if (response.statusCode == 200) {
-      var data = jsonDecode(response.body);
-      bool isEnabled = data['start'] ?? false;
-      return isEnabled;
-    } else {
-      print('Failed to get face detection');
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      var token = prefs.getString("token");
+      var typedServerUrl = prefs.getString("typed_url");
+      var uri = Uri.parse('$typedServerUrl/api/facedetection/config/');
+      var response = await http.get(uri, headers: {
+        "Content-Type": "application/json",
+        "Authorization": "Bearer $token",
+      }).timeout(Duration(seconds: 8));
+      if (response.statusCode == 200) {
+        var data = jsonDecode(response.body);
+        bool isEnabled = data['start'] ?? false;
+        return isEnabled;
+      } else {
+        print('Failed to get face detection');
+        return false;
+      }
+    } on TimeoutException catch (e) {
+      print('Timeout in getFaceDetection: $e');
+      return false;
+    } on Exception catch (e) {
+      print('Error in getFaceDetection: $e');
       return false;
     }
   }
@@ -691,7 +701,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
       var response = await http.get(uri, headers: {
         "Content-Type": "application/json",
         "Authorization": "Bearer $token",
-      });
+      }).timeout(Duration(seconds: 8));
 
       if (response.statusCode == 200 && response.body.isNotEmpty) {
         var data = jsonDecode(response.body);
@@ -845,9 +855,23 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    Image.asset(imagePath,
-                        width: 180, height: 180, fit: BoxFit.cover),
-                    const SizedBox(height: 16),
+                    Padding(
+                      padding: const EdgeInsets.all(16.0),
+                      child: Container(
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(12),
+                          color: Colors.white,
+                        ),
+                        padding: const EdgeInsets.all(12),
+                        child: Image.asset(
+                          imagePath,
+                          width: 150,
+                          height: 150,
+                          fit: BoxFit.contain,
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 8),
                     const Text(
                       "Values Marked Successfully",
                       style: TextStyle(
@@ -953,63 +977,61 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                                   MediaQuery.of(context).size.width * 0.0357),
                           child: Center(
                             child: notifications.isEmpty
-                                    ? Center(
-                                        child: Column(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.center,
-                                          children: [
-                                            Icon(
-                                              Icons.notifications,
-                                              color: Colors.black,
-                                              size: MediaQuery.of(context)
-                                                      .size
-                                                      .width *
-                                                  0.2054,
-                                            ),
-                                            SizedBox(
-                                                height: MediaQuery.of(context)
-                                                        .size
-                                                        .height *
-                                                    0.0205),
-                                            Text(
-                                              "There are no notification records to display",
-                                              style: TextStyle(
-                                                fontSize: MediaQuery.of(context)
-                                                        .size
-                                                        .width *
-                                                    0.0268,
-                                                color: Colors.black,
-                                                fontWeight: FontWeight.bold,
-                                              ),
-                                            ),
-                                          ],
+                                ? Center(
+                                    child: Column(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: [
+                                        Icon(
+                                          Icons.notifications,
+                                          color: Colors.black,
+                                          size: MediaQuery.of(context)
+                                                  .size
+                                                  .width *
+                                              0.2054,
                                         ),
-                                      )
-                                    : Column(
-                                        children: [
-                                          Expanded(
-                                            child: ListView.builder(
-                                              itemCount: notifications.length,
-                                              itemBuilder: (context, index) {
-                                                final record =
-                                                    notifications[index];
-                                                return Padding(
-                                                  padding:
-                                                      const EdgeInsets.all(4.0),
-                                                  child: Column(
-                                                    children: [
-                                                      if (record['verb'] !=
-                                                          null)
-                                                        buildListItem(context,
-                                                            record, index),
-                                                    ],
-                                                  ),
-                                                );
-                                              },
-                                            ),
+                                        SizedBox(
+                                            height: MediaQuery.of(context)
+                                                    .size
+                                                    .height *
+                                                0.0205),
+                                        Text(
+                                          "There are no notification records to display",
+                                          style: TextStyle(
+                                            fontSize: MediaQuery.of(context)
+                                                    .size
+                                                    .width *
+                                                0.0268,
+                                            color: Colors.black,
+                                            fontWeight: FontWeight.bold,
                                           ),
-                                        ],
+                                        ),
+                                      ],
+                                    ),
+                                  )
+                                : Column(
+                                    children: [
+                                      Expanded(
+                                        child: ListView.builder(
+                                          itemCount: notifications.length,
+                                          itemBuilder: (context, index) {
+                                            final record = notifications[index];
+                                            return Padding(
+                                              padding:
+                                                  const EdgeInsets.all(4.0),
+                                              child: Column(
+                                                children: [
+                                                  if (record['verb'] != null)
+                                                    buildListItem(
+                                                        context, record, index),
+                                                ],
+                                              ),
+                                            );
+                                          },
+                                        ),
                                       ),
+                                    ],
+                                  ),
                           ),
                         ),
                       )
@@ -1405,8 +1427,8 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
           ? SafeArea(
               child: Padding(
                 padding: EdgeInsets.only(
-                  bottom: MediaQuery.of(context).padding.bottom > 0 
-                      ? MediaQuery.of(context).padding.bottom - 8 
+                  bottom: MediaQuery.of(context).padding.bottom > 0
+                      ? MediaQuery.of(context).padding.bottom - 8
                       : 8,
                 ),
                 child: AnimatedNotchBottomBar(
@@ -1419,39 +1441,41 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                   removeMargins: false,
                   bottomBarWidth: MediaQuery.of(context).size.width * 1,
                   durationInMilliSeconds: 500,
-              bottomBarItems: const [
-                BottomBarItem(
-                  inActiveItem: Icon(
-                    Icons.home_filled,
-                    color: Colors.white,
-                  ),
-                  activeItem: Icon(
-                    Icons.home_filled,
-                    color: Colors.white,
-                  ),
-                ),
-                BottomBarItem(
-                  inActiveItem: Icon(
-                    Icons.update_outlined,
-                    color: Colors.white,
-                  ),
-                  activeItem: Icon(
-                    Icons.update_outlined,
-                    color: Colors.white,
-                  ),
-                ),
-                BottomBarItem(
-                  inActiveItem: Icon(
-                    Icons.person,
-                    color: Colors.white,
-                  ),
-                  activeItem: Icon(
-                    Icons.person,
-                    color: Colors.white,
-                  ),
-                ),
-              ],
+                  bottomBarItems: const [
+                    BottomBarItem(
+                      inActiveItem: Icon(
+                        Icons.home_filled,
+                        color: Colors.white,
+                      ),
+                      activeItem: Icon(
+                        Icons.home_filled,
+                        color: Colors.white,
+                      ),
+                    ),
+                    BottomBarItem(
+                      inActiveItem: Icon(
+                        Icons.update_outlined,
+                        color: Colors.white,
+                      ),
+                      activeItem: Icon(
+                        Icons.update_outlined,
+                        color: Colors.white,
+                      ),
+                    ),
+                    BottomBarItem(
+                      inActiveItem: Icon(
+                        Icons.person,
+                        color: Colors.white,
+                      ),
+                      activeItem: Icon(
+                        Icons.person,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ],
                   onTap: (index) async {
+                    // Update the controller index to show the correct tab as selected
+                    _controller.index = index;
                     switch (index) {
                       case 0:
                         Navigator.pushNamed(context, '/home');

@@ -66,37 +66,38 @@ class _CheckInCheckOutFormPageState extends State<CheckInCheckOutFormPage>
     super.initState();
     WidgetsBinding.instance.addObserver(this);
     swipeDirection = 'Swipe to Check-In';
-    
+
     // Show UI immediately - don't wait for data
     setState(() {
       isLoading = false;
     });
-    
+
     // Restore timer from local storage immediately (fast)
     _restoreTimerFromLocal();
-    
+
     // Load data in background
     _initializeData();
-    
+
     // Start periodic sync with web every 2 seconds
     _startPeriodicSync();
   }
-  
+
   void _startPeriodicSync() {
     // Cancel any existing timer
     _syncTimer?.cancel();
-    
+
     // Start new timer that polls every 2 seconds
     _syncTimer = Timer.periodic(const Duration(seconds: 2), (timer) {
       // Sync with server to check if clock-out happened on web
       getCheckIn().catchError((e) {
         print('Error in periodic sync: $e');
       });
-      
+
       // Also refresh employee data periodically (every 30 seconds) to ensure data is up to date
       // Check if data is still empty and retry loading
-      if ((requestsEmpMyFirstName.isEmpty || requestsEmpMyDepartment.isEmpty) && 
-          timer.tick % 15 == 0) { // Every 30 seconds (15 * 2 seconds)
+      if ((requestsEmpMyFirstName.isEmpty || requestsEmpMyDepartment.isEmpty) &&
+          timer.tick % 15 == 0) {
+        // Every 30 seconds (15 * 2 seconds)
         print('Employee data is empty, retrying to load...');
         getLoginEmployeeRecord().catchError((e) {
           print('Error retrying employee data: $e');
@@ -104,7 +105,7 @@ class _CheckInCheckOutFormPageState extends State<CheckInCheckOutFormPage>
       }
     });
   }
-  
+
   void _stopPeriodicSync() {
     _syncTimer?.cancel();
     _syncTimer = null;
@@ -127,9 +128,9 @@ class _CheckInCheckOutFormPageState extends State<CheckInCheckOutFormPage>
       await _restoreTimerFromLocal();
       // Then sync with server (server is source of truth)
       await getCheckIn();
-    } else if (state == AppLifecycleState.paused || 
-               state == AppLifecycleState.inactive ||
-               state == AppLifecycleState.detached) {
+    } else if (state == AppLifecycleState.paused ||
+        state == AppLifecycleState.inactive ||
+        state == AppLifecycleState.detached) {
       // Pause periodic sync when app is in background
       _stopPeriodicSync();
     }
@@ -194,7 +195,7 @@ class _CheckInCheckOutFormPageState extends State<CheckInCheckOutFormPage>
   Future<void> _restoreTimerFromLocal() async {
     final isIn = await _getIsCheckedIn();
     final display = await _getCheckinDisplay();
-    
+
     if (isIn) {
       final saved = await _getSavedCheckInTime();
       if (saved != null) {
@@ -255,7 +256,7 @@ class _CheckInCheckOutFormPageState extends State<CheckInCheckOutFormPage>
     try {
       // Load local preferences first (fast)
       final prefs = await SharedPreferences.getInstance();
-      
+
       // Load token immediately (non-blocking)
       fetchToken();
 
@@ -294,16 +295,18 @@ class _CheckInCheckOutFormPageState extends State<CheckInCheckOutFormPage>
           }).catchError((e) {
             print('Retry getLoginEmployeeRecord also failed: $e');
           }),
-        ]).timeout(const Duration(seconds: 5));
+        ]).timeout(const Duration(seconds: 10));
         dataLoaded = true;
       } on TimeoutException {
-        print('API calls timed out after 5 seconds, retrying once...');
+        print('API calls timed out after 10 seconds, retrying once...');
         // Retry failed calls once more
         try {
           await Future.wait<void>([
-            prefetchData().catchError((e) => print('Retry prefetchData failed: $e')),
-            getLoginEmployeeRecord().catchError((e) => print('Retry getLoginEmployeeRecord failed: $e')),
-          ]).timeout(const Duration(seconds: 3));
+            prefetchData()
+                .catchError((e) => print('Retry prefetchData failed: $e')),
+            getLoginEmployeeRecord().catchError(
+                (e) => print('Retry getLoginEmployeeRecord failed: $e')),
+          ]).timeout(const Duration(seconds: 8));
           dataLoaded = true;
         } catch (e) {
           print('Retry also failed: $e');
@@ -416,11 +419,14 @@ class _CheckInCheckOutFormPageState extends State<CheckInCheckOutFormPage>
     final c1 = jsonBody['clock_in_time'];
     final c2 = jsonBody['clock_in'];
     final c3 = jsonBody['check_in_time'];
-    
+
     // Try formatted time first
     if (c1 is String && c1.trim().isNotEmpty) {
       // If already formatted (h:mm a), return as is
-      if (c1.contains('AM') || c1.contains('PM') || c1.contains('am') || c1.contains('pm')) {
+      if (c1.contains('AM') ||
+          c1.contains('PM') ||
+          c1.contains('am') ||
+          c1.contains('pm')) {
         return c1;
       }
       // Otherwise try to parse and format
@@ -431,7 +437,7 @@ class _CheckInCheckOutFormPageState extends State<CheckInCheckOutFormPage>
         return c1;
       }
     }
-    
+
     // Try clock_in field
     if (c2 is String && c2.trim().isNotEmpty) {
       try {
@@ -441,7 +447,7 @@ class _CheckInCheckOutFormPageState extends State<CheckInCheckOutFormPage>
         return c2;
       }
     }
-    
+
     // Try check_in_time field
     if (c3 is String && c3.trim().isNotEmpty) {
       try {
@@ -451,7 +457,7 @@ class _CheckInCheckOutFormPageState extends State<CheckInCheckOutFormPage>
         return c3;
       }
     }
-    
+
     // Fallback: current time (shouldn't happen if server provides data)
     return DateFormat('h:mm a').format(DateTime.now());
   }
@@ -471,18 +477,19 @@ class _CheckInCheckOutFormPageState extends State<CheckInCheckOutFormPage>
 
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
-        
+
         // Server is the source of truth - sync everything from server
         if (data['status'] == true) {
           // Server says currently checked-in - get all info from server
           final display = _extractCheckInDisplay(data);
-          
+
           // Extract check-in timestamp from server (source of truth)
           DateTime serverCheckInTime;
           try {
             final clockInStr = data['clock_in'] ?? data['clock_in_time'] ?? '';
             if (clockInStr.toString().isNotEmpty) {
-              serverCheckInTime = DateTime.parse(clockInStr.toString()).toLocal();
+              serverCheckInTime =
+                  DateTime.parse(clockInStr.toString()).toLocal();
             } else {
               // Fallback to current time if server doesn't provide timestamp
               serverCheckInTime = DateTime.now();
@@ -490,18 +497,18 @@ class _CheckInCheckOutFormPageState extends State<CheckInCheckOutFormPage>
           } catch (_) {
             serverCheckInTime = DateTime.now();
           }
-          
+
           // Calculate elapsed time from server check-in time
           final elapsed = DateTime.now().difference(serverCheckInTime);
-          
+
           // Sync local state with server (server is source of truth)
           await _setIsCheckedIn(true);
           await _saveCheckInTime(serverCheckInTime);
           await _saveCheckinDisplay(display);
-          
+
           // Start/restart timer with server's elapsed time
           stopwatchManager.startStopwatch(initialTime: elapsed);
-          
+
           if (mounted) {
             setState(() {
               duration = data['duration'] ?? formatDuration(elapsed);
@@ -519,7 +526,7 @@ class _CheckInCheckOutFormPageState extends State<CheckInCheckOutFormPage>
           await _saveLastElapsed(Duration.zero);
           stopwatchManager.stopStopwatch();
           stopwatchManager.resetStopwatch();
-          
+
           if (mounted) {
             setState(() {
               clockCheckedIn = false;
@@ -630,8 +637,8 @@ class _CheckInCheckOutFormPageState extends State<CheckInCheckOutFormPage>
       bottomNavigationBar: SafeArea(
         child: Padding(
           padding: EdgeInsets.only(
-            bottom: MediaQuery.of(context).padding.bottom > 0 
-                ? MediaQuery.of(context).padding.bottom - 8 
+            bottom: MediaQuery.of(context).padding.bottom > 0
+                ? MediaQuery.of(context).padding.bottom - 8
                 : 8,
           ),
           child: AnimatedNotchBottomBar(
@@ -644,21 +651,22 @@ class _CheckInCheckOutFormPageState extends State<CheckInCheckOutFormPage>
             removeMargins: false,
             bottomBarWidth: MediaQuery.of(context).size.width,
             durationInMilliSeconds: 500,
-        bottomBarItems: const [
-          BottomBarItem(
-            inActiveItem: Icon(Icons.home_filled, color: Colors.white),
-            activeItem: Icon(Icons.home_filled, color: Colors.white),
-          ),
-          BottomBarItem(
-            inActiveItem: Icon(Icons.update_outlined, color: Colors.white),
-            activeItem: Icon(Icons.update_outlined, color: Colors.white),
-          ),
-          BottomBarItem(
-            inActiveItem: Icon(Icons.person, color: Colors.white),
-            activeItem: Icon(Icons.person, color: Colors.white),
-          ),
-        ],
+            bottomBarItems: const [
+              BottomBarItem(
+                inActiveItem: Icon(Icons.home_filled, color: Colors.white),
+                activeItem: Icon(Icons.home_filled, color: Colors.white),
+              ),
+              BottomBarItem(
+                inActiveItem: Icon(Icons.update_outlined, color: Colors.white),
+                activeItem: Icon(Icons.update_outlined, color: Colors.white),
+              ),
+              BottomBarItem(
+                inActiveItem: Icon(Icons.person, color: Colors.white),
+                activeItem: Icon(Icons.person, color: Colors.white),
+              ),
+            ],
             onTap: (index) async {
+              _controller.index = index;
               switch (index) {
                 case 0:
                   Future.delayed(const Duration(milliseconds: 1000), () {
@@ -1121,17 +1129,18 @@ class _CheckInCheckOutFormPageState extends State<CheckInCheckOutFormPage>
 
     // Ensure apiJson is not null
     if (apiJson == null) return;
-    
+
     // Store in non-nullable variable for safe access
     final responseData = apiJson;
-    
+
     // Extract check-in time from API response (server is source of truth)
     final display = _extractCheckInDisplay(responseData);
-    
+
     // Extract server timestamp
     DateTime serverCheckInTime;
     try {
-      final clockInStr = responseData['clock_in'] ?? responseData['clock_in_time'] ?? '';
+      final clockInStr =
+          responseData['clock_in'] ?? responseData['clock_in_time'] ?? '';
       if (clockInStr.toString().isNotEmpty) {
         serverCheckInTime = DateTime.parse(clockInStr.toString()).toLocal();
       } else {
@@ -1147,7 +1156,7 @@ class _CheckInCheckOutFormPageState extends State<CheckInCheckOutFormPage>
     await _setIsCheckedIn(true);
     await _saveCheckInTime(serverCheckInTime);
     await _saveLastElapsed(Duration.zero);
-    
+
     // Reset and start timer from zero
     stopwatchManager.resetStopwatch();
     stopwatchManager.startStopwatch(initialTime: Duration.zero);
@@ -1169,7 +1178,7 @@ class _CheckInCheckOutFormPageState extends State<CheckInCheckOutFormPage>
     }
 
     await _saveClockStateUIOnly(clockCheckedIn, 1, display);
-    
+
     // Refresh check-in status from server to ensure sync
     await getCheckIn();
   }
@@ -1226,7 +1235,7 @@ class _CheckInCheckOutFormPageState extends State<CheckInCheckOutFormPage>
 
     // Save UI state
     await _saveClockStateUIOnly(false, 2, serverClockOut);
-    
+
     // Refresh check-in status from server to ensure sync
     await getCheckIn();
   }
@@ -1278,12 +1287,13 @@ class _CheckInCheckOutFormPageState extends State<CheckInCheckOutFormPage>
         return;
       }
 
-      final uri = Uri.parse('$typedServerUrl/api/employee/employees/$employeeId');
+      final uri =
+          Uri.parse('$typedServerUrl/api/employee/employees/$employeeId');
       final response = await http.get(uri, headers: {
         "Content-Type": "application/json",
         "Authorization": "Bearer $token",
-      }).timeout(const Duration(seconds: 3));
-      
+      }).timeout(const Duration(seconds: 8));
+
       if (response.statusCode == 200) {
         final responseData = jsonDecode(response.body);
         if (mounted) {
@@ -1308,7 +1318,8 @@ class _CheckInCheckOutFormPageState extends State<CheckInCheckOutFormPage>
               'emergency_contact': responseData['emergency_contact'],
               'emergency_contact_name': responseData['emergency_contact_name'],
               'employee_work_info_id': responseData['employee_work_info_id'],
-              'employee_bank_details_id': responseData['employee_bank_details_id'],
+              'employee_bank_details_id':
+                  responseData['employee_bank_details_id'],
               'employee_profile': responseData['employee_profile'] ?? ''
             };
           });
@@ -1365,33 +1376,40 @@ class _CheckInCheckOutFormPageState extends State<CheckInCheckOutFormPage>
       var typedServerUrl = prefs.getString("typed_url");
       var employeeId = prefs.getInt("employee_id");
       if (typedServerUrl == null || token == null || employeeId == null) {
-        print('Missing required data: token=$token, url=$typedServerUrl, employeeId=$employeeId');
+        print(
+            'Missing required data: token=$token, url=$typedServerUrl, employeeId=$employeeId');
         return;
       }
 
-      final uri = Uri.parse('$typedServerUrl/api/employee/employees/$employeeId');
+      final uri =
+          Uri.parse('$typedServerUrl/api/employee/employees/$employeeId');
       final response = await http.get(uri, headers: {
         "Content-Type": "application/json",
         "Authorization": "Bearer $token",
-      }).timeout(const Duration(seconds: 3));
-      
+      }).timeout(const Duration(seconds: 8));
+
       if (response.statusCode == 200) {
         final body = jsonDecode(response.body);
         if (mounted) {
           setState(() {
-            requestsEmpMyFirstName = body['employee_first_name']?.toString() ?? '';
-            requestsEmpMyLastName = body['employee_last_name']?.toString() ?? '';
+            requestsEmpMyFirstName =
+                body['employee_first_name']?.toString() ?? '';
+            requestsEmpMyLastName =
+                body['employee_last_name']?.toString() ?? '';
             requestsEmpMyBadgeId = body['badge_id']?.toString() ?? '';
             requestsEmpMyDepartment = body['department_name']?.toString() ?? '';
             requestsEmpProfile = body['employee_profile']?.toString() ?? '';
-            requestsEmpMyWorkInfoId = body['employee_work_info_id']?.toString() ?? '';
+            requestsEmpMyWorkInfoId =
+                body['employee_work_info_id']?.toString() ?? '';
           });
-          print('Employee data loaded: ${requestsEmpMyFirstName} ${requestsEmpMyLastName}');
+          print(
+              'Employee data loaded: ${requestsEmpMyFirstName} ${requestsEmpMyLastName}');
         }
-        
+
         // Load work info only if we have work info ID
         if (requestsEmpMyWorkInfoId.isNotEmpty) {
-          await getLoginEmployeeWorkInfoRecord(requestsEmpMyWorkInfoId).catchError((e) {
+          await getLoginEmployeeWorkInfoRecord(requestsEmpMyWorkInfoId)
+              .catchError((e) {
             print('Error in getLoginEmployeeWorkInfoRecord: $e');
           });
         }
@@ -1427,7 +1445,7 @@ class _CheckInCheckOutFormPageState extends State<CheckInCheckOutFormPage>
       final response = await http.get(uri, headers: {
         "Content-Type": "application/json",
         "Authorization": "Bearer $token",
-      }).timeout(const Duration(seconds: 3));
+      }).timeout(const Duration(seconds: 8));
       if (response.statusCode == 200) {
         final body = jsonDecode(response.body);
         if (mounted) {
@@ -1457,7 +1475,7 @@ class _CheckInCheckOutFormPageState extends State<CheckInCheckOutFormPage>
       try {
         return await Geolocator.getCurrentPosition(
           desiredAccuracy: LocationAccuracy.high,
-        ).timeout(const Duration(seconds: 5));
+        ).timeout(const Duration(seconds: 8));
       } on TimeoutException {
         print('getCurrentPosition timed out');
         return null;
@@ -1479,7 +1497,7 @@ class _CheckInCheckOutFormPageState extends State<CheckInCheckOutFormPage>
       final response = await http.get(uri, headers: {
         "Content-Type": "application/json",
         "Authorization": "Bearer $token",
-      }).timeout(const Duration(seconds: 3));
+      }).timeout(const Duration(seconds: 8));
 
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);

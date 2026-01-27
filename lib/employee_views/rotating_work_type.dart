@@ -94,23 +94,23 @@ class _RotatingWorkTypePageState extends State<RotatingWorkTypePage> {
     _scrollController.addListener(_scrollListener);
     prefetchData();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      getEmployeeDetails();
+      // Load data in parallel for faster initialization
       permissionChecks();
       accessChecks();
-      getRotatingWorkTypeRequest();
-      getEmployees();
-      getWorkType();
-      getBaseUrl();
-      fetchToken();
-      _simulateLoading();
-      getRotatingWorkType();
-      _simulateLoading();
-    });
-  }
 
-  Future<void> _simulateLoading() async {
-    await Future.delayed(const Duration(seconds: 5));
-    setState(() {});
+      Future.wait<void>([
+        getEmployeeDetails(),
+        getRotatingWorkTypeRequest(),
+        getEmployees(),
+        getWorkType(),
+        getBaseUrl(),
+        fetchToken(),
+        getRotatingWorkType(),
+      ]).catchError((e) {
+        print('Error loading rotating work type data: $e');
+        return [];
+      });
+    });
   }
 
   Future<void> fetchToken() async {
@@ -575,16 +575,32 @@ class _RotatingWorkTypePageState extends State<RotatingWorkTypePage> {
       context: context,
       builder: (BuildContext dialogContext) {
         return Dialog(
+          backgroundColor: Colors.white,
           child: SizedBox(
-            height: MediaQuery.of(context).size.height * 0.3,
+            height: MediaQuery.of(context).size.height * 0.35,
             width: MediaQuery.of(context).size.width * 0.85,
             child: SingleChildScrollView(
               child: Center(
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    Image.asset(imagePath),
-                    const SizedBox(height: 16),
+                    Padding(
+                      padding: const EdgeInsets.all(16.0),
+                      child: Container(
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(12),
+                          color: Colors.grey[100],
+                        ),
+                        padding: const EdgeInsets.all(12),
+                        child: Image.asset(
+                          imagePath,
+                          width: 150,
+                          height: 150,
+                          fit: BoxFit.contain,
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 8),
                     const Text(
                       "Work Type Created Successfully",
                       style: TextStyle(
@@ -618,16 +634,32 @@ class _RotatingWorkTypePageState extends State<RotatingWorkTypePage> {
       context: context,
       builder: (BuildContext dialogContext) {
         return Dialog(
+          backgroundColor: Colors.white,
           child: SizedBox(
-            height: MediaQuery.of(context).size.height * 0.3,
+            height: MediaQuery.of(context).size.height * 0.35,
             width: MediaQuery.of(context).size.width * 0.85,
             child: SingleChildScrollView(
               child: Center(
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    Image.asset(imagePath),
-                    const SizedBox(height: 16),
+                    Padding(
+                      padding: const EdgeInsets.all(16.0),
+                      child: Container(
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(12),
+                          color: Colors.grey[100],
+                        ),
+                        padding: const EdgeInsets.all(12),
+                        child: Image.asset(
+                          imagePath,
+                          width: 150,
+                          height: 150,
+                          fit: BoxFit.contain,
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 8),
                     const Text(
                       "Work Type Deleted Successfully",
                       style: TextStyle(
@@ -661,16 +693,32 @@ class _RotatingWorkTypePageState extends State<RotatingWorkTypePage> {
       context: context,
       builder: (BuildContext dialogContext) {
         return Dialog(
+          backgroundColor: Colors.white,
           child: SizedBox(
-            height: MediaQuery.of(context).size.height * 0.3,
+            height: MediaQuery.of(context).size.height * 0.35,
             width: MediaQuery.of(context).size.width * 0.85,
             child: SingleChildScrollView(
               child: Center(
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    Image.asset(imagePath),
-                    const SizedBox(height: 16),
+                    Padding(
+                      padding: const EdgeInsets.all(16.0),
+                      child: Container(
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(12),
+                          color: Colors.grey[100],
+                        ),
+                        padding: const EdgeInsets.all(12),
+                        child: Image.asset(
+                          imagePath,
+                          width: 150,
+                          height: 150,
+                          fit: BoxFit.contain,
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 8),
                     const Text(
                       "Work Type Updated Successfully",
                       style: TextStyle(
@@ -2152,8 +2200,8 @@ class _RotatingWorkTypePageState extends State<RotatingWorkTypePage> {
           ? SafeArea(
               child: Padding(
                 padding: EdgeInsets.only(
-                  bottom: MediaQuery.of(context).padding.bottom > 0 
-                      ? MediaQuery.of(context).padding.bottom - 8 
+                  bottom: MediaQuery.of(context).padding.bottom > 0
+                      ? MediaQuery.of(context).padding.bottom - 8
                       : 8,
                 ),
                 child: AnimatedNotchBottomBar(
@@ -2169,47 +2217,49 @@ class _RotatingWorkTypePageState extends State<RotatingWorkTypePage> {
                   removeMargins: false,
                   bottomBarWidth: MediaQuery.of(context).size.width * 1,
                   durationInMilliSeconds: 300,
-              bottomBarItems: const [
-                BottomBarItem(
-                  inActiveItem: Icon(
-                    Icons.home_filled,
-                    color: Colors.white,
-                  ),
-                  activeItem: Icon(
-                    Icons.home_filled,
-                    color: Colors.white,
-                  ),
-                  // itemLabel: 'Home',
-                ),
-                BottomBarItem(
-                  inActiveItem: Icon(
-                    Icons.update_outlined,
-                    color: Colors.white,
-                  ),
-                  activeItem: Icon(
-                    Icons.update_outlined,
-                    color: Colors.white,
-                  ),
-                ),
-                BottomBarItem(
-                  inActiveItem: Icon(
-                    Icons.person,
-                    color: Colors.white,
-                  ),
-                  activeItem: Icon(
-                    Icons.person,
-                    color: Colors.white,
-                  ),
-                ),
-              ],
+                  bottomBarItems: const [
+                    BottomBarItem(
+                      inActiveItem: Icon(
+                        Icons.home_filled,
+                        color: Colors.white,
+                      ),
+                      activeItem: Icon(
+                        Icons.home_filled,
+                        color: Colors.white,
+                      ),
+                      // itemLabel: 'Home',
+                    ),
+                    BottomBarItem(
+                      inActiveItem: Icon(
+                        Icons.update_outlined,
+                        color: Colors.white,
+                      ),
+                      activeItem: Icon(
+                        Icons.update_outlined,
+                        color: Colors.white,
+                      ),
+                    ),
+                    BottomBarItem(
+                      inActiveItem: Icon(
+                        Icons.person,
+                        color: Colors.white,
+                      ),
+                      activeItem: Icon(
+                        Icons.person,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ],
 
                   onTap: (index) async {
+                    _controller.index = index;
                     switch (index) {
                       case 0:
                         Navigator.pushNamed(context, '/home');
                         break;
                       case 1:
-                        Navigator.pushNamed(context, '/employee_checkin_checkout');
+                        Navigator.pushNamed(
+                            context, '/employee_checkin_checkout');
                         break;
                       case 2:
                         Navigator.pushNamed(context, '/employees_form',

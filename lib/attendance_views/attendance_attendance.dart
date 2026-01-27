@@ -124,27 +124,7 @@ class _AttendanceAttendance extends State<AttendanceAttendance>
   void initState() {
     super.initState();
     currentPage = 1;
-    prefetchData();
-    _simulateLoading();
     _scrollController.addListener(_scrollListener);
-    getMyAttendance(reset: true);
-    getAllNonValidatedAttendance(reset: true);
-    getAllOvertimeAttendance(reset: true);
-    getAllValidatedAttendance(reset: true);
-    getEmployees();
-    getShiftDetails();
-    attendanceTypeChecks();
-    managerChecks();
-    getBaseUrl();
-    fetchToken();
-    loadPermissionsFromStorage();
-
-    // Load permissions once
-    permissionChecks().then((_) {
-      setState(() {
-        _permissionsLoaded = true;
-      });
-    });
 
     // Initialize controllers
     dateInput.text = "";
@@ -156,11 +136,47 @@ class _AttendanceAttendance extends State<AttendanceAttendance>
     dateInputValidated.text = "";
     checkInTimeValidated.text = "";
     checkOutTimeValidated.text = "";
+
+    // Load permissions from storage immediately
+    loadPermissionsFromStorage();
+
+    // Load data in parallel for faster initialization
+    permissionChecks();
+    prefetchData();
+    attendanceTypeChecks();
+    managerChecks();
+
+    Future.wait<void>([
+      getMyAttendance(reset: true),
+      getAllNonValidatedAttendance(reset: true),
+      getAllOvertimeAttendance(reset: true),
+      getAllValidatedAttendance(reset: true),
+      getEmployees(),
+      getShiftDetails(),
+      getBaseUrl(),
+      fetchToken(),
+    ]).then((_) {
+      setState(() {
+        _permissionsLoaded = true;
+      });
+    }).catchError((e) {
+      print('Error loading attendance data: $e');
+    });
+
+    // Load permissions in background
+    permissionChecks().then((_) {
+      setState(() {
+        _permissionsLoaded = true;
+      });
+    });
   }
 
-  Future<void> _simulateLoading() async {
-    await Future.delayed(const Duration(seconds: 5));
-    setState(() {});
+  Future<void> fetchToken() async {
+    final prefs = await SharedPreferences.getInstance();
+    var token = prefs.getString("token");
+    setState(() {
+      getToken = token ?? '';
+    });
   }
 
   Future loadPermissionsFromStorage() async {
@@ -188,15 +204,6 @@ class _AttendanceAttendance extends State<AttendanceAttendance>
     var typedServerUrl = prefs.getString("typed_url");
     setState(() {
       baseUrl = typedServerUrl ?? '';
-    });
-  }
-
-  Future<void> fetchToken() async {
-    final prefs = await SharedPreferences.getInstance();
-    var token = prefs.getString("token");
-    setState(() {
-      getToken = token ?? '';
-      print('token: $getToken');
     });
   }
 
@@ -230,16 +237,32 @@ class _AttendanceAttendance extends State<AttendanceAttendance>
       context: context,
       builder: (BuildContext dialogContext) {
         return Dialog(
+          backgroundColor: Colors.white,
           child: SizedBox(
-            height: MediaQuery.of(context).size.height * 0.3,
+            height: MediaQuery.of(context).size.height * 0.35,
             width: MediaQuery.of(context).size.width * 0.85,
             child: SingleChildScrollView(
               child: Center(
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    Image.asset(imagePath),
-                    const SizedBox(height: 16),
+                    Padding(
+                      padding: const EdgeInsets.all(16.0),
+                      child: Container(
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(12),
+                          color: Colors.white,
+                        ),
+                        padding: const EdgeInsets.all(12),
+                        child: Image.asset(
+                          imagePath,
+                          width: 150,
+                          height: 150,
+                          fit: BoxFit.contain,
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 8),
                     const Text(
                       "Attendance Created Successfully",
                       style: TextStyle(
@@ -273,16 +296,32 @@ class _AttendanceAttendance extends State<AttendanceAttendance>
       context: context,
       builder: (BuildContext dialogContext) {
         return Dialog(
+          backgroundColor: Colors.white,
           child: SizedBox(
-            height: MediaQuery.of(context).size.height * 0.3,
+            height: MediaQuery.of(context).size.height * 0.35,
             width: MediaQuery.of(context).size.width * 0.85,
             child: SingleChildScrollView(
               child: Center(
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    Image.asset(imagePath),
-                    const SizedBox(height: 16),
+                    Padding(
+                      padding: const EdgeInsets.all(16.0),
+                      child: Container(
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(12),
+                          color: Colors.white,
+                        ),
+                        padding: const EdgeInsets.all(12),
+                        child: Image.asset(
+                          imagePath,
+                          width: 150,
+                          height: 150,
+                          fit: BoxFit.contain,
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 8),
                     const Text(
                       "Attendance Updated Successfully",
                       style: TextStyle(
@@ -316,16 +355,32 @@ class _AttendanceAttendance extends State<AttendanceAttendance>
       context: context,
       builder: (BuildContext dialogContext) {
         return Dialog(
+          backgroundColor: Colors.white,
           child: SizedBox(
-            height: MediaQuery.of(context).size.height * 0.3,
+            height: MediaQuery.of(context).size.height * 0.35,
             width: MediaQuery.of(context).size.width * 0.85,
             child: SingleChildScrollView(
               child: Center(
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    Image.asset(imagePath),
-                    const SizedBox(height: 16),
+                    Padding(
+                      padding: const EdgeInsets.all(16.0),
+                      child: Container(
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(12),
+                          color: Colors.white,
+                        ),
+                        padding: const EdgeInsets.all(12),
+                        child: Image.asset(
+                          imagePath,
+                          width: 150,
+                          height: 150,
+                          fit: BoxFit.contain,
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 8),
                     const Text(
                       "Attendance Deleted Successfully",
                       style: TextStyle(
@@ -359,16 +414,32 @@ class _AttendanceAttendance extends State<AttendanceAttendance>
       context: context,
       builder: (BuildContext dialogContext) {
         return Dialog(
+          backgroundColor: Colors.white,
           child: SizedBox(
-            height: MediaQuery.of(context).size.height * 0.3,
+            height: MediaQuery.of(context).size.height * 0.35,
             width: MediaQuery.of(context).size.width * 0.85,
             child: SingleChildScrollView(
               child: Center(
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    Image.asset(imagePath),
-                    const SizedBox(height: 16),
+                    Padding(
+                      padding: const EdgeInsets.all(16.0),
+                      child: Container(
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(12),
+                          color: Colors.white,
+                        ),
+                        padding: const EdgeInsets.all(12),
+                        child: Image.asset(
+                          imagePath,
+                          width: 150,
+                          height: 150,
+                          fit: BoxFit.contain,
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 8),
                     const Text(
                       "Attendance Validated Successfully",
                       style: TextStyle(
@@ -3062,8 +3133,7 @@ class _AttendanceAttendance extends State<AttendanceAttendance>
                           }
                         },
                         style: ButtonStyle(
-                          backgroundColor:
-                              MaterialStateProperty.all<Color>(
+                          backgroundColor: MaterialStateProperty.all<Color>(
                               const Color(0xFF6B57F0)),
                           shape:
                               MaterialStateProperty.all<RoundedRectangleBorder>(
@@ -3240,8 +3310,8 @@ class _AttendanceAttendance extends State<AttendanceAttendance>
             ? SafeArea(
                 child: Padding(
                   padding: EdgeInsets.only(
-                    bottom: MediaQuery.of(context).padding.bottom > 0 
-                        ? MediaQuery.of(context).padding.bottom - 8 
+                    bottom: MediaQuery.of(context).padding.bottom > 0
+                        ? MediaQuery.of(context).padding.bottom - 8
                         : 8,
                   ),
                   child: AnimatedNotchBottomBar(
@@ -3257,41 +3327,42 @@ class _AttendanceAttendance extends State<AttendanceAttendance>
                     removeMargins: false,
                     bottomBarWidth: MediaQuery.of(context).size.width * 1,
                     durationInMilliSeconds: 300,
-                bottomBarItems: const [
-                  BottomBarItem(
-                    inActiveItem: Icon(
-                      Icons.home_filled,
-                      color: Colors.white,
-                    ),
-                    activeItem: Icon(
-                      Icons.home_filled,
-                      color: Colors.white,
-                    ),
-                  ),
-                  BottomBarItem(
-                    inActiveItem: Icon(
-                      Icons.update_outlined,
-                      color: Colors.white,
-                    ),
-                    activeItem: Icon(
-                      Icons.update_outlined,
-                      color: Colors.white,
-                    ),
-                  ),
-                  BottomBarItem(
-                    inActiveItem: Icon(
-                      Icons.person,
-                      color: Colors.white,
-                    ),
-                    activeItem: Icon(
-                      Icons.person,
-                      color: Colors.white,
-                    ),
-                    // itemLabel: 'Profile',
-                  ),
-                ],
+                    bottomBarItems: const [
+                      BottomBarItem(
+                        inActiveItem: Icon(
+                          Icons.home_filled,
+                          color: Colors.white,
+                        ),
+                        activeItem: Icon(
+                          Icons.home_filled,
+                          color: Colors.white,
+                        ),
+                      ),
+                      BottomBarItem(
+                        inActiveItem: Icon(
+                          Icons.update_outlined,
+                          color: Colors.white,
+                        ),
+                        activeItem: Icon(
+                          Icons.update_outlined,
+                          color: Colors.white,
+                        ),
+                      ),
+                      BottomBarItem(
+                        inActiveItem: Icon(
+                          Icons.person,
+                          color: Colors.white,
+                        ),
+                        activeItem: Icon(
+                          Icons.person,
+                          color: Colors.white,
+                        ),
+                        // itemLabel: 'Profile',
+                      ),
+                    ],
 
                     onTap: (index) async {
+                      _controller.index = index;
                       switch (index) {
                         case 0:
                           Navigator.pushNamed(context, '/home');
@@ -3318,7 +3389,7 @@ class _AttendanceAttendance extends State<AttendanceAttendance>
   Widget shimmerListTile() {
     return Shimmer.fromColors(
       baseColor: Colors.grey[300]!,
-      highlightColor: Colors.grey[100]!,
+      highlightColor: Colors.white!,
       child: ListTile(
         title: Container(
           width: double.infinity,
@@ -3342,7 +3413,7 @@ class _AttendanceAttendance extends State<AttendanceAttendance>
                   elevation: 0,
                   child: Shimmer.fromColors(
                     baseColor: Colors.grey[300]!,
-                    highlightColor: Colors.grey[100]!,
+                    highlightColor: Colors.white!,
                     child: Container(
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(4.0),
@@ -3389,7 +3460,7 @@ class _AttendanceAttendance extends State<AttendanceAttendance>
   Widget _buildTabBarShimmer() {
     return Shimmer.fromColors(
       baseColor: Colors.grey[300]!,
-      highlightColor: Colors.grey[100]!,
+      highlightColor: Colors.white!,
       child: SingleChildScrollView(
         scrollDirection: Axis.horizontal,
         child: Row(
@@ -3460,7 +3531,7 @@ class _AttendanceAttendance extends State<AttendanceAttendance>
                               borderSide: BorderSide.none,
                             ),
                             filled: true,
-                            fillColor: Colors.grey[100],
+                            fillColor: Colors.white,
                             prefixIcon: Transform.scale(
                               scale: 0.8,
                               child: Icon(Icons.search,
@@ -3633,7 +3704,7 @@ class _AttendanceAttendance extends State<AttendanceAttendance>
         itemBuilder: (context, index) {
           return Shimmer.fromColors(
             baseColor: Colors.grey[300]!,
-            highlightColor: Colors.grey[100]!,
+            highlightColor: Colors.white!,
             child: Container(
               padding: const EdgeInsets.all(8.0),
               child: Container(
@@ -3708,7 +3779,7 @@ class _AttendanceAttendance extends State<AttendanceAttendance>
         itemBuilder: (context, index) {
           return Shimmer.fromColors(
             baseColor: Colors.grey[300]!,
-            highlightColor: Colors.grey[100]!,
+            highlightColor: Colors.white!,
             child: Container(
               padding: const EdgeInsets.all(8.0),
               child: Container(
@@ -3783,7 +3854,7 @@ class _AttendanceAttendance extends State<AttendanceAttendance>
         itemBuilder: (context, index) {
           return Shimmer.fromColors(
             baseColor: Colors.grey[300]!,
-            highlightColor: Colors.grey[100]!,
+            highlightColor: Colors.white!,
             child: Container(
               padding: const EdgeInsets.all(8.0),
               child: Container(
@@ -3858,7 +3929,7 @@ class _AttendanceAttendance extends State<AttendanceAttendance>
         itemBuilder: (context, index) {
           return Shimmer.fromColors(
             baseColor: Colors.grey[300]!,
-            highlightColor: Colors.grey[100]!,
+            highlightColor: Colors.white!,
             child: Container(
               padding: const EdgeInsets.all(8.0),
               child: Container(
@@ -6272,3 +6343,5 @@ class _TimeInputFormatter extends TextInputFormatter {
     return newValue;
   }
 }
+
+

@@ -63,15 +63,20 @@ class _AttendanceOverviewState extends State<AttendanceOverview>
     prefetchData();
     _scrollController.addListener(_scrollListener);
     _tabController = TabController(length: 2, vsync: this);
-    getAllOfflineEmployees(1);
-    getTodayAttendance();
-    getOfflineEmployeeCount();
-    getAllOvertimeValidateEmployees();
-    getAllNonValidatedAttendance();
-    getBaseUrl();
-    _simulateLoading();
     loadPermissionsFromStorage();
-    fetchToken();
+    // Load data in parallel for faster initialization
+    Future.wait([
+      getAllOfflineEmployees(1),
+      getTodayAttendance(),
+      getOfflineEmployeeCount(),
+      getAllOvertimeValidateEmployees(),
+      getAllNonValidatedAttendance(),
+      getBaseUrl(),
+      fetchToken(),
+    ]).catchError((e) {
+      print('Error loading attendance overview data: $e');
+      return [];
+    });
   }
 
   Future loadPermissionsFromStorage() async {
@@ -85,11 +90,6 @@ class _AttendanceOverviewState extends State<AttendanceOverview>
           prefs.getBool("perm_hour_account") ?? false;
       _isPermissionCheckComplete = true;
     });
-  }
-
-  Future<void> _simulateLoading() async {
-    await Future.delayed(const Duration(seconds: 10));
-    setState(() {});
   }
 
   @override
@@ -438,8 +438,8 @@ class _AttendanceOverviewState extends State<AttendanceOverview>
           ? SafeArea(
               child: Padding(
                 padding: EdgeInsets.only(
-                  bottom: MediaQuery.of(context).padding.bottom > 0 
-                      ? MediaQuery.of(context).padding.bottom - 8 
+                  bottom: MediaQuery.of(context).padding.bottom > 0
+                      ? MediaQuery.of(context).padding.bottom - 8
                       : 8,
                 ),
                 child: AnimatedNotchBottomBar(
@@ -455,46 +455,48 @@ class _AttendanceOverviewState extends State<AttendanceOverview>
                   removeMargins: false,
                   bottomBarWidth: MediaQuery.of(context).size.width * 1,
                   durationInMilliSeconds: 300,
-              bottomBarItems: const [
-                BottomBarItem(
-                  inActiveItem: Icon(
-                    Icons.home_filled,
-                    color: Colors.white,
-                  ),
-                  activeItem: Icon(
-                    Icons.home_filled,
-                    color: Colors.white,
-                  ),
-                ),
-                BottomBarItem(
-                  inActiveItem: Icon(
-                    Icons.update_outlined,
-                    color: Colors.white,
-                  ),
-                  activeItem: Icon(
-                    Icons.update_outlined,
-                    color: Colors.white,
-                  ),
-                ),
-                BottomBarItem(
-                  inActiveItem: Icon(
-                    Icons.person,
-                    color: Colors.white,
-                  ),
-                  activeItem: Icon(
-                    Icons.person,
-                    color: Colors.white,
-                  ),
-                ),
-              ],
+                  bottomBarItems: const [
+                    BottomBarItem(
+                      inActiveItem: Icon(
+                        Icons.home_filled,
+                        color: Colors.white,
+                      ),
+                      activeItem: Icon(
+                        Icons.home_filled,
+                        color: Colors.white,
+                      ),
+                    ),
+                    BottomBarItem(
+                      inActiveItem: Icon(
+                        Icons.update_outlined,
+                        color: Colors.white,
+                      ),
+                      activeItem: Icon(
+                        Icons.update_outlined,
+                        color: Colors.white,
+                      ),
+                    ),
+                    BottomBarItem(
+                      inActiveItem: Icon(
+                        Icons.person,
+                        color: Colors.white,
+                      ),
+                      activeItem: Icon(
+                        Icons.person,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ],
 
                   onTap: (index) async {
+                    _controller.index = index;
                     switch (index) {
                       case 0:
                         Navigator.pushNamed(context, '/home');
                         break;
                       case 1:
-                        Navigator.pushNamed(context, '/employee_checkin_checkout');
+                        Navigator.pushNamed(
+                            context, '/employee_checkin_checkout');
                         break;
                       case 2:
                         Navigator.pushNamed(context, '/employees_form',

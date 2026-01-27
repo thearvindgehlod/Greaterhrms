@@ -182,7 +182,6 @@ class _EmployeeFormPageState extends State<EmployeeFormPage>
       getReportingManager();
       getCompanies();
       getEmployeeType();
-      _simulateLoading();
       fetchToken();
     });
   }
@@ -193,11 +192,6 @@ class _EmployeeFormPageState extends State<EmployeeFormPage>
     setState(() {
       getToken = token ?? '';
     });
-  }
-
-  Future<void> _simulateLoading() async {
-    await Future.delayed(const Duration(seconds: 2));
-    setState(() {});
   }
 
   Future<void> _loadEmployeeData() async {
@@ -3572,8 +3566,8 @@ class _EmployeeFormPageState extends State<EmployeeFormPage>
           ? SafeArea(
               child: Padding(
                 padding: EdgeInsets.only(
-                  bottom: MediaQuery.of(context).padding.bottom > 0 
-                      ? MediaQuery.of(context).padding.bottom - 8 
+                  bottom: MediaQuery.of(context).padding.bottom > 0
+                      ? MediaQuery.of(context).padding.bottom - 8
                       : 8,
                 ),
                 child: AnimatedNotchBottomBar(
@@ -3589,59 +3583,60 @@ class _EmployeeFormPageState extends State<EmployeeFormPage>
                   removeMargins: false,
                   bottomBarWidth: MediaQuery.of(context).size.width * 1,
                   durationInMilliSeconds: 500,
-              bottomBarItems: const [
-                BottomBarItem(
-                  inActiveItem: Icon(
-                    Icons.home_filled,
-                    color: Colors.white,
-                  ),
-                  activeItem: Icon(
-                    Icons.home_filled,
-                    color: Colors.white,
-                  ),
-                ),
-                BottomBarItem(
-                  inActiveItem: Icon(
-                    Icons.update_outlined,
-                    color: Colors.white,
-                  ),
-                  activeItem: Icon(
-                    Icons.update_outlined,
-                    color: Colors.white,
-                  ),
-                ),
-                BottomBarItem(
-                  inActiveItem: Icon(
-                    Icons.person,
-                    color: Colors.white,
-                  ),
-                  activeItem: Icon(
-                    Icons.person,
-                    color: Colors.white,
-                  ),
-                ),
-              ],
+                  bottomBarItems: const [
+                    BottomBarItem(
+                      inActiveItem: Icon(
+                        Icons.home_filled,
+                        color: Colors.white,
+                      ),
+                      activeItem: Icon(
+                        Icons.home_filled,
+                        color: Colors.white,
+                      ),
+                    ),
+                    BottomBarItem(
+                      inActiveItem: Icon(
+                        Icons.update_outlined,
+                        color: Colors.white,
+                      ),
+                      activeItem: Icon(
+                        Icons.update_outlined,
+                        color: Colors.white,
+                      ),
+                    ),
+                    BottomBarItem(
+                      inActiveItem: Icon(
+                        Icons.person,
+                        color: Colors.white,
+                      ),
+                      activeItem: Icon(
+                        Icons.person,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ],
 
-              onTap: (index) async {
-                switch (index) {
-                  case 0:
-                    Future.delayed(const Duration(milliseconds: 1000), () {
-                      Navigator.pushNamed(context, '/home');
-                    });
-                    break;
-                  case 1:
-                    Future.delayed(const Duration(milliseconds: 1000), () {
-                      Navigator.pushNamed(
-                          context, '/employee_checkin_checkout');
-                    });
-                    break;
-                  case 2:
-                    Future.delayed(const Duration(milliseconds: 1000), () {
-                      Navigator.pushNamed(context, '/employees_form',
-                          arguments: arguments);
-                    });
-                    break;
-                }
+                  onTap: (index) async {
+                    _controller.index = index;
+                    switch (index) {
+                      case 0:
+                        Future.delayed(const Duration(milliseconds: 1000), () {
+                          Navigator.pushNamed(context, '/home');
+                        });
+                        break;
+                      case 1:
+                        Future.delayed(const Duration(milliseconds: 1000), () {
+                          Navigator.pushNamed(
+                              context, '/employee_checkin_checkout');
+                        });
+                        break;
+                      case 2:
+                        Future.delayed(const Duration(milliseconds: 1000), () {
+                          Navigator.pushNamed(context, '/employees_form',
+                              arguments: arguments);
+                        });
+                        break;
+                    }
                   },
                 ),
               ),
@@ -3663,16 +3658,32 @@ class _EmployeeFormPageState extends State<EmployeeFormPage>
       context: context,
       builder: (BuildContext dialogContext) {
         return Dialog(
+          backgroundColor: Colors.white,
           child: SizedBox(
-            height: MediaQuery.of(context).size.height * 0.3,
+            height: MediaQuery.of(context).size.height * 0.35,
             width: MediaQuery.of(context).size.width * 0.85,
             child: SingleChildScrollView(
               child: Center(
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    Image.asset(imagePath),
-                    const SizedBox(height: 16),
+                    Padding(
+                      padding: const EdgeInsets.all(16.0),
+                      child: Container(
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(12),
+                          color: Colors.white,
+                        ),
+                        padding: const EdgeInsets.all(12),
+                        child: Image.asset(
+                          imagePath,
+                          width: 150,
+                          height: 150,
+                          fit: BoxFit.contain,
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 8),
                     const Text(
                       "Information Updated Successfully",
                       style: TextStyle(
@@ -3706,16 +3717,32 @@ class _EmployeeFormPageState extends State<EmployeeFormPage>
       context: context,
       builder: (BuildContext dialogContext) {
         return Dialog(
+          backgroundColor: Colors.white,
           child: SizedBox(
-            height: MediaQuery.of(context).size.height * 0.3,
+            height: MediaQuery.of(context).size.height * 0.35,
             width: MediaQuery.of(context).size.width * 0.85,
             child: SingleChildScrollView(
               child: Center(
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    Image.asset(imagePath),
-                    const SizedBox(height: 16),
+                    Padding(
+                      padding: const EdgeInsets.all(16.0),
+                      child: Container(
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(12),
+                          color: Colors.white,
+                        ),
+                        padding: const EdgeInsets.all(12),
+                        child: Image.asset(
+                          imagePath,
+                          width: 150,
+                          height: 150,
+                          fit: BoxFit.contain,
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 8),
                     const Text(
                       "Information Updated Successfully",
                       style: TextStyle(
@@ -3749,16 +3776,32 @@ class _EmployeeFormPageState extends State<EmployeeFormPage>
       context: context,
       builder: (BuildContext dialogContext) {
         return Dialog(
+          backgroundColor: Colors.white,
           child: SizedBox(
-            height: MediaQuery.of(context).size.height * 0.3,
+            height: MediaQuery.of(context).size.height * 0.35,
             width: MediaQuery.of(context).size.width * 0.85,
             child: SingleChildScrollView(
               child: Center(
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    Image.asset(imagePath),
-                    const SizedBox(height: 16),
+                    Padding(
+                      padding: const EdgeInsets.all(16.0),
+                      child: Container(
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(12),
+                          color: Colors.white,
+                        ),
+                        padding: const EdgeInsets.all(12),
+                        child: Image.asset(
+                          imagePath,
+                          width: 150,
+                          height: 150,
+                          fit: BoxFit.contain,
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 8),
                     const Text(
                       "Information Updated Successfully",
                       style: TextStyle(
@@ -3802,7 +3845,7 @@ class _EmployeeFormPageState extends State<EmployeeFormPage>
                     children: [
                       Shimmer.fromColors(
                         baseColor: Colors.grey[300]!,
-                        highlightColor: Colors.grey[100]!,
+                        highlightColor: Colors.white!,
                         child: const CircleAvatar(
                           radius: 30.0,
                           backgroundColor: Colors.white,
@@ -3844,7 +3887,7 @@ class _EmployeeFormPageState extends State<EmployeeFormPage>
                       children: [
                         Shimmer.fromColors(
                           baseColor: Colors.grey[300]!,
-                          highlightColor: Colors.grey[100]!,
+                          highlightColor: Colors.white!,
                           child: Container(
                             decoration: BoxDecoration(
                               boxShadow: [
@@ -4142,7 +4185,7 @@ class _EmployeeFormPageState extends State<EmployeeFormPage>
                                     children: [
                                       Shimmer.fromColors(
                                         baseColor: Colors.grey[300]!,
-                                        highlightColor: Colors.grey[100]!,
+                                        highlightColor: Colors.white!,
                                         child: buildTabContentAbout(
                                           context,
                                           employeeDetails,
@@ -5748,3 +5791,5 @@ class _EmployeeFormPageState extends State<EmployeeFormPage>
     return Container();
   }
 }
+
+

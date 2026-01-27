@@ -64,7 +64,8 @@ Future<void> notificationTapBackground(
 
 void _startNotificationTimer() {
   _notificationTimer?.cancel();
-  _notificationTimer = Timer.periodic(Duration(seconds: 3), (timer) {
+  // Increased from 3s to 10s to reduce server load and timeout errors
+  _notificationTimer = Timer.periodic(Duration(seconds: 10), (timer) {
     if (isAuthenticated) {
       fetchNotifications();
       unreadNotificationsCount();
@@ -272,7 +273,7 @@ Future<void> fetchNotifications() async {
     var response = await http.get(uri, headers: {
       "Content-Type": "application/json",
       "Authorization": "Bearer $token",
-    }).timeout(Duration(seconds: 3));
+    }).timeout(Duration(seconds: 8));
 
     if (response.statusCode == 200) {
       List<Map<String, dynamic>> fetchedNotifications =

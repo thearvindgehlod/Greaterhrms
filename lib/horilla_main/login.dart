@@ -37,7 +37,7 @@ class _LoginPageState extends State<LoginPage> {
 
   void _startNotificationTimer() {
     _notificationTimer?.cancel();
-    _notificationTimer = Timer.periodic(Duration(seconds: 3), (timer) {
+    _notificationTimer = Timer.periodic(Duration(seconds: 10), (timer) {
       if (isAuthenticated) {
         fetchNotifications();
         unreadNotificationsCount();
@@ -57,7 +57,7 @@ class _LoginPageState extends State<LoginPage> {
       http.Response response = await http.post(
         Uri.parse(url),
         body: {'username': username, 'password': password},
-      ).timeout(Duration(seconds: 3));
+      ).timeout(Duration(seconds: 8));
 
       if (response.statusCode == 200) {
         final responseBody = jsonDecode(response.body);

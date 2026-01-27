@@ -8,6 +8,7 @@ import 'package:intl/intl.dart';
 import 'package:animated_notch_bottom_bar/animated_notch_bottom_bar/animated_notch_bottom_bar.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:flutter_typeahead/flutter_typeahead.dart';
+import '../utils/button_loader_mixin.dart';
 
 class AttendanceRequest extends StatefulWidget {
   const AttendanceRequest({super.key});
@@ -17,7 +18,7 @@ class AttendanceRequest extends StatefulWidget {
 }
 
 class _AttendanceRequest extends State<AttendanceRequest>
-    with SingleTickerProviderStateMixin {
+    with SingleTickerProviderStateMixin, ButtonLoaderMixin {
   Map<String, String> employeeIdMap = {};
   Map<String, String> shiftIdMap = {};
   Map<String, String> workTypeIdMap = {};
@@ -89,21 +90,33 @@ class _AttendanceRequest extends State<AttendanceRequest>
   bool _drawerPermissionHourAccount = false;
   bool _isPermissionCheckComplete = false;
   late String getToken = '';
+  
+  // Button loading states
+  bool _isCreateAttendanceLoading = false;
+  bool _isUpdateAttendanceLoading = false;
+  bool _isDeleteAttendanceLoading = false;
+  bool _isApproveAttendanceLoading = false;
+  bool _isRejectAttendanceLoading = false;
 
   @override
   void initState() {
     super.initState();
-    prefetchData();
     _scrollController.addListener(_scrollListener);
-    getAllRequestedAttendances();
-    getAllAttendances();
-    getBaseUrl();
-    getEmployees();
-    getShiftDetails();
-    getWorkTypeDetails();
-    _simulateLoading();
     loadPermissionsFromStorage();
-    fetchToken();
+    prefetchData();
+    // Load data in parallel for faster initialization
+    Future.wait<void>([
+      getAllRequestedAttendances(),
+      getAllAttendances(),
+      getBaseUrl(),
+      getEmployees(),
+      getShiftDetails(),
+      getWorkTypeDetails(),
+      fetchToken(),
+    ]).catchError((e) {
+      print('Error loading attendance request data: $e');
+      return [];
+    });
   }
 
   Future loadPermissionsFromStorage() async {
@@ -125,11 +138,6 @@ class _AttendanceRequest extends State<AttendanceRequest>
     setState(() {
       getToken = token ?? '';
     });
-  }
-
-  Future<void> _simulateLoading() async {
-    await Future.delayed(const Duration(seconds: 5));
-    setState(() {});
   }
 
   @override
@@ -163,16 +171,32 @@ class _AttendanceRequest extends State<AttendanceRequest>
       context: context,
       builder: (BuildContext dialogContext) {
         return Dialog(
+          backgroundColor: Colors.white,
           child: SizedBox(
-            height: MediaQuery.of(context).size.height * 0.3,
+            height: MediaQuery.of(context).size.height * 0.35,
             width: MediaQuery.of(context).size.width * 0.85,
             child: SingleChildScrollView(
               child: Center(
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    Image.asset(imagePath),
-                    const SizedBox(height: 16),
+                    Padding(
+                      padding: const EdgeInsets.all(16.0),
+                      child: Container(
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(12),
+                          color: Colors.white,
+                        ),
+                        padding: const EdgeInsets.all(12),
+                        child: Image.asset(
+                          imagePath,
+                          width: 150,
+                          height: 150,
+                          fit: BoxFit.contain,
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 8),
                     const Text(
                       "Attendance Created Successfully",
                       style: TextStyle(
@@ -206,16 +230,32 @@ class _AttendanceRequest extends State<AttendanceRequest>
       context: context,
       builder: (BuildContext dialogContext) {
         return Dialog(
+          backgroundColor: Colors.white,
           child: SizedBox(
-            height: MediaQuery.of(context).size.height * 0.3,
+            height: MediaQuery.of(context).size.height * 0.35,
             width: MediaQuery.of(context).size.width * 0.85,
             child: SingleChildScrollView(
               child: Center(
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    Image.asset(imagePath),
-                    const SizedBox(height: 16),
+                    Padding(
+                      padding: const EdgeInsets.all(16.0),
+                      child: Container(
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(12),
+                          color: Colors.white,
+                        ),
+                        padding: const EdgeInsets.all(12),
+                        child: Image.asset(
+                          imagePath,
+                          width: 150,
+                          height: 150,
+                          fit: BoxFit.contain,
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 8),
                     const Text(
                       "Attendance Approved Successfully",
                       style: TextStyle(
@@ -249,16 +289,32 @@ class _AttendanceRequest extends State<AttendanceRequest>
       context: context,
       builder: (BuildContext dialogContext) {
         return Dialog(
+          backgroundColor: Colors.white,
           child: SizedBox(
-            height: MediaQuery.of(context).size.height * 0.3,
+            height: MediaQuery.of(context).size.height * 0.35,
             width: MediaQuery.of(context).size.width * 0.85,
             child: SingleChildScrollView(
               child: Center(
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    Image.asset(imagePath),
-                    const SizedBox(height: 16),
+                    Padding(
+                      padding: const EdgeInsets.all(16.0),
+                      child: Container(
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(12),
+                          color: Colors.white,
+                        ),
+                        padding: const EdgeInsets.all(12),
+                        child: Image.asset(
+                          imagePath,
+                          width: 150,
+                          height: 150,
+                          fit: BoxFit.contain,
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 8),
                     const Text(
                       "Attendance Rejected Successfully",
                       style: TextStyle(
@@ -1796,8 +1852,8 @@ class _AttendanceRequest extends State<AttendanceRequest>
             ? SafeArea(
                 child: Padding(
                   padding: EdgeInsets.only(
-                    bottom: MediaQuery.of(context).padding.bottom > 0 
-                        ? MediaQuery.of(context).padding.bottom - 8 
+                    bottom: MediaQuery.of(context).padding.bottom > 0
+                        ? MediaQuery.of(context).padding.bottom - 8
                         : 8,
                   ),
                   child: AnimatedNotchBottomBar(
@@ -1813,41 +1869,42 @@ class _AttendanceRequest extends State<AttendanceRequest>
                     removeMargins: false,
                     bottomBarWidth: MediaQuery.of(context).size.width * 1,
                     durationInMilliSeconds: 300,
-                bottomBarItems: const [
-                  BottomBarItem(
-                    inActiveItem: Icon(
-                      Icons.home_filled,
-                      color: Colors.white,
-                    ),
-                    activeItem: Icon(
-                      Icons.home_filled,
-                      color: Colors.white,
-                    ),
-                    // itemLabel: 'Home',
-                  ),
-                  BottomBarItem(
-                    inActiveItem: Icon(
-                      Icons.update_outlined,
-                      color: Colors.white,
-                    ),
-                    activeItem: Icon(
-                      Icons.update_outlined,
-                      color: Colors.white,
-                    ),
-                  ),
-                  BottomBarItem(
-                    inActiveItem: Icon(
-                      Icons.person,
-                      color: Colors.white,
-                    ),
-                    activeItem: Icon(
-                      Icons.person,
-                      color: Colors.white,
-                    ),
-                  ),
-                ],
+                    bottomBarItems: const [
+                      BottomBarItem(
+                        inActiveItem: Icon(
+                          Icons.home_filled,
+                          color: Colors.white,
+                        ),
+                        activeItem: Icon(
+                          Icons.home_filled,
+                          color: Colors.white,
+                        ),
+                        // itemLabel: 'Home',
+                      ),
+                      BottomBarItem(
+                        inActiveItem: Icon(
+                          Icons.update_outlined,
+                          color: Colors.white,
+                        ),
+                        activeItem: Icon(
+                          Icons.update_outlined,
+                          color: Colors.white,
+                        ),
+                      ),
+                      BottomBarItem(
+                        inActiveItem: Icon(
+                          Icons.person,
+                          color: Colors.white,
+                        ),
+                        activeItem: Icon(
+                          Icons.person,
+                          color: Colors.white,
+                        ),
+                      ),
+                    ],
 
                     onTap: (index) async {
+                      _controller.index = index;
                       switch (index) {
                         case 0:
                           Navigator.pushNamed(context, '/home');
@@ -1873,7 +1930,7 @@ class _AttendanceRequest extends State<AttendanceRequest>
   Widget shimmerListTile() {
     return Shimmer.fromColors(
       baseColor: Colors.grey[300]!,
-      highlightColor: Colors.grey[100]!,
+      highlightColor: Colors.white!,
       child: ListTile(
         title: Container(
           width: double.infinity,
@@ -1897,7 +1954,7 @@ class _AttendanceRequest extends State<AttendanceRequest>
                   elevation: 0,
                   child: Shimmer.fromColors(
                     baseColor: Colors.grey[300]!,
-                    highlightColor: Colors.grey[100]!,
+                    highlightColor: Colors.white!,
                     child: Container(
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(4.0),
@@ -1995,7 +2052,7 @@ class _AttendanceRequest extends State<AttendanceRequest>
                             hintStyle:
                                 TextStyle(color: Colors.blueGrey.shade300),
                             filled: true,
-                            fillColor: Colors.grey[100],
+                            fillColor: Colors.white,
                             prefixIcon: Transform.scale(
                               scale: 0.8,
                               child: Icon(Icons.search,
@@ -2130,7 +2187,7 @@ class _AttendanceRequest extends State<AttendanceRequest>
         itemBuilder: (context, index) {
           return Shimmer.fromColors(
             baseColor: Colors.grey[300]!,
-            highlightColor: Colors.grey[100]!,
+            highlightColor: Colors.white!,
             child: Container(
               padding: const EdgeInsets.all(8.0),
               child: Container(
@@ -2203,7 +2260,7 @@ class _AttendanceRequest extends State<AttendanceRequest>
         itemBuilder: (context, index) {
           return Shimmer.fromColors(
             baseColor: Colors.grey[300]!,
-            highlightColor: Colors.grey[100]!,
+            highlightColor: Colors.white!,
             child: Container(
               padding: const EdgeInsets.all(8.0),
               child: Container(
@@ -3258,3 +3315,5 @@ class _TimeInputFormatter extends TextInputFormatter {
     return newValue;
   }
 }
+
+
