@@ -142,7 +142,7 @@ class _LeaveRequest extends State<LeaveRequest>
   bool hasMoreCancelled = true;
   bool hasMoreRejected = true;
   late String getToken = '';
-  
+
   // Button loading states
   bool _isCreateLeaveLoading = false;
   bool _isUpdateLeaveLoading = false;

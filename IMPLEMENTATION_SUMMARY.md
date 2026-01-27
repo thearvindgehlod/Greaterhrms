@@ -3,6 +3,7 @@
 ## ✅ Completed Setup
 
 ### 1. Core Infrastructure
+
 - ✅ Created `lib/utils/button_loader_mixin.dart` with:
   - `ButtonLoaderMixin` - Main mixin for managing button loading states
   - `LoadingButtonWrapper` - Widget to show loading overlay on buttons
@@ -10,14 +11,17 @@
   - Helper methods: `setButtonLoading()`, `isButtonLoading()`, `executeWithButtonLoading()`
 
 ### 2. Mixin Added to Key Screens
-- ✅ `lib/horilla_leave/leave_request.dart` 
+
+- ✅ `lib/horilla_leave/leave_request.dart`
 - ✅ `lib/horilla_leave/my_leave_request.dart`
 - ✅ `lib/attendance_views/attendance_request.dart`
 - ✅ `lib/employee_views/work_type_request.dart`
 - ✅ `lib/employee_views/shift_request.dart`
 
 ### 3. Button Loading State Variables Added
+
 All screens now have pre-declared button loading states ready for use:
+
 ```dart
 bool _isCreateXxxLoading = false;
 bool _isUpdateXxxLoading = false;
@@ -33,7 +37,9 @@ bool _isRejectXxxLoading = false;
 For each button that makes an API call, follow these 3 steps:
 
 ### Step 1: Identify the Button
+
 Find buttons with API calls:
+
 ```dart
 onPressed: () async {
   // Has API call like: await createNewLeaveType()
@@ -41,6 +47,7 @@ onPressed: () async {
 ```
 
 ### Step 2: Wrap with Loading State
+
 ```dart
 onPressed: _isCreateLeaveLoading ? null : () async {
   setState(() => _isCreateLeaveLoading = true);
@@ -53,6 +60,7 @@ onPressed: _isCreateLeaveLoading ? null : () async {
 ```
 
 ### Step 3: Update Child Widget
+
 ```dart
 child: _isCreateLeaveLoading
     ? const SizedBox(
@@ -71,7 +79,9 @@ child: _isCreateLeaveLoading
 ## 🎯 Implementation Examples by File
 
 ### leave_request.dart
+
 **Buttons to Update:**
+
 - Create Leave button (line ~1100)
 - Edit Leave button (line ~2033)
 - Delete Leave button (multiple locations)
@@ -79,7 +89,9 @@ child: _isCreateLeaveLoading
 - Reject Leave buttons (line ~3919, 4089, 4568)
 
 ### my_leave_request.dart
+
 **Buttons to Update:**
+
 - Create Leave button in dialog (line ~777)
 - Edit Leave button in dialog
 - Delete Leave button (multiple locations)
@@ -88,7 +100,9 @@ child: _isCreateLeaveLoading
 - Cancel Leave button
 
 ### attendance_request.dart
+
 **Buttons to Update:**
+
 - Create Attendance button
 - Edit Attendance button
 - Delete Attendance button
@@ -96,7 +110,9 @@ child: _isCreateLeaveLoading
 - Reject Attendance button
 
 ### work_type_request.dart
+
 **Buttons to Update:**
+
 - Create Request button
 - Update Request button
 - Delete Request button
@@ -104,7 +120,9 @@ child: _isCreateLeaveLoading
 - Reject Request button
 
 ### shift_request.dart
+
 **Buttons to Update:**
+
 - Create Shift Request button
 - Update Shift Request button
 - Delete Shift Request button
@@ -116,6 +134,7 @@ child: _isCreateLeaveLoading
 ## 🚀 Usage Patterns
 
 ### Pattern 1: Simple Button with Loading (Most Common)
+
 ```dart
 ElevatedButton(
   onPressed: _isCreateLoading ? null : () async {
@@ -140,6 +159,7 @@ ElevatedButton(
 ```
 
 ### Pattern 2: Using LoadingButton Widget
+
 ```dart
 LoadingButton(
   isLoading: _isCreateLoading,
@@ -157,6 +177,7 @@ LoadingButton(
 ```
 
 ### Pattern 3: Using Mixin Helper Methods
+
 ```dart
 ElevatedButton(
   onPressed: isButtonLoading('create_btn') ? null : () async {
@@ -171,6 +192,7 @@ ElevatedButton(
 ```
 
 ### Pattern 4: Multiple Buttons in Dialog
+
 ```dart
 actions: [
   ElevatedButton(
@@ -182,7 +204,7 @@ actions: [
         setState(() => _isApproveLoading = false);
       }
     },
-    child: _isApproveLoading 
+    child: _isApproveLoading
         ? const CircularProgressIndicator(strokeWidth: 2)
         : const Text('Approve'),
   ),
@@ -209,11 +231,12 @@ actions: [
 ### For Each File:
 
 1. **Search for API calls in onPressed**
+
    ```dart
    grep -n "onPressed.*async" filename.dart
    ```
 
-2. **Find the button structure** 
+2. **Find the button structure**
    - Look for ElevatedButton, TextButton, or IconButton
    - Check if it has an async callback with API calls
 
@@ -262,7 +285,6 @@ actions: [
 
 1. **Always use try-finally**
    - Ensures loading state resets even if error occurs
-   
 2. **Disable buttons during loading**
    - Set `onPressed: null` when loading
    - Prevents accidental duplicate submissions
@@ -298,6 +320,7 @@ actions: [
 ## ✨ After Implementation
 
 Once all buttons are updated with loaders:
+
 - ✅ Better UX - Users see feedback for their actions
 - ✅ Prevent Duplicates - Button disabled during request
 - ✅ Professional Look - Loading spinner on buttons

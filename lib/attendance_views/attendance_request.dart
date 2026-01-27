@@ -90,7 +90,7 @@ class _AttendanceRequest extends State<AttendanceRequest>
   bool _drawerPermissionHourAccount = false;
   bool _isPermissionCheckComplete = false;
   late String getToken = '';
-  
+
   // Button loading states
   bool _isCreateAttendanceLoading = false;
   bool _isUpdateAttendanceLoading = false;
@@ -3315,5 +3315,3 @@ class _TimeInputFormatter extends TextInputFormatter {
     return newValue;
   }
 }
-
-

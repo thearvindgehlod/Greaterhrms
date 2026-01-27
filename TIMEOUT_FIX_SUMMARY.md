@@ -5,12 +5,14 @@
 ### Critical Files Modified:
 
 #### 1. **lib/main.dart**
+
 - `_startNotificationTimer()`: 3s → **10s** polling interval
 - `fetchNotifications()`: 3s → **8s** timeout
 
 #### 2. **lib/horilla_main/home.dart**
+
 - `_initializePermissionsAndData()`: 5s → **10s** timeout
-- `permissionLeaveOverviewChecks()`: 3s → **8s** 
+- `permissionLeaveOverviewChecks()`: 3s → **8s**
 - `permissionLeaveTypeChecks()`: 3s → **8s**
 - `permissionGeoFencingMapView()`: 3s → **8s**
 - `permissionLeaveRequestChecks()`: 3s → **8s**
@@ -21,10 +23,12 @@
 - `checkAllPermissions()/_getPerm()`: 3s → **8s**
 
 #### 3. **lib/horilla_main/login.dart**
+
 - `_startNotificationTimer()`: 3s → **10s** polling interval
 - `_login()`: 3s → **8s** timeout
 
 #### 4. **lib/checkin_checkout/checkin_checkout_views/checkin_checkout_form.dart**
+
 - `getLoginEmployeeRecord()`: 3s → **8s** timeout
 - `getLoginEmployeeWorkInfoRecord()`: 3s → **8s** timeout
 - Initial API calls batch: 5s → **10s** timeout
@@ -39,6 +43,7 @@
 ## Timeout Progression Summary
 
 ### API Calls:
+
 ```
 Before:  3 seconds
 After:   8 seconds
@@ -46,6 +51,7 @@ Increase: +266%
 ```
 
 ### Polling Interval (Notifications):
+
 ```
 Before:  3 seconds (every request)
 After:   10 seconds
@@ -53,6 +59,7 @@ Reduction: 70% fewer requests
 ```
 
 ### Initialization:
+
 ```
 Before:  5 seconds (for 8+ concurrent requests)
 After:   10 seconds
@@ -64,6 +71,7 @@ Increase: +100% buffer
 ## Expected Log Changes
 
 ### Before (Current Logs):
+
 ```
 I/flutter (13723): Error in getFaceDetection: TimeoutException after 0:00:03.000000
 I/flutter (13723): Error in prefetchData: TimeoutException after 0:00:03.000000
@@ -73,6 +81,7 @@ I/flutter (13723): Error fetching check-in status: TimeoutException after 0:00:1
 ```
 
 ### After (Expected with New Build):
+
 ```
 ✅ No more 3-second timeout errors
 ✅ API calls will complete within 8s window
@@ -86,20 +95,23 @@ I/flutter (13723): Error fetching check-in status: TimeoutException after 0:00:1
 ## Test Plan
 
 ### 1. **Monitor Logs After Rebuild**
-   - Watch for absence of "TimeoutException after 0:00:03" messages
-   - Check for reduced "Skipped X frames" messages
-   - Verify "No notifications available" appears less frequently
+
+- Watch for absence of "TimeoutException after 0:00:03" messages
+- Check for reduced "Skipped X frames" messages
+- Verify "No notifications available" appears less frequently
 
 ### 2. **Network Simulation Testing**
-   ```bash
-   # Android Studio: Network Throttling (3G, 500ms latency)
-   # Device Monitor → Telephony → Edge
-   ```
+
+```bash
+# Android Studio: Network Throttling (3G, 500ms latency)
+# Device Monitor → Telephony → Edge
+```
 
 ### 3. **Performance Metrics**
-   - App startup time
-   - First data load completion
-   - Frame drops during initial load
+
+- App startup time
+- First data load completion
+- Frame drops during initial load
 
 ---
 
@@ -117,6 +129,7 @@ I/flutter (13723): Error fetching check-in status: TimeoutException after 0:00:1
 ## Next Steps
 
 1. **Rebuild the app**
+
    ```bash
    flutter run
    ```
@@ -138,10 +151,12 @@ I/flutter (13723): Error fetching check-in status: TimeoutException after 0:00:1
 ---
 
 ## Files Changed: 4
+
 - lib/main.dart
 - lib/horilla_main/home.dart
 - lib/horilla_main/login.dart
 - lib/checkin_checkout/checkin_checkout_views/checkin_checkout_form.dart
 
 ## Total API Timeout Changes: 15+
+
 ## Total Duration Changes: 18+

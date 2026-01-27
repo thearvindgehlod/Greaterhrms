@@ -3,6 +3,7 @@
 ## Example 1: Simple Save Button
 
 ### ❌ BEFORE (No Loading Indicator)
+
 ```dart
 actions: <Widget>[
   SizedBox(
@@ -45,12 +46,14 @@ actions: <Widget>[
 ```
 
 **Issues:**
+
 - No visual feedback while API is processing
 - User doesn't know if button click worked
 - User might click multiple times
 - No loading indicator
 
 ### ✅ AFTER (With Loading Indicator)
+
 ```dart
 actions: <Widget>[
   SizedBox(
@@ -107,6 +110,7 @@ actions: <Widget>[
 ```
 
 **Benefits:**
+
 - ✅ Shows loading spinner while API processes
 - ✅ Button disabled during loading (prevents duplicates)
 - ✅ Clear visual feedback to user
@@ -117,6 +121,7 @@ actions: <Widget>[
 ## Example 2: Approve/Reject Dialog Buttons
 
 ### ❌ BEFORE (No Loading on Multiple Buttons)
+
 ```dart
 showDialog(
   context: context,
@@ -160,11 +165,13 @@ showDialog(
 ```
 
 **Issues:**
+
 - Both Approve and Reject buttons have no loading feedback
 - No indication of which button was clicked
 - If one API call takes time, user might click again
 
 ### ✅ AFTER (With Separate Loading States)
+
 ```dart
 showDialog(
   context: context,
@@ -242,6 +249,7 @@ showDialog(
 ```
 
 **Benefits:**
+
 - ✅ Each button has independent loading state
 - ✅ Clear indication of which action is processing
 - ✅ Other button remains clickable (e.g., Reject while Approve is loading)
@@ -252,6 +260,7 @@ showDialog(
 ## Example 3: Icon Button with Loading (File Upload)
 
 ### ❌ BEFORE (No Feedback on Icon Button)
+
 ```dart
 IconButton(
   icon: const Icon(Icons.attach_file),
@@ -271,10 +280,12 @@ IconButton(
 ```
 
 **Issues:**
+
 - Icon button gives no loading feedback
 - Hard to tell if upload is in progress
 
 ### ✅ AFTER (With Loading Indicator)
+
 ```dart
 Stack(
   children: [
@@ -318,6 +329,7 @@ Stack(
 ```
 
 **Benefits:**
+
 - ✅ Small loading indicator on icon button
 - ✅ Doesn't obscure the icon completely
 - ✅ Clear visual feedback for file upload
@@ -327,6 +339,7 @@ Stack(
 ## Example 4: Using LoadingButton Helper Widget
 
 ### ✅ Simplified with LoadingButton
+
 ```dart
 LoadingButton(
   isLoading: _isCreateLeaveLoading,
@@ -334,7 +347,7 @@ LoadingButton(
     try {
       setState(() => _isCreateLeaveLoading = true);
       await createNewLeaveType(createdDetails, checkfile, fileName, filePath);
-      
+
       if (_errorMessage == null) {
         Navigator.of(context).pop(true);
       }
@@ -353,6 +366,7 @@ LoadingButton(
 ```
 
 **Benefits:**
+
 - ✅ Less boilerplate code
 - ✅ Loading indicator handled automatically
 - ✅ Button disabled automatically during loading
@@ -363,12 +377,13 @@ LoadingButton(
 ## Example 5: Using Mixin Helper Methods
 
 ### ✅ Using executeWithButtonLoading Helper
+
 ```dart
 ElevatedButton(
   onPressed: isButtonLoading('create_leaf') ? null : () {
     executeWithButtonLoading('create_leave', () async {
       await createNewLeaveType(createdDetails, checkfile, fileName, filePath);
-      
+
       if (_errorMessage == null) {
         Navigator.of(context).pop(true);
         showCreateAnimation();
@@ -389,6 +404,7 @@ ElevatedButton(
 ```
 
 **Benefits:**
+
 - ✅ Mixin handles loading state automatically
 - ✅ Less manual setState calls
 - ✅ Built-in error handling
@@ -398,12 +414,12 @@ ElevatedButton(
 
 ## Quick Reference Table
 
-| Pattern | Best For | Code Length | Boilerplate |
-|---------|----------|------------|-------------|
-| Manual setState | Simple buttons | 15-20 lines | Medium |
-| LoadingButton | Standard buttons | 10-15 lines | Low |
-| Mixin Helper | Complex flows | 10-12 lines | Very Low |
-| Stack overlay | Icon buttons | 20-25 lines | High |
+| Pattern         | Best For         | Code Length | Boilerplate |
+| --------------- | ---------------- | ----------- | ----------- |
+| Manual setState | Simple buttons   | 15-20 lines | Medium      |
+| LoadingButton   | Standard buttons | 10-15 lines | Low         |
+| Mixin Helper    | Complex flows    | 10-12 lines | Very Low    |
+| Stack overlay   | Icon buttons     | 20-25 lines | High        |
 
 ---
 
@@ -438,6 +454,7 @@ For each button, verify:
 ## Common Mistakes to Avoid
 
 ### ❌ Mistake 1: Forgetting try-finally
+
 ```dart
 // WRONG - Loading state never resets if error occurs
 onPressed: () async {
@@ -448,6 +465,7 @@ onPressed: () async {
 ```
 
 ### ✅ Correct Way
+
 ```dart
 // CORRECT
 onPressed: () async {
@@ -461,6 +479,7 @@ onPressed: () async {
 ```
 
 ### ❌ Mistake 2: Not disabling button during loading
+
 ```dart
 // WRONG - User can click multiple times
 onPressed: () async {
@@ -471,6 +490,7 @@ onPressed: () async {
 ```
 
 ### ✅ Correct Way
+
 ```dart
 // CORRECT
 onPressed: _isLoading ? null : () async {
@@ -484,6 +504,7 @@ onPressed: _isLoading ? null : () async {
 ```
 
 ### ❌ Mistake 3: Wrong loading indicator color
+
 ```dart
 // WRONG - White loader on white button = invisible
 child: _isLoading
@@ -492,6 +513,7 @@ child: _isLoading
 ```
 
 ### ✅ Correct Way
+
 ```dart
 // CORRECT - Make sure color is visible
 child: _isLoading
@@ -507,6 +529,7 @@ child: _isLoading
 ## Need Help?
 
 Refer to:
+
 1. **BUTTON_LOADER_GUIDE.md** - Full API documentation
 2. **IMPLEMENTATION_SUMMARY.md** - Implementation checklist
 3. **This file** - Before/After examples

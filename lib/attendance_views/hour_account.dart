@@ -2530,5 +2530,3 @@ class _TimeInputFormatter extends TextInputFormatter {
     return newValue;
   }
 }
-
-

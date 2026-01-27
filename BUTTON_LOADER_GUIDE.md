@@ -1,9 +1,11 @@
 # Button Loading Indicator Guide
 
 ## Overview
+
 A comprehensive solution for adding loading indicators to buttons that make API calls throughout the HorillaMobile app.
 
 ## Files Modified
+
 - `lib/utils/button_loader_mixin.dart` - Main loader implementation
 - `lib/horilla_leave/leave_request.dart` - Added ButtonLoaderMixin
 - `lib/horilla_leave/my_leave_request.dart` - Added ButtonLoaderMixin
@@ -14,6 +16,7 @@ A comprehensive solution for adding loading indicators to buttons that make API 
 ## How to Use
 
 ### 1. Add the Mixin to Your StatefulWidget Class
+
 ```dart
 import '../utils/button_loader_mixin.dart';
 
@@ -36,10 +39,10 @@ LoadingButton(
   onPressed: () async {
     try {
       setState(() => _isCreateLoading = true);
-      
+
       // Your API call here
       await createNewLeaveType(createdDetails, checkfile, fileName, filePath);
-      
+
       if (_errorMessage == null) {
         Navigator.of(context).pop(true);
         showCreateAnimation();
@@ -69,7 +72,7 @@ LoadingButton(
     await executeWithButtonLoading('create_leave_btn', () async {
       // Your API call here
       await createNewLeaveType(createdDetails, checkfile, fileName, filePath);
-      
+
       if (_errorMessage == null) {
         Navigator.of(context).pop(true);
         showCreateAnimation();
@@ -95,10 +98,10 @@ actions: [
       onPressed: _isLoading ? null : () async {
         try {
           setState(() => _isLoading = true);
-          
+
           // API call
           await someApiFunction();
-          
+
         } finally {
           setState(() => _isLoading = false);
         }
@@ -222,6 +225,7 @@ actions: [
 ## Screens to Update (TODO)
 
 Add loading indicators to buttons with API calls in:
+
 - [x] `leave_request.dart` - Ready for implementation
 - [x] `my_leave_request.dart` - Ready for implementation
 - [x] `attendance_request.dart` - Ready for implementation
@@ -255,7 +259,7 @@ onPressed: _isMyButtonLoading ? null : () async {
     // 3. Make the API call
     await myApiFunction();
     // 4. Handle success
-    
+
   } catch (e) {
     // 5. Handle error
     print('Error: $e');
@@ -290,6 +294,7 @@ child: _isMyButtonLoading
 ## Customization
 
 ### Custom Loading Color
+
 ```dart
 child: _isLoading
     ? SizedBox(
@@ -304,6 +309,7 @@ child: _isLoading
 ```
 
 ### Disable Other UI During Loading
+
 ```dart
 // Wrap the entire form with IgnorePointer to prevent interaction
 IgnorePointer(
@@ -313,6 +319,7 @@ IgnorePointer(
 ```
 
 ## Notes
+
 - This implementation prevents duplicate API calls by disabling buttons during loading
 - Loading states are automatically reset if an exception occurs
 - The mixin provides helper methods for managing multiple button loading states

@@ -201,7 +201,7 @@ class _CameraSetupPageState extends State<CameraSetupPage> {
                     child: Container(
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(12),
-                          color: Colors.white,
+                        color: Colors.white,
                       ),
                       padding: const EdgeInsets.all(12),
                       child: Image.asset(

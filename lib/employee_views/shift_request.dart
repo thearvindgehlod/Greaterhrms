@@ -28,7 +28,8 @@ class StateInfo {
   StateInfo(this.color, this.displayString);
 }
 
-class _ShiftRequestPageState extends State<ShiftRequestPage> with ButtonLoaderMixin {
+class _ShiftRequestPageState extends State<ShiftRequestPage>
+    with ButtonLoaderMixin {
   TextEditingController yearController = TextEditingController();
   TextEditingController workedHoursController = TextEditingController();
   TextEditingController pendingHoursController = TextEditingController();
@@ -108,7 +109,7 @@ class _ShiftRequestPageState extends State<ShiftRequestPage> with ButtonLoaderMi
   Map<String, dynamic> employeeDetails = {};
   bool isCreateButtonVisible = true;
   late String getToken = '';
-  
+
   // Button loading states
   bool _isCreateShiftLoading = false;
   bool _isUpdateShiftLoading = false;

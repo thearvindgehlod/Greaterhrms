@@ -28,7 +28,8 @@ class StateInfo {
   StateInfo(this.color, this.displayString);
 }
 
-class _WorkTypeRequestPageState extends State<WorkTypeRequestPage> with ButtonLoaderMixin {
+class _WorkTypeRequestPageState extends State<WorkTypeRequestPage>
+    with ButtonLoaderMixin {
   final ScrollController _scrollController = ScrollController();
   final _pageController = PageController(initialPage: 0);
   final _controller = NotchBottomBarController(index: -1);
@@ -90,7 +91,7 @@ class _WorkTypeRequestPageState extends State<WorkTypeRequestPage> with ButtonLo
   Map<String, String> workTypeIdMap = {};
   bool isCreateButtonVisible = true;
   late String getToken = '';
-  
+
   // Button loading states
   bool _isCreateRequestLoading = false;
   bool _isUpdateRequestLoading = false;
